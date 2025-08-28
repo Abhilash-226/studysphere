@@ -165,7 +165,7 @@ const TutorChat = ({ currentUser }) => {
                 <h5>Welcome to your student messages</h5>
                 <p className="text-muted">
                   Select a conversation from the list to respond to your
-                  students
+                  students hello
                 </p>
               </div>
             )}
