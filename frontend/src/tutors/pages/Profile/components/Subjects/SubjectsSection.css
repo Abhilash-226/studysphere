@@ -1,0 +1,21 @@
+.subject-tags {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: var(--spacing-sm);
+  gap: var(--spacing-xs);
+}
+
+.subject-badge {
+  padding: 0.35rem 0.7rem;
+  border-radius: var(--radius-sm);
+  margin-right: var(--spacing-xs);
+  margin-bottom: var(--spacing-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  transition: all var(--transition-fast);
+}
+
+.subject-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}

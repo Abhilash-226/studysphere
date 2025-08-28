@@ -1,0 +1,290 @@
+.tutor-card-detailed {
+  display: flex;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+  border: 1px solid #eaeaea;
+}
+
+.tutor-card-detailed:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.tutor-qualification,
+.tutor-university,
+.tutor-location {
+  color: #666;
+  font-size: 0.9rem;
+  margin: 5px 0;
+}
+
+.tutor-university .university-label,
+.tutor-location .location-label,
+.tutor-availability .availability-label {
+  font-weight: 500;
+  color: #555;
+}
+
+.tutor-availability {
+  margin: 10px 0;
+}
+
+.availability-days {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 5px;
+}
+
+.availability-slot {
+  background-color: #f3f4f6;
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.tutor-card-left {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-right: 1px solid #eaeaea;
+  min-width: 140px;
+}
+
+.tutor-avatar {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.tutor-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tutor-rating-badge {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background-color: #5469d4;
+  color: white;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 0.8rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.star-icon {
+  font-size: 0.7rem;
+  margin-left: 1px;
+}
+
+.tutor-reviews {
+  margin-top: 5px;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.tutor-card-content {
+  padding: 20px;
+  flex-grow: 1;
+}
+
+.tutor-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 5px;
+}
+
+.tutor-name {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.tutor-tags {
+  display: flex;
+  gap: 5px;
+}
+
+.tutor-tag {
+  font-size: 0.7rem;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+.teaching-mode {
+  background-color: #e6f7ff;
+  color: #0077cc;
+}
+
+.top-rated {
+  background-color: #fff8e1;
+  color: #ff9800;
+}
+
+.tutor-specialization {
+  font-size: 0.95rem;
+  color: #555;
+  margin: 0 0 10px;
+}
+
+.tutor-qualification {
+  font-size: 0.85rem;
+  color: #666;
+  margin: 0 0 12px;
+}
+
+.tutor-subjects {
+  margin-bottom: 12px;
+}
+
+.subject-label {
+  font-size: 0.85rem;
+  color: #555;
+  font-weight: 500;
+  margin-right: 5px;
+}
+
+.subject-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 5px;
+}
+
+.subject-tag {
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  background-color: #f0f2ff;
+  color: #5469d4;
+  border-radius: 12px;
+}
+
+.tutor-availability {
+  font-size: 0.85rem;
+  color: #666;
+  margin: 0 0 12px;
+}
+
+.availability-label {
+  font-weight: 500;
+  color: #555;
+}
+
+.tutor-bio {
+  font-size: 0.85rem;
+  color: #666;
+  margin: 12px 0;
+  line-height: 1.5;
+}
+
+.tutor-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #eaeaea;
+}
+
+.tutor-price {
+  display: flex;
+  align-items: baseline;
+}
+
+.price-amount {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.price-unit {
+  font-size: 0.85rem;
+  color: #666;
+  margin-left: 2px;
+}
+
+.tutor-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.tutor-actions .btn {
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-decoration: none;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.tutor-actions .btn-primary {
+  background-color: #5469d4;
+  color: white;
+  border: none;
+}
+
+.tutor-actions .btn-primary:hover {
+  background-color: #4054b4;
+}
+
+.tutor-actions .btn-secondary {
+  background-color: transparent;
+  color: #5469d4;
+  border: 1px solid #5469d4;
+}
+
+.tutor-actions .btn-secondary:hover {
+  background-color: #f0f2ff;
+}
+
+/* Responsive styling */
+@media (max-width: 768px) {
+  .tutor-card-detailed {
+    flex-direction: column;
+  }
+  
+  .tutor-card-left {
+    border-right: none;
+    border-bottom: 1px solid #eaeaea;
+    padding-bottom: 15px;
+  }
+  
+  .tutor-avatar {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .tutor-card-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  
+  .tutor-actions {
+    width: 100%;
+  }
+  
+  .tutor-actions .btn {
+    flex: 1;
+  }
+}

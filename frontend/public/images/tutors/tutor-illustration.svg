@@ -1,0 +1,29 @@
+<svg width="300" height="300" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .tutor-body { fill: #4a7aff; }
+    .tutor-face { fill: #ffffff; }
+    .tutor-details { fill: #2b5be3; }
+    .student { fill: #91b3fa; }
+    .book { fill: #1a1a2e; }
+  </style>
+  
+  <!-- Tutor Figure -->
+  <circle cx="150" cy="70" r="40" class="tutor-body" />
+  <circle cx="150" cy="70" r="30" class="tutor-face" />
+  <rect x="110" y="110" width="80" height="120" rx="10" class="tutor-body" />
+  
+  <!-- Graduation Cap -->
+  <rect x="120" y="40" width="60" height="10" class="tutor-details" />
+  <polygon points="150,30 180,40 150,50 120,40" class="tutor-details" />
+  <line x1="150" y1="30" x2="150" y2="15" stroke="#2b5be3" stroke-width="2" />
+  <circle cx="150" cy="12" r="3" class="tutor-details" />
+  
+  <!-- Teacher with Arms -->
+  <rect x="90" y="130" width="20" height="60" rx="5" class="tutor-body" />
+  <rect x="190" y="130" width="20" height="60" rx="5" class="tutor-body" />
+  
+  <!-- Book -->
+  <rect x="115" y="200" width="70" height="40" rx="5" class="book" />
+  <rect x="120" y="205" width="60" height="30" rx="3" fill="white" />
+  <line x1="150" y1="205" x2="150" y2="235" stroke="#1a1a2e" stroke-width="2" />
+</svg>

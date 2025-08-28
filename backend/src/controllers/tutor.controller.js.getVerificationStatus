@@ -1,0 +1,42 @@
+// Get verification status
+exports.getVerificationStatus = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // Find the tutor profile
+    const tutor = await Tutor.findOne({ user: userId });
+
+    if (!tutor) {
+      return res.status(404).json({
+        success: false,
+        message: "Tutor profile not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      status: tutor.verificationStatus,
+      message: getVerificationMessage(tutor.verificationStatus),
+    });
+  } catch (error) {
+    console.error("Error getting verification status:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error while fetching verification status",
+    });
+  }
+};
+
+// Helper function to get verification message
+function getVerificationMessage(status) {
+  switch (status) {
+    case "pending":
+      return "Your account is pending verification. We'll notify you once approved.";
+    case "approved":
+      return "Your account has been verified. You can now start accepting students.";
+    case "rejected":
+      return "Your verification was not approved. Please contact support for more information.";
+    default:
+      return "Verification status unknown.";
+  }
+}

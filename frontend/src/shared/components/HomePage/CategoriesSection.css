@@ -1,0 +1,233 @@
+/* CategoriesSection.css */
+
+.categories-section {
+  padding: 3.5rem 0;
+  background-color: #ffffff;
+  border-top: 1px solid #f0f0f0;
+  background-image: linear-gradient(to bottom, #f9fbff, #ffffff);
+}
+
+.section-title {
+  text-align: center;
+  margin-bottom: 2.5rem;
+  color: #222;
+  font-weight: 700;
+  font-size: 2rem;
+  position: relative;
+}
+
+.section-title:after {
+  content: '';
+  position: absolute;
+  width: 70px;
+  height: 3px;
+  background-color: #4a7aff;
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 3px;
+}
+
+/* Category Tabs */
+.category-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  border: 1px solid #e1e1e1;
+  border-radius: 30px;
+  overflow: hidden;
+  margin-bottom: 2rem;
+  background-color: #f8f9fa;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  padding: 5px;
+}
+
+/* Tab Navigation Styling */
+.category-tabs .nav-item {
+  flex-grow: 1;
+  text-align: center;
+  border-right: 1px solid #e1e1e1;
+  min-width: 160px; /* Ensure minimum width for tab items */
+}
+
+.category-tabs .nav-item:last-child {
+  border-right: none;
+}
+
+.category-tabs .nav-link {
+  padding: 0.8rem 1.5rem;
+  border-radius: 25px;
+  font-weight: 500;
+  color: #333;
+  background-color: #f8f9fa;
+  transition: all 0.3s ease;
+  border: none;
+  position: relative;
+  margin: 0 5px;
+}
+
+.category-tabs .nav-link.active {
+  background-color: #4a7aff; /* Softer blue */
+  color: #fff;
+  border: none;
+  font-weight: 600;
+  box-shadow: 0 4px 8px rgba(74, 122, 255, 0.25);
+}
+
+/* Create a subtle glow effect for the active tab */
+.category-tabs .nav-link.active:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 25px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.category-tabs .nav-link.active:hover:before {
+  opacity: 1;
+}
+
+.category-tabs .nav-link:hover:not(.active) {
+  background-color: #e9ecef;
+}
+
+/* Category Content */
+.categories-content {
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 12px;
+  padding: 1.8rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  margin-top: 10px; /* Space for the arrow from the active tab */
+}
+
+/* Tab Content Visibility */
+.tab-content {
+  color: #333;
+}
+
+.tab-pane {
+  display: none;
+}
+
+.tab-pane.active, 
+.tab-pane.show.active {
+  display: block;
+  opacity: 1;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.categories-grid {
+  width: 100%;
+}
+
+.category-column {
+  margin-bottom: 2rem;
+}
+
+.category-column h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #444;
+  margin-bottom: 1.2rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #4a7aff; /* Match our new primary blue color */
+  display: inline-block;
+}
+
+.category-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.category-list li {
+  margin-bottom: 0.7rem;
+}
+
+.category-list a {
+  color: #555;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  display: block;
+  padding: 0.5rem 0.3rem;
+  border-radius: 4px;
+}
+
+.category-list a:hover {
+  color: #4a7aff;
+  background-color: #f8f9ff;
+  padding-left: 0.6rem;
+  text-decoration: none;
+}
+
+/* Highlight for popular classes */
+.category-list li a.popular {
+  position: relative;
+  font-weight: 500;
+}
+
+.category-list li a.popular:after {
+  content: "Popular";
+  position: absolute;
+  right: 8px;
+  top: 5px;
+  background: linear-gradient(135deg, #ff9800, #ff5722);
+  color: white;
+  font-size: 0.65rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 20px;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(255, 152, 0, 0.3);
+  letter-spacing: 0.3px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 991px) {
+  .category-tabs .nav-link {
+    padding: 0.8rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .categories-content {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .category-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 8px;
+  }
+  
+  .category-tabs .nav-item {
+    flex-grow: 0;
+  }
+  
+  .category-column {
+    margin-bottom: 1.5rem;
+  }
+  
+  .category-column h3 {
+    font-size: 1.1rem;
+  }
+  
+  /* Full width columns on mobile */
+  .category-column {
+    width: 100%;
+  }
+}

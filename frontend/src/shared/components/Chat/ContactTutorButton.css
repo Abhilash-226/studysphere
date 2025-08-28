@@ -1,0 +1,13 @@
+.contact-tutor-button {
+  width: 100%;
+  font-weight: 600;
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.contact-tutor-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}

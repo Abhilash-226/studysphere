@@ -1,0 +1,50 @@
+/* TutorChat.css */
+
+.tutor-chat-container {
+  height: calc(100vh - 110px); /* Adjust based on your layout */
+}
+
+.tutor-chat-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.conversation-sidebar {
+  height: 100%;
+}
+
+.chat-main-content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-messages-container {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.select-conversation-placeholder {
+  text-align: center;
+  padding: 2rem;
+}
+
+.select-conversation-placeholder h5 {
+  margin-bottom: 0.5rem;
+  color: #495057;
+}
+
+/* Media queries for mobile */
+@media (max-width: 767.98px) {
+  .tutor-chat-container {
+    height: calc(100vh - 80px); /* Adjust for mobile */
+  }
+  
+  .conversation-sidebar {
+    height: auto;
+    max-height: 300px;
+    margin-bottom: 1rem;
+  }
+}

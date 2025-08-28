@@ -1,0 +1,65 @@
+.basic-info-step {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.avatar-preview {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8f9fa;
+  border: 2px dashed #ced4da;
+  margin-bottom: 15px;
+}
+
+.avatar-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.upload-icon {
+  font-size: 2.5rem;
+  color: #6c757d;
+}
+
+.file-upload {
+  margin-bottom: 10px;
+}
+
+.file-upload-label {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  background-color: #f8f9fa;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.file-upload-label:hover {
+  background-color: #e9ecef;
+}
+
+.file-upload-icon {
+  margin-right: 8px;
+}
+
+.file-upload input[type="file"] {
+  display: none;
+}
+
+.form-group {
+  margin-bottom: 25px;
+}
+
+.help-text {
+  font-size: 0.85rem;
+  color: #6c757d;
+  margin-top: 8px;
+}

@@ -1,0 +1,35 @@
+.dashboard-stat-card h6 {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.dashboard-stat-card h3 {
+  font-weight: 700;
+  margin-top: 0;
+  font-size: 1.75rem;
+}
+
+.dashboard-stat-card .card-body {
+  padding: 1.25rem;
+}
+
+/* Text color for different card backgrounds */
+.dashboard-stat-card.text-white h6 {
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+
+.dashboard-stat-card.text-white h3 {
+  color: #ffffff !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-stat-card.text-dark h6 {
+  color: rgba(0, 0, 0, 0.6) !important;
+}
+
+.dashboard-stat-card.text-dark h3 {
+  color: #000000 !important;
+}

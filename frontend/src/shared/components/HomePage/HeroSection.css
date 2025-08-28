@@ -1,0 +1,136 @@
+/* HeroSection.css */
+
+.hero-section {
+  background-color: #e8f2ff;
+  padding: 3rem 0;
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.hero-content {
+  padding: 2rem 1rem 2rem 0;
+}
+
+.hero-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 2rem;
+  color: #333;
+}
+
+.search-container {
+  max-width: 100%;
+  margin-bottom: 2.5rem;
+}
+
+.search-input {
+  padding: 1.2rem;
+  border-radius: 8px 0 0 8px !important;
+  border: none;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  font-size: 1rem;
+}
+
+.search-input:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.search-button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0 8px 8px 0;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.search-button:hover {
+  transform: translateX(2px);
+  background-color: #0b5ed7;
+  border-color: #0b5ed7;
+}
+
+.tagline-container {
+  margin-top: 2rem;
+}
+
+.tagline {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #333;
+  letter-spacing: 0.3px;
+  display: inline-block;
+  line-height: 1.4;
+  /* Removed position: relative and padding-bottom since we're removing the underline */
+}
+
+/* Removed the .tagline:after rule that was creating the underline */
+
+.hero-image-container {
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0;
+  margin-right: -15px; /* Align with the edge of the container */
+}
+
+.image-wrapper {
+  margin-right: 0; /* Align with the edge */
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+}
+
+.hero-image {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.1));
+}
+
+@media (max-width: 992px) {
+  .hero-section {
+    padding: 3rem 0;
+  }
+
+  .hero-title {
+    font-size: 2rem;
+  }
+  
+  .hero-image {
+    max-width: 70%;
+  }
+
+  .stat-item {
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 1.8rem;
+    text-align: center;
+  }
+  
+  .hero-content {
+    text-align: center;
+  }
+  
+  .tagline {
+    font-size: 1.3rem;
+    max-width: 100%;
+  }
+  
+  .hero-image-container {
+    margin-right: 0;
+  }
+  
+  /* Removed .tagline:after rule since we no longer have the underline */
+}

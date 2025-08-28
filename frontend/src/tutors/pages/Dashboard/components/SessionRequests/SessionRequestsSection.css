@@ -1,0 +1,50 @@
+.session-time {
+  min-width: 80px;
+}
+
+.session-time .fw-bold {
+  font-size: 0.9rem;
+  color: #495057;
+}
+
+.session-time div:last-child {
+  font-size: 0.8rem;
+  color: #6c757d;
+}
+
+.session-request-item {
+  padding: 1rem;
+  transition: background-color 0.2s ease;
+}
+
+.session-request-item:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.session-request-notes {
+  font-size: 0.85rem;
+  color: #666;
+  max-height: 60px;
+  overflow-y: auto;
+  padding-right: 10px;
+  margin-bottom: 0;
+  max-width: 500px;
+}
+
+.session-request-actions {
+  display: flex;
+  align-items: flex-start;
+}
+
+@media (max-width: 576px) {
+  .session-request-actions {
+    flex-direction: column;
+    margin-top: 10px;
+  }
+  
+  .session-request-actions .btn {
+    margin-right: 0;
+    margin-bottom: 5px;
+    width: 100%;
+  }
+}

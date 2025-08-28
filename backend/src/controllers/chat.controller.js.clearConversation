@@ -1,0 +1,53 @@
+// Clear all messages in a conversation
+exports.clearConversation = async (req, res) => {
+  try {
+    const { conversationId } = req.params;
+    const userId = req.user.id;
+
+    // Validate conversation ID
+    if (!mongoose.Types.ObjectId.isValid(conversationId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid conversation ID format",
+      });
+    }
+
+    // Check if conversation exists
+    const conversation = await Conversation.findById(conversationId);
+    if (!conversation) {
+      return res.status(404).json({
+        success: false,
+        message: "Conversation not found",
+      });
+    }
+
+    // Check if user is a participant
+    if (!conversation.participants.some((p) => p.toString() === userId)) {
+      return res.status(403).json({
+        success: false,
+        message: "You don't have permission to access this conversation",
+      });
+    }
+
+    // Delete all messages in the conversation
+    await Message.deleteMany({ conversation: conversationId });
+
+    // Update conversation to reflect it has no messages
+    conversation.lastMessage = null;
+    conversation.lastMessageTime = new Date();
+    conversation.unreadCount = new Map(); // Reset unread counts
+    await conversation.save();
+
+    res.status(200).json({
+      success: true,
+      message: "All messages in conversation have been cleared",
+    });
+  } catch (error) {
+    console.error("Error clearing conversation:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to clear conversation",
+      error: error.message,
+    });
+  }
+};

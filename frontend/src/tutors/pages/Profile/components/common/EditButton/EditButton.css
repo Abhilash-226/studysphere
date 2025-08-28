@@ -1,0 +1,38 @@
+.card-edit-button {
+  background-color: #f8f9fa;
+  border: 2px solid #212529;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #212529;
+  transition: all 0.2s ease;
+  padding: 0;
+  margin-left: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.card-edit-button:hover {
+  background-color: #e9ecef;
+  color: #000;
+  border-color: #6c757d;
+  transform: translateY(-1px);
+}
+
+.edit-button-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Style for the React Icon */
+.card-edit-button svg {
+  color: #212529;
+  font-size: 16px;
+  display: block;
+}

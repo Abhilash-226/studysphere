@@ -1,0 +1,15 @@
+.bio-content {
+  line-height: var(--line-height-relaxed);
+  color: var(--gray-600);
+  font-size: var(--font-size-sm);
+  padding: var(--spacing-sm);
+  background-color: var(--gray-50);
+  border-radius: var(--radius-md);
+  position: relative;
+  overflow: hidden;
+  margin-bottom: var(--spacing-md);
+}
+
+.bio-content p:last-child {
+  margin-bottom: 0;
+}

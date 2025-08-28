@@ -1,0 +1,20 @@
+/* Card Header Styles */
+.card-header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.card-header-content .title {
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.card-header-content .title svg {
+  color: #007bff;
+  margin-right: 8px;
+  font-size: 18px;
+}

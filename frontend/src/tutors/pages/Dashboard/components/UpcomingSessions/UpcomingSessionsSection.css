@@ -1,0 +1,17 @@
+.session-time {
+  min-width: 80px;
+}
+
+.session-time .fw-bold {
+  font-size: 0.9rem;
+  color: #495057;
+}
+
+.session-time div:last-child {
+  font-size: 0.8rem;
+  color: #6c757d;
+}
+
+.list-group-item {
+  padding: 1rem;
+}

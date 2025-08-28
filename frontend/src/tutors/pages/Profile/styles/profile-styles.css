@@ -1,0 +1,159 @@
+/* Main Profile Styles */
+.tutor-profile-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: var(--font-main);
+  color: var(--dark-color);
+  letter-spacing: 0.01em;
+}
+
+/* Apply base typography */
+.tutor-profile-container h1, 
+.tutor-profile-container h2, 
+.tutor-profile-container h3 {
+  color: var(--dark-color);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+  margin-bottom: var(--spacing-md);
+}
+
+.tutor-profile-container p {
+  margin-bottom: var(--spacing-md);
+  line-height: var(--line-height-relaxed);
+}
+
+/* Card Components */
+.card {
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  margin-bottom: var(--spacing-md);
+  transition: all var(--transition-normal);
+  background: white;
+  position: relative;
+  height: calc(100% - var(--spacing-md)); /* Make cards equal height in grid rows */
+}
+
+.card:hover {
+  box-shadow: 0 6px 16px rgba(71, 77, 87, 0.1), 0 0 1px rgba(0, 0, 0, 0.1);
+  border-color: transparent;
+  z-index: 2;
+}
+
+.card-header {
+  background: var(--gray-50);
+  font-weight: var(--font-weight-semibold);
+  padding: var(--spacing-md) var(--spacing-md);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  color: var(--dark-color);
+  border-top-left-radius: calc(var(--radius-lg) - 1px);
+  border-top-right-radius: calc(var(--radius-lg) - 1px);
+}
+
+.card-body {
+  padding: var(--spacing-md);
+  background-color: white;
+}
+
+/* Badge Styles */
+.badge {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  padding: 0.35rem 0.7rem;
+  border-radius: var(--radius-sm);
+  margin-right: var(--spacing-xs);
+  margin-bottom: var(--spacing-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  transition: all var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+}
+
+.badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.badge.bg-primary {
+  background-color: rgba(67, 97, 238, 0.1) !important;
+  color: var(--primary-color) !important;
+  border: 1px solid rgba(67, 97, 238, 0.2);
+}
+
+.badge.bg-secondary {
+  background-color: rgba(79, 93, 117, 0.1) !important;
+  color: var(--secondary-color) !important;
+  border: 1px solid rgba(79, 93, 117, 0.2);
+}
+
+.badge.bg-success {
+  background-color: rgba(16, 185, 129, 0.1) !important;
+  color: var(--success-color) !important;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.badge.bg-info {
+  background-color: rgba(59, 130, 246, 0.1) !important;
+  color: var(--info-color) !important;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.badge.bg-light {
+  background-color: var(--gray-50) !important;
+  color: var(--gray-600) !important;
+  border: 1px solid var(--gray-200);
+}
+
+/* Progress Bar */
+.progress {
+  height: 8px;
+  border-radius: var(--radius-lg);
+  background-color: var(--gray-200);
+  margin-top: var(--spacing-sm);
+  margin-bottom: 0;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  display: flex;
+  align-items: stretch;
+}
+
+.progress-bar {
+  background-image: linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);
+  background-size: 1rem 1rem;
+  transition: width 0.8s ease;
+  height: 100%;
+  display: flex;
+  align-self: flex-start;
+}
+
+.progress-bar.bg-success {
+  background-color: var(--success-color);
+}
+
+.progress-bar.bg-warning {
+  background-color: var(--warning-color);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .tutor-profile-container {
+    padding-left: var(--spacing-sm);
+    padding-right: var(--spacing-sm);
+  }
+  
+  .card-body {
+    padding: var(--spacing-sm);
+  }
+  
+  .badge {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.7rem;
+  }
+}

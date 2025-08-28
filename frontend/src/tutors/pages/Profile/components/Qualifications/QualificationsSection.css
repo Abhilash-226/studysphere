@@ -1,0 +1,30 @@
+.info-table {
+  width: 100%;
+  font-size: var(--font-size-sm);
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-bottom: var(--spacing-md);
+}
+
+.info-table tr {
+  transition: background-color var(--transition-fast);
+}
+
+.info-table tr:hover {
+  background-color: var(--gray-50);
+}
+
+.info-table td {
+  padding: 0.4rem 0.5rem;
+  border-bottom: 1px solid var(--gray-100);
+}
+
+.info-table td:first-child {
+  color: var(--gray-500);
+  width: 40%;
+}
+
+.info-table td:last-child {
+  color: var(--dark-color);
+  font-weight: var(--font-weight-medium);
+}

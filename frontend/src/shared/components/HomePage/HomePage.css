@@ -1,0 +1,16 @@
+/* HomePage.css */
+
+.home-page {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* Section spacing */
+.home-page > section {
+  margin-bottom: 0;
+}
+
+/* Create a wave-like transition between sections */
+.home-page .hero-section {
+  margin-bottom: -1px; /* Eliminate any gap between sections */
+}

@@ -1,0 +1,399 @@
+import React, { useState, useEffect, useRef } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Form,
+  Button,
+  Spinner,
+} from "react-bootstrap";
+import { FaArrowLeft, FaPaperPlane } from "react-icons/fa";
+import { useAuth } from "../../../shared/context/AuthContext";
+import chatService from "../../../shared/services/chat.service";
+import "./ChatPage.css";
+
+const ChatPage = () => {
+  const { conversationId } = useParams();
+  const { isAuthenticated, currentUser } = useAuth();
+  const navigate = useNavigate();
+
+  const [loading, setLoading] = useState(true);
+  const [messages, setMessages] = useState([]);
+  const [conversation, setConversation] = useState(null);
+  const [newMessage, setNewMessage] = useState("");
+  const [sendingMessage, setSendingMessage] = useState(false);
+  const [error, setError] = useState(null);
+
+  const messagesEndRef = useRef(null);
+
+  // Check authentication
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      navigate("/login-student?message=You need to login to access messages");
+    }
+  }, [isAuthenticated, navigate]);
+
+  // Initialize socket connection
+  useEffect(() => {
+    if (isAuthenticated()) {
+      // Get the token from localStorage or wherever it's stored
+      const token = localStorage.getItem("token");
+      chatService.initSocket(token);
+
+      return () => {
+        // Clean up socket connection
+        chatService.disconnect();
+      };
+    }
+  }, [isAuthenticated]);
+
+  // Load conversation and messages
+  useEffect(() => {
+    if (conversationId && isAuthenticated()) {
+      loadConversation();
+      loadMessages();
+
+      // Join the conversation room for real-time updates
+      chatService.joinConversation(conversationId);
+
+      // Mark messages as read
+      markMessagesAsRead();
+
+      return () => {
+        // Leave the conversation room when component unmounts
+        chatService.leaveConversation(conversationId);
+      };
+    }
+  }, [conversationId, isAuthenticated]);
+
+  // Scroll to bottom when messages change
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  // Listen for new messages via WebSocket
+  useEffect(() => {
+    if (isAuthenticated()) {
+      const handleNewMessage = (data) => {
+        if (data.conversationId === conversationId) {
+          setMessages((prevMessages) => [...prevMessages, data.message]);
+          markMessagesAsRead();
+        }
+      };
+
+      chatService.on("new-message", handleNewMessage);
+
+      return () => {
+        chatService.off("new-message", handleNewMessage);
+      };
+    }
+  }, [conversationId, isAuthenticated]);
+
+  const loadConversation = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const response = await chatService.getConversationById(conversationId);
+
+      if (response.success) {
+        setConversation(response.conversation);
+      } else {
+        setError(response.message || "Failed to load conversation");
+      }
+    } catch (error) {
+      console.error("Error loading conversation:", error);
+      setError("Failed to load conversation. Please try again.");
+    }
+  };
+
+  const loadMessages = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const response = await chatService.getMessages(conversationId);
+
+      if (response.success) {
+        setMessages(response.messages || []);
+      } else {
+        setError(response.message || "Failed to load messages");
+      }
+    } catch (error) {
+      console.error("Error loading messages:", error);
+      setError("Failed to load messages. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const markMessagesAsRead = async () => {
+    try {
+      await chatService.markAsRead(conversationId);
+    } catch (error) {
+      console.error("Error marking messages as read:", error);
+    }
+  };
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleSendMessage = async (e) => {
+    e.preventDefault();
+
+    if (!newMessage.trim()) return;
+
+    try {
+      setSendingMessage(true);
+      setError(null);
+
+      const response = await chatService.sendMessage(
+        conversationId,
+        newMessage
+      );
+
+      if (response.success) {
+        // Create a client-side message object if the response doesn't have message data
+        const messageToAdd = {
+          _id: response.messageId || `temp-${Date.now()}`,
+          content: newMessage,
+          sender: currentUser?.id || "user-1",
+          createdAt: response.createdAt || new Date().toISOString(),
+          isSentByCurrentUser: true,
+          read: false
+        };
+
+        setMessages((prevMessages) => [...prevMessages, messageToAdd]);
+        setNewMessage("");
+
+        // Reload messages to get the properly formatted message from the server
+        setTimeout(() => loadMessages(), 500);
+      } else {
+        setError(response.message || "Failed to send message");
+      }
+    } catch (error) {
+      console.error("Error sending message:", error);
+      setError("Failed to send message. Please try again.");
+    } finally {
+      setSendingMessage(false);
+    }
+  };
+
+  const formatTime = (timestamp) => {
+    if (!timestamp) return "";
+    
+    try {
+      return new Date(timestamp).toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } catch (error) {
+      console.error("Error formatting time:", error);
+      return "";
+    }
+  };
+
+  const formatDate = (timestamp) => {
+    if (!timestamp) return "";
+    
+    try {
+      const date = new Date(timestamp);
+      return date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year:
+          date.getFullYear() !== new Date().getFullYear() ? "numeric" : undefined,
+      });
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return "";
+    }
+  };
+
+  const shouldShowDate = (index) => {
+    // First message always shows date
+    if (index === 0) return true;
+    
+    try {
+      // Check if messages exist and have valid createdAt property
+      if (
+        !messages[index] ||
+        !messages[index].createdAt ||
+        !messages[index - 1] ||
+        !messages[index - 1].createdAt
+      ) {
+        return false;
+      }
+
+      const currentDate = new Date(
+        messages[index].createdAt
+      ).toLocaleDateString();
+      const prevDate = new Date(
+        messages[index - 1].createdAt
+      ).toLocaleDateString();
+
+      return currentDate !== prevDate;
+    } catch (error) {
+      console.error("Error in shouldShowDate:", error);
+      return false;
+    }
+  };
+
+  if (!isAuthenticated()) {
+    return null;
+  }
+
+  return (
+    <Container className="chat-page py-4">
+      <Row className="justify-content-center">
+        <Col md={10} lg={8}>
+          <Card className="chat-container">
+            {/* Chat Header */}
+            <Card.Header className="d-flex align-items-center">
+              <Button
+                variant="link"
+                className="p-0 me-3 text-dark"
+                onClick={() => navigate("/messages")}
+              >
+                <FaArrowLeft />
+              </Button>
+
+              {conversation && conversation.otherUser ? (
+                <div className="d-flex align-items-center">
+                  <div className="chat-avatar">
+                    <img
+                      src={
+                        (conversation.otherUser &&
+                          conversation.otherUser.profileImage) ||
+                        "/images/tutors/tutor-placeholder.svg"
+                      }
+                      alt={
+                        (conversation.otherUser &&
+                          conversation.otherUser.name) ||
+                        "User"
+                      }
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = "/images/tutors/tutor-placeholder.svg";
+                      }}
+                    />
+                  </div>
+                  <div className="ms-2">
+                    <h6 className="mb-0">
+                      {conversation?.otherUser?.name || "User"}
+                    </h6>
+                    <small className="text-muted">
+                      {conversation?.otherUser?.role === "tutor"
+                        ? "Tutor"
+                        : "Student"}
+                    </small>
+                  </div>
+                </div>
+              ) : (
+                <div>Loading...</div>
+              )}
+            </Card.Header>
+
+            {/* Chat Messages */}
+            <Card.Body className="chat-messages-container">
+              {loading ? (
+                <div className="text-center p-4">
+                  <Spinner animation="border" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </Spinner>
+                  <p className="mt-2">Loading messages...</p>
+                </div>
+              ) : error ? (
+                <div className="alert alert-danger">{error}</div>
+              ) : !messages || messages.length === 0 ? (
+                <div className="text-center p-4">
+                  <p>No messages yet. Start the conversation!</p>
+                </div>
+              ) : (
+                <div className="messages-list">
+                  {messages.map((message, index) => {
+                    if (!message) return null;
+                    return (
+                      <React.Fragment key={message._id || `msg-${index}`}>
+                        {shouldShowDate(index) && (
+                          <div className="message-date-separator">
+                            <span>
+                              {message.createdAt
+                                ? formatDate(message.createdAt)
+                                : ""}
+                            </span>
+                          </div>
+                        )}
+                        <div
+                          className={`message-container ${
+                            (message.isSentByCurrentUser === true) ||
+                            (message.sender &&
+                              currentUser &&
+                              message.sender === currentUser.id)
+                              ? "sent"
+                              : "received"
+                          }`}
+                        >
+                          <div className="message-content">
+                            <div className="message-bubble">
+                              {message.content}
+                            </div>
+                            <div className="message-info">
+                              <span className="message-time">
+                                {message.createdAt ? formatTime(message.createdAt) : ""}
+                              </span>
+                              {message.isSentByCurrentUser && (
+                                <span className="message-status">
+                                  {message.read && (
+                                    <span className="read-indicator">Read</span>
+                                  )}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </React.Fragment>
+                    );
+                  })}
+                  <div ref={messagesEndRef} />
+                </div>
+              )}
+            </Card.Body>
+
+            {/* Message Input */}
+            <Card.Footer className="p-2">
+              <Form onSubmit={handleSendMessage}>
+                <div className="d-flex">
+                  <Form.Control
+                    type="text"
+                    placeholder="Type a message..."
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    disabled={sendingMessage}
+                    className="me-2"
+                  />
+                  <Button
+                    variant="primary"
+                    type="submit"
+                    disabled={sendingMessage || !newMessage.trim()}
+                  >
+                    {sendingMessage ? (
+                      <Spinner size="sm" animation="border" />
+                    ) : (
+                      <FaPaperPlane />
+                    )}
+                  </Button>
+                </div>
+              </Form>
+            </Card.Footer>
+          </Card>
+        </Col>
+      </Row>
+    </Container>
+  );
+};
+
+export default ChatPage;

@@ -1,0 +1,23 @@
+.qualification-list {
+  margin-bottom: 2rem;
+}
+
+.qualification-description {
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 0.5rem;
+}
+
+.qualification-list .list-group-item {
+  border-left: none;
+  border-right: none;
+  padding: 1rem 0;
+}
+
+.qualification-list .list-group-item:first-child {
+  border-top: none;
+}
+
+.qualification-list .btn-outline-danger {
+  padding: 0.25rem 0.5rem;
+}

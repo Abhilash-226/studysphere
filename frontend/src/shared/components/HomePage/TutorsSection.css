@@ -1,0 +1,322 @@
+.tutors-section {
+  padding: 60px 0;
+  background-color: #f9f9f9;
+}
+
+.tutors-section .section-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.tutors-section .section-header h2 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.tutors-section .section-header p {
+  font-size: 1rem;
+  color: #666;
+}
+
+.tutors-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.tutor-card {
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid #eaeaea;
+}
+
+.tutor-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.tutor-image {
+  height: 150px;
+  overflow: hidden;
+}
+
+.tutor-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.tutor-card:hover .tutor-image img {
+  transform: scale(1.05);
+}
+
+.tutor-info {
+  padding: 15px;
+}
+
+.tutor-info h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tutor-specialization {
+  color: #666;
+  margin: 4px 0 10px;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tutor-rating {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.stars {
+  display: flex;
+  margin-right: 6px;
+}
+
+.star {
+  color: #ddd;
+  font-size: 0.9rem;
+}
+
+.star.filled {
+  color: #ffb400;
+}
+
+.star.half-filled {
+  position: relative;
+}
+
+.star.half-filled:after {
+  content: "★";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 50%;
+  overflow: hidden;
+  color: #ffb400;
+}
+
+.rating-number {
+  font-weight: 600;
+  color: #333;
+  margin-right: 3px;
+  font-size: 0.85rem;
+}
+
+.reviews-count {
+  font-size: 0.75rem;
+  color: #777;
+}
+
+.tutor-qualification {
+  font-size: 0.8rem;
+  color: #777;
+  margin: 0 0 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tutor-actions {
+  padding: 0 15px 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tutor-actions .btn {
+  width: 100%;
+  padding: 8px;
+  text-align: center;
+  font-size: 0.8rem;
+  border-radius: 4px;
+}
+
+.btn-secondary {
+  background-color: transparent;
+  border: 1px solid #5469d4;
+  color: #5469d4;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-secondary:hover {
+  background-color: #eef0ff;
+}
+
+.tutors-loading,
+.tutors-error,
+.tutors-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+.tutors-error p,
+.tutors-empty p {
+  margin-bottom: 20px;
+  color: #666;
+  text-align: center;
+  font-size: 1.1rem;
+}
+
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top: 4px solid #5469d4;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 15px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.see-all-tutors {
+  text-align: center;
+  margin-top: 30px;
+  margin-bottom: 10px;
+}
+
+.btn-outline {
+  background: transparent;
+  border: 2px solid #5469d4;
+  color: #5469d4;
+  padding: 12px 28px;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+  box-shadow: 0 2px 8px rgba(84, 105, 212, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-outline:hover {
+  background-color: #5469d4;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(84, 105, 212, 0.25);
+}
+
+.btn-outline:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(84, 105, 212, 0.15);
+}
+
+.arrow-icon {
+  display: inline-block;
+  margin-left: 6px;
+  transition: transform 0.3s ease;
+}
+
+.btn-outline:hover .arrow-icon {
+  transform: translateX(4px);
+}
+
+.btn-primary {
+  background-color: #5469d4;
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-primary:hover {
+  background-color: #4054b4;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .tutors-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .tutors-grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  }
+  
+  .tutors-section {
+    padding: 50px 0;
+  }
+  
+  .tutor-image {
+    height: 130px;
+  }
+  
+  .see-all-tutors {
+    margin-top: 25px;
+  }
+  
+  .btn-outline {
+    padding: 10px 24px;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .tutors-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+  
+  .tutor-image {
+    height: 120px;
+  }
+  
+  .tutor-info h3 {
+    font-size: 1rem;
+  }
+  
+  .tutor-specialization,
+  .tutor-qualification {
+    font-size: 0.75rem;
+  }
+  
+  .tutor-actions {
+    padding: 0 10px 10px;
+  }
+  
+  .btn-outline {
+    padding: 8px 20px;
+    font-size: 0.9rem;
+  }
+}
