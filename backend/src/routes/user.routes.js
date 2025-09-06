@@ -1,5 +1,6 @@
 const express = require("express");
 const { authenticateToken } = require("../middleware/auth.middleware");
+const { uploadProfileImage } = require("../middleware/uploads");
 const User = require("../models/user.model");
 
 const router = express.Router();
@@ -22,11 +23,54 @@ router.put("/change-password", authenticateToken, (req, res) => {
 });
 
 // Upload profile image
-router.post("/upload-profile-image", authenticateToken, (req, res) => {
-  res
-    .status(501)
-    .json({ message: "Upload profile image - Not implemented yet" });
-});
+router.post(
+  "/upload-profile-image",
+  authenticateToken,
+  uploadProfileImage.single("profileImage"),
+  async (req, res) => {
+    try {
+      // Check if file was uploaded
+      if (!req.file) {
+        return res.status(400).json({
+          success: false,
+          message: "Please upload an image file",
+        });
+      }
+
+      // Get user ID from auth middleware
+      const userId = req.user.id;
+
+      // Update user with the profile image path
+      const user = await User.findByIdAndUpdate(
+        userId,
+        { profileImage: req.file.path.replace(/\\/g, "/") }, // Normalize path for cross-platform
+        { new: true }
+      ).select("-password");
+
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: "User not found",
+        });
+      }
+
+      res.status(200).json({
+        success: true,
+        message: "Profile image uploaded successfully",
+        data: {
+          profileImage: user.profileImage,
+          user: user,
+        },
+      });
+    } catch (error) {
+      console.error("Profile image upload error:", error);
+      res.status(500).json({
+        success: false,
+        message: "Server error during profile image upload",
+      });
+    }
+  }
+);
 
 // Get current user's details (protected - any authenticated user)
 router.get("/me", authenticateToken, async (req, res) => {

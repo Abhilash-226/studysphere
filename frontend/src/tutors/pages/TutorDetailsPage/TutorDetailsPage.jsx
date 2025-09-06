@@ -39,6 +39,21 @@ const TutorDetailsPage = () => {
   // Check if user is logged in and is a student
   const isStudent = isAuthenticated() && getUserRole() === "student";
 
+  // Handle profile image loading errors with fallback chain
+  const handleImageError = (e) => {
+    console.warn(`Failed to load tutor profile image:`, e.target.src);
+    e.target.onerror = null;
+
+    // Try different fallback images in order
+    if (e.target.src.includes("tutor-placeholder.svg")) {
+      e.target.src = "/images/tutor-placeholder.jpg";
+    } else if (e.target.src.includes("tutor-placeholder.jpg")) {
+      e.target.src = "/images/avatar-placeholder.jpg";
+    } else {
+      e.target.src = "/images/tutors/tutor-placeholder.svg";
+    }
+  };
+
   useEffect(() => {
     const fetchTutorDetails = async () => {
       try {
@@ -132,13 +147,12 @@ const TutorDetailsPage = () => {
             <Card.Body className="text-center">
               <div className="profile-image-wrapper mb-3">
                 <img
-                  src={formatImageUrl(tutor.image)}
-                  alt={tutor.name}
+                  src={formatImageUrl(tutor.image || tutor.profileImage)}
+                  alt={`${tutor.name}'s profile`}
                   className="profile-image"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = "/images/tutors/tutor-placeholder.svg";
-                  }}
+                  onError={handleImageError}
+                  loading="lazy"
+                  key={tutor.id} // Force re-render when tutor changes
                 />
               </div>
               <h2 className="tutor-name">{tutor.name}</h2>
@@ -193,7 +207,7 @@ const TutorDetailsPage = () => {
                   Book a Session
                 </Button>
                 <ContactTutorButton
-                  tutorId={tutor._id}
+                  tutorId={tutor.userId}
                   tutorName={tutor.name}
                 />
               </div>

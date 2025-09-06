@@ -1,62 +1,85 @@
 const express = require("express");
 const { authenticateToken } = require("../middleware/auth.middleware");
 const { checkRole } = require("../middleware/role.middleware");
+const sessionController = require("../controllers/session.controller");
 
 const router = express.Router();
 
 // CREATE a new session (protected - student only)
-router.post("/", authenticateToken, checkRole(["student"]), (req, res) => {
-  res.status(501).json({ message: "Create session - Not implemented yet" });
-});
+router.post(
+  "/",
+  authenticateToken,
+  checkRole(["student"]),
+  sessionController.createSession
+);
 
 // GET all sessions for current user (protected)
-router.get("/", authenticateToken, (req, res) => {
-  res.status(501).json({ message: "Get all sessions - Not implemented yet" });
+router.get("/", authenticateToken, sessionController.getAllSessions);
+
+// GET session statistics (protected)
+router.get(
+  "/statistics",
+  authenticateToken,
+  sessionController.getSessionStatistics
+);
+
+// DEVELOPMENT ONLY - Clear all sessions (for testing)
+router.delete("/clear-all", authenticateToken, async (req, res) => {
+  try {
+    const Session = require("../models/session.model");
+    await Session.deleteMany({});
+    res.json({ success: true, message: "All sessions cleared" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to clear sessions" });
+  }
 });
+
+// CHECK tutor availability (protected)
+router.post(
+  "/check-availability",
+  authenticateToken,
+  sessionController.checkTutorAvailability
+);
+
+// GET available time slots for a tutor (protected)
+router.get(
+  "/available-slots/:tutorId",
+  authenticateToken,
+  sessionController.getAvailableTimeSlots
+);
 
 // GET single session (protected)
-router.get("/:id", authenticateToken, (req, res) => {
-  res.status(501).json({ message: "Get session by ID - Not implemented yet" });
-});
-
-// UPDATE session (protected)
-router.put("/:id", authenticateToken, (req, res) => {
-  res.status(501).json({ message: "Update session - Not implemented yet" });
-});
+router.get("/:id", authenticateToken, sessionController.getSessionById);
 
 // CANCEL session (protected)
-router.put("/:id/cancel", authenticateToken, (req, res) => {
-  res.status(501).json({ message: "Cancel session - Not implemented yet" });
-});
-
-// RESCHEDULE session (protected)
-router.put("/:id/reschedule", authenticateToken, (req, res) => {
-  res.status(501).json({ message: "Reschedule session - Not implemented yet" });
-});
+router.patch("/:id/cancel", authenticateToken, sessionController.cancelSession);
 
 // COMPLETE session (protected - tutor only)
-router.put(
+router.patch(
   "/:id/complete",
   authenticateToken,
   checkRole(["tutor"]),
-  (req, res) => {
-    res.status(501).json({ message: "Complete session - Not implemented yet" });
-  }
+  sessionController.completeSession
 );
 
-// ADD review for session (protected - student only)
-router.post(
+// RESCHEDULE session (protected)
+router.patch(
+  "/:id/reschedule",
+  authenticateToken,
+  sessionController.rescheduleSession
+);
+
+// ADD review to session (protected - student only)
+router.patch(
   "/:id/review",
   authenticateToken,
   checkRole(["student"]),
-  (req, res) => {
-    res
-      .status(501)
-      .json({ message: "Add session review - Not implemented yet" });
-  }
+  sessionController.addSessionReview
 );
 
-// Upload attachment to session
+module.exports = router;
 router.post("/:id/attachments", authenticateToken, (req, res) => {
   res.status(501).json({ message: "Upload attachment - Not implemented yet" });
 });

@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { formatImageUrl } from "../../../shared/utils/imageUtils";
 import "./TutorCard.css";
 
@@ -11,17 +11,59 @@ import "./TutorCard.css";
  * @param {Boolean} props.expanded - Whether to show the expanded view with more details
  */
 const TutorCard = ({ tutor, expanded = false }) => {
+  const navigate = useNavigate();
+
+  const handleBookSession = () => {
+    // Prepare subjects array - prioritize subjects field, fallback to specialization
+    let subjects = [];
+    if (tutor.subjects && Array.isArray(tutor.subjects)) {
+      subjects = tutor.subjects;
+    } else if (tutor.specialization) {
+      subjects = [tutor.specialization];
+    }
+
+    navigate(`/book/${tutor.id}`, {
+      state: {
+        tutor: {
+          id: tutor.id,
+          name: tutor.name,
+          profileImage: tutor.image || tutor.profileImage,
+          hourlyRate: tutor.hourlyRate || 25,
+          subjects: subjects,
+          bio: tutor.bio,
+          rating: tutor.rating,
+          experience: tutor.experience,
+          university: tutor.university,
+          location: tutor.location,
+          teachingMode: tutor.teachingMode,
+        },
+      },
+    });
+  };
+
+  const handleImageError = (e) => {
+    console.warn(`Failed to load image for tutor ${tutor.name}:`, e.target.src);
+    e.target.onerror = null;
+
+    // Try different fallback images in order
+    if (e.target.src.includes("tutor-placeholder.svg")) {
+      e.target.src = "/images/tutor-placeholder.jpg";
+    } else if (e.target.src.includes("tutor-placeholder.jpg")) {
+      e.target.src = "/images/avatar-placeholder.jpg";
+    } else {
+      e.target.src = "/images/tutors/tutor-placeholder.svg";
+    }
+  };
+
   return (
     <div className={`tutor-card-detailed ${expanded ? "expanded" : ""}`}>
       <div className="tutor-card-left">
         <div className="tutor-avatar">
           <img
-            src={formatImageUrl(tutor.image)}
-            alt={tutor.name}
-            onError={(e) => {
-              e.target.onerror = null;
-              e.target.src = "/images/tutors/tutor-placeholder.svg";
-            }}
+            src={formatImageUrl(tutor.image || tutor.profileImage)}
+            alt={`${tutor.name}'s profile`}
+            onError={handleImageError}
+            loading="lazy"
           />
           {tutor.rating ? (
             <div className="tutor-rating-badge">
@@ -146,9 +188,9 @@ const TutorCard = ({ tutor, expanded = false }) => {
             <Link to={`/tutors/${tutor.id}`} className="btn btn-primary">
               View Profile
             </Link>
-            <Link to={`/book/${tutor.id}`} className="btn btn-secondary">
+            <button onClick={handleBookSession} className="btn btn-secondary">
               Book Session
-            </Link>
+            </button>
           </div>
         </div>
       </div>

@@ -79,15 +79,27 @@ export const AuthProvider = ({ children }) => {
     return currentUser ? currentUser.role : null;
   };
 
+  // Update user data (useful for email verification status updates)
+  const updateUser = (updatedFields) => {
+    if (currentUser) {
+      const updatedUser = { ...currentUser, ...updatedFields };
+      setCurrentUser(updatedUser);
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+    }
+  };
+
   const value = {
     currentUser,
+    setCurrentUser,
     loading,
     error,
     login,
     logout,
     isAuthenticated,
     getUserRole,
+    updateUser,
     setError,
+    user: currentUser, // Alias for compatibility
   };
 
   return (

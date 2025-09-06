@@ -1,0 +1,96 @@
+.student-card {
+  padding: 1rem;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  background-color: #ffffff;
+  transition: all 0.2s ease-in-out;
+  height: 100%;
+}
+
+.student-card:hover {
+  border-color: #007bff;
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+.student-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #e9ecef;
+}
+
+.profile-completion {
+  min-width: 80px;
+  text-align: right;
+}
+
+.student-card .btn {
+  transition: all 0.2s ease-in-out;
+}
+
+.student-card .btn:hover {
+  transform: translateY(-1px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .student-card {
+    margin-bottom: 1rem;
+  }
+}
+
+/* Badge styling with proper contrast */
+.student-card .badge {
+  font-size: 0.7rem;
+  padding: 0.25rem 0.5rem;
+  font-weight: 600;
+  border-radius: 50px;
+}
+
+/* Ensure proper contrast for badge variants */
+.student-card .badge.bg-light {
+  background-color: #f8f9fa !important;
+  color: #495057 !important;
+  border: 1px solid #dee2e6;
+}
+
+.student-card .badge.bg-secondary {
+  background-color: #6c757d !important;
+  color: white !important;
+}
+
+.student-card .badge.bg-primary {
+  background-color: #007bff !important;
+  color: white !important;
+}
+
+/* Fix text color inheritance */
+.student-card .badge.text-dark {
+  color: #212529 !important;
+}
+
+.student-card .badge.text-white {
+  color: white !important;
+}
+
+.student-card .badge.text-muted {
+  color: #6c757d !important;
+}
+
+/* Animation for loading */
+.spinner-border {
+  width: 2rem;
+  height: 2rem;
+}
+
+/* Empty state styling */
+.empty-state {
+  padding: 2rem;
+  text-align: center;
+}
+
+.empty-state svg {
+  opacity: 0.5;
+}

@@ -7,21 +7,26 @@ This directory contains the backend API for the StudySphere tutoring platform.
 ```
 backend/
 ├── src/
-│   ├── config/        # Configuration files
-│   ├── controllers/   # Route controllers
-│   ├── middleware/    # Custom middleware
-│   ├── models/        # Database models
-│   ├── routes/        # API routes
-│   ├── services/      # Business logic services
-│   └── utils/         # Utility functions
-├── uploads/           # Uploaded files
+│   ├── config/        # Database and app configuration
+│   ├── controllers/   # API route controllers
+│   ├── helpers/       # Helper functions for complex operations
+│   ├── middleware/    # Authentication and validation middleware
+│   ├── models/        # Mongoose database models
+│   ├── routes/        # Express route definitions
+│   ├── services/      # Business logic and external services
+│   └── utils/         # Utility functions and formatters
+├── scripts/           # Maintenance and development scripts
+│   ├── data-migration/  # Data migration and fix scripts
+│   ├── database/        # Database maintenance scripts
+│   ├── development/     # Development and debugging tools
+│   └── README.md        # Scripts documentation
+├── uploads/           # User uploaded files
 │   ├── documents/     # ID and qualification documents
 │   └── profileImages/ # User profile images
-├── tests/             # Test files
 ├── .env               # Environment variables (create from .env.example)
 ├── .env.example       # Example environment variables
 ├── package.json       # Project dependencies and scripts
-└── server.js          # Entry point for the application
+└── server.js          # Application entry point
 ```
 
 ## Getting Started

@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Container, Row, Col, Card, Alert } from "react-bootstrap";
 import { ChatProvider } from "../../../shared/components/Chat/contexts/ChatContext";
-import ConversationList from "../../../shared/components/Chat/common/ConversationList";
-import ChatHeader from "../../../shared/components/Chat/common/ChatHeader";
-import MessageList from "../../../shared/components/Chat/common/MessageList";
-import ChatInput from "../../../shared/components/Chat/common/ChatInput";
+import ConversationList from "../../../shared/components/Chat/components/ConversationList";
+import ChatHeader from "../../../shared/components/Chat/components/ChatHeader";
+import MessageList from "../../../shared/components/Chat/components/MessageList";
+import MessageInput from "../../../shared/components/Chat/components/MessageInput";
 import useChatService from "../../../shared/components/Chat/hooks/useChatService";
 import "./TutorChat.css";
 
@@ -154,7 +154,7 @@ const TutorChat = ({ currentUser }) => {
                 </Card.Body>
 
                 <Card.Footer className="p-2">
-                  <ChatInput
+                  <MessageInput
                     onSendMessage={handleSendMessage}
                     placeholder="Type your message to student..."
                   />

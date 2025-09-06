@@ -4,6 +4,7 @@ const authController = require("../controllers/auth.controller");
 const uploadController = require("../controllers/upload.controller");
 const { authenticateToken } = require("../middleware/auth.middleware");
 const { documentUpload } = require("../config/upload");
+const emailVerificationRoutes = require("./emailVerification.routes");
 
 const router = express.Router();
 
@@ -68,5 +69,8 @@ router.post(
   documentUpload.single("qualificationDocument"),
   uploadController.uploadQualificationDocument
 );
+
+// Include email verification routes
+router.use("/", emailVerificationRoutes);
 
 module.exports = router;

@@ -43,7 +43,7 @@ const UpcomingSessions = ({ sessions }) => {
         </div>
       </Card.Header>
       <ListGroup variant="flush">
-        {sessions && sessions.length > 0 ? (
+        {Array.isArray(sessions) && sessions.length > 0 ? (
           sessions.map((session, index) => (
             <ListGroup.Item key={index} className="py-3">
               <div className="d-flex justify-content-between align-items-center">
@@ -78,6 +78,7 @@ const UpcomingSessions = ({ sessions }) => {
                         ? "warning"
                         : "secondary"
                     }
+                    text={session.status === "pending" ? "dark" : "white"}
                     className="mb-2"
                   >
                     {session.status === "confirmed"

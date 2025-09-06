@@ -54,11 +54,21 @@ conversationSchema.pre("save", function (next) {
     return next(new Error("A conversation must have exactly 2 participants"));
   }
 
-  // Convert participants to strings for comparison
-  const participantStrings = this.participants.map((p) => p.toString());
+  // Normalize participants order to ensure the unique index can be applied reliably.
+  // Convert to string IDs, sort, then store the sorted array.
+  try {
+    const participantStrings = this.participants.map((p) => p.toString());
+    participantStrings.sort();
+    // Replace participants array with sorted string IDs
+    this.participants = participantStrings.map((idStr) => idStr);
+  } catch (err) {
+    // If anything goes wrong, fallback to current participants without sorting
+    console.warn("Failed to normalize participants order:", err && err.message);
+  }
 
-  // Check for duplicates
-  if (new Set(participantStrings).size !== participantStrings.length) {
+  // Check for duplicates after normalization
+  const normalizedStrings = this.participants.map((p) => p.toString());
+  if (new Set(normalizedStrings).size !== normalizedStrings.length) {
     return next(new Error("Participants must be unique users"));
   }
 
@@ -66,7 +76,12 @@ conversationSchema.pre("save", function (next) {
 });
 
 // Create a compound index on participants to ensure uniqueness and efficient querying
-conversationSchema.index({ participants: 1 }, { unique: true });
+// Use a compound index on ordered participant positions to avoid multikey unique index behavior.
+// We normalize participants order in a pre-save hook so the pair [a,b] and [b,a] are the same.
+conversationSchema.index(
+  { "participants.0": 1, "participants.1": 1 },
+  { unique: true }
+);
 
 const Conversation = mongoose.model("Conversation", conversationSchema);
 

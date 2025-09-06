@@ -4,46 +4,28 @@ const User = require("../models/user.model");
 const Tutor = require("../models/tutor.model");
 const Student = require("../models/student.model");
 const mongoose = require("mongoose");
+const chatService = require("../services/chat.service");
 
-// Helper function to format user data consistently
-const formatUserData = (user) => {
-  if (!user) return { name: "Unknown User", role: "unknown" };
+// Helper function to process conversations consistently
+const processConversations = async (conversations, userId) => {
+  // Format conversations for client with consistent user data
+  const formattedConversations = await Promise.all(
+    conversations.map(async (conv) => {
+      // Find the other participant (not the current user)
+      const otherParticipant = conv.participants.find(
+        (participant) => participant._id.toString() !== userId.toString()
+      );
 
-  return {
-    id: user._id,
-    name: `${user.firstName} ${user.lastName}`,
-    profileImage: user.profileImage || "",
-    email: user.email,
-    role: user.role,
-  };
-};
+      if (!otherParticipant) {
+        console.log("No other participant found for conversation:", conv._id);
+        return null; // Skip conversations without other participants
+      }
 
-// Get all conversations for the current user
-exports.getConversations = async (req, res) => {
-  try {
-    const userId = req.user.id;
-
-    const conversations = await Conversation.find({
-      participants: userId,
-    })
-      .populate({
-        path: "participants",
-        select: "firstName lastName profileImage email role",
-        match: { _id: { $ne: userId } }, // Exclude current user from populated results
-      })
-      .populate({
-        path: "tutor",
-        select: "specialization qualification",
-      })
-      .sort({ lastMessageTime: -1 }); // Sort by most recent message
-
-    // Format conversations for client with consistent user data
-    const formattedConversations = conversations.map((conv) => {
-      const otherParticipant = conv.participants[0]; // Due to match in populate, this will be the other user
+      const otherUserData = await formatUserData(otherParticipant, conv);
 
       return {
         id: conv._id,
-        otherUser: otherParticipant ? formatUserData(otherParticipant) : { name: "Unknown User", role: "unknown" },
+        otherUser: otherUserData,
         lastMessage: conv.lastMessage || "",
         lastMessageTime: conv.lastMessageTime,
         unreadCount: conv.unreadCount.get(userId.toString()) || 0,
@@ -55,11 +37,265 @@ exports.getConversations = async (req, res) => {
             }
           : null,
       };
-    });
+    })
+  );
+
+  // Filter out null conversations
+  return formattedConversations.filter((conv) => conv !== null);
+};
+
+// Helper function to format user data consistently
+const formatUserData = async (user, conversation = null) => {
+  if (!user) return { name: "Unknown User", role: "unknown" };
+
+  // Accept multiple shapes for `user`: populated object, plain object with _id, ObjectId, or string id
+  let userId = null;
+  if (typeof user === "string") userId = user;
+  else if (user._id) userId = user._id.toString();
+  else if (user.toString) userId = user.toString();
+
+  // Start with values present on the passed object (if any)
+  let name = user.name || null;
+  let email = user.email || "No email";
+  let profileImage = user.profileImage || "";
+  let role = user.role || "unknown";
+
+  // If the passed object already contains firstName/lastName, prefer those
+  if (!name && (user.firstName || user.lastName)) {
+    const first = (user.firstName || "").trim();
+    const last = (user.lastName || "").trim();
+    if (first || last) name = `${first} ${last}`.trim();
+  }
+
+  // Try to fetch full User document when we don't have name or role info
+  try {
+    if (!name || role === "unknown") {
+      const fullUser = await User.findById(userId)
+        .select("firstName lastName email profileImage role")
+        .lean();
+
+      if (fullUser) {
+        email = fullUser.email || email;
+        profileImage = fullUser.profileImage || profileImage;
+        role = fullUser.role || role;
+
+        if (
+          fullUser.firstName &&
+          fullUser.lastName &&
+          fullUser.firstName.trim() !== "" &&
+          fullUser.lastName.trim() !== ""
+        ) {
+          name = `${fullUser.firstName} ${fullUser.lastName}`.trim();
+        }
+      }
+    }
+  } catch (err) {
+    console.error(`Error fetching full User for ${userId}:`, err);
+  }
+
+  // Role-specific lookups if still missing name
+  if (!name) {
+    try {
+      if (role === "tutor") {
+        const tutorWithUser = await Tutor.findOne({ user: userId })
+          .populate("user", "firstName lastName email profileImage")
+          .lean();
+
+        if (tutorWithUser && tutorWithUser.user) {
+          const tutorUser = tutorWithUser.user;
+          if (tutorUser.firstName && tutorUser.lastName) {
+            name = `${tutorUser.firstName} ${tutorUser.lastName}`.trim();
+          }
+          email = tutorUser.email || email;
+          profileImage = tutorUser.profileImage || profileImage;
+        }
+      } else if (role === "student") {
+        const studentWithUser = await Student.findOne({ user: userId })
+          .populate("user", "firstName lastName email profileImage")
+          .lean();
+
+        if (studentWithUser && studentWithUser.user) {
+          const studentUser = studentWithUser.user;
+          if (studentUser.firstName && studentUser.lastName) {
+            name = `${studentUser.firstName} ${studentUser.lastName}`.trim();
+          }
+          email = studentUser.email || email;
+          profileImage = studentUser.profileImage || profileImage;
+        }
+      }
+    } catch (err) {
+      console.error(`Error in role-specific lookup for ${userId}:`, err);
+    }
+  }
+
+  // If we still don't have a name, try conversation-level tutor reference
+  if (!name && conversation && conversation.tutor) {
+    try {
+      const tutorInfo = await Tutor.findById(conversation.tutor)
+        .populate("user", "firstName lastName")
+        .lean();
+
+      if (
+        tutorInfo &&
+        tutorInfo.user &&
+        tutorInfo.user.firstName &&
+        tutorInfo.user.lastName
+      ) {
+        name = `${tutorInfo.user.firstName} ${tutorInfo.user.lastName}`.trim();
+      }
+    } catch (err) {
+      console.error(
+        `Error fetching conversation tutor info for ${userId}:`,
+        err
+      );
+    }
+  }
+
+  // Final fallback - extract from email or use short id label
+  if (!name || name === "Unknown User") {
+    if (email && email !== "No email" && email.includes("@")) {
+      const emailPrefix = email.split("@")[0];
+      if (emailPrefix.includes(".")) {
+        const parts = emailPrefix.split(".");
+        name = `${parts[0].charAt(0).toUpperCase() + parts[0].slice(1)} ${
+          parts[1].charAt(0).toUpperCase() + parts[1].slice(1)
+        }`;
+      } else {
+        name = emailPrefix.charAt(0).toUpperCase() + emailPrefix.slice(1);
+      }
+    } else {
+      const idSuffix = (userId || "").toString().slice(-4);
+      name = `${role === "tutor" ? "Tutor" : "Student"} ${idSuffix}`;
+    }
+  }
+
+  return {
+    id: userId || (user._id || user).toString(),
+    name,
+    profileImage,
+    email,
+    role,
+  };
+};
+
+// Get all conversations for the current user
+exports.getConversations = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const userRole = req.user.role;
+
+    console.log(`Getting conversations for ${userRole} with ID: ${userId}`);
+
+    // For tutors, we need to ensure they only see conversations where they are directly involved
+    if (userRole === "tutor") {
+      const tutorData = await Tutor.findOne({ user: userId })
+        .select("_id")
+        .lean();
+
+      if (!tutorData) {
+        return res.status(404).json({
+          success: false,
+          message: "Tutor profile not found",
+        });
+      }
+
+      console.log(`Found tutor record with ID: ${tutorData._id}`);
+
+      // First get all conversations where this user is a participant
+      const allConversations = await Conversation.find({
+        participants: userId,
+      }).lean();
+
+      console.log(`Found ${allConversations.length} total conversations`);
+
+      // Filter to only include conversations where this tutor is the actual tutor
+      const tutorConversations = allConversations.filter(
+        (conv) =>
+          conv.tutor && conv.tutor.toString() === tutorData._id.toString()
+      );
+
+      console.log(
+        `Filtered to ${tutorConversations.length} tutor-specific conversations`
+      );
+
+      // Now populate these filtered conversations
+      const populatedConversations = await Conversation.find({
+        _id: { $in: tutorConversations.map((c) => c._id) },
+      })
+        .populate({
+          path: "participants",
+          select: "firstName lastName profileImage email role",
+        })
+        .populate({
+          path: "tutor",
+          select: "specialization qualification",
+        })
+        .sort({ lastMessageTime: -1 });
+
+      // Process the conversations for the response
+      const formattedConversations = await processConversations(
+        populatedConversations,
+        userId
+      );
+
+      return res.status(200).json({
+        success: true,
+        conversations: formattedConversations,
+      });
+    }
+
+    // For students and other roles, proceed normally
+    const conversations = await Conversation.find({ participants: userId })
+      .populate({
+        path: "participants",
+        select: "firstName lastName profileImage email role",
+      })
+      .populate({
+        path: "tutor",
+        select: "specialization qualification",
+      })
+      .sort({ lastMessageTime: -1 }); // Sort by most recent message
+
+    // Format conversations for client with consistent user data
+    const formattedConversations = await Promise.all(
+      conversations.map(async (conv) => {
+        // Find the other participant (not the current user)
+        const otherParticipant = conv.participants.find(
+          (participant) => participant._id.toString() !== userId.toString()
+        );
+
+        if (!otherParticipant) {
+          console.log("No other participant found for conversation:", conv._id);
+          return null; // Skip conversations without other participants
+        }
+
+        const otherUserData = await formatUserData(otherParticipant, conv);
+
+        return {
+          id: conv._id,
+          otherUser: otherUserData,
+          lastMessage: conv.lastMessage || "",
+          lastMessageTime: conv.lastMessageTime,
+          unreadCount: conv.unreadCount.get(userId.toString()) || 0,
+          type: conv.type,
+          tutorInfo: conv.tutor
+            ? {
+                specialization: conv.tutor.specialization,
+                qualification: conv.tutor.qualification,
+              }
+            : null,
+        };
+      })
+    );
+
+    // Filter out null conversations
+    const validConversations = formattedConversations.filter(
+      (conv) => conv !== null
+    );
 
     res.status(200).json({
       success: true,
-      conversations: formattedConversations,
+      conversations: validConversations,
     });
   } catch (error) {
     console.error("Error getting conversations:", error);
@@ -113,7 +349,7 @@ exports.getConversationById = async (req, res) => {
 
     const formattedConversation = {
       id: conversation._id,
-      otherUser: formatUserData(otherParticipant),
+      otherUser: await formatUserData(otherParticipant),
       lastMessage: conversation.lastMessage || "",
       lastMessageTime: conversation.lastMessageTime,
       unreadCount: conversation.unreadCount.get(userId.toString()) || 0,
@@ -139,27 +375,61 @@ exports.createConversation = async (req, res) => {
   try {
     const userId = req.user.id;
     const { recipientId } = req.body;
+    // Defensive: ensure we have a recipientId and resolve it to a User _id if a Tutor id was passed
+    if (!recipientId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "recipientId is required" });
+    }
 
-    // Validate recipient ID
-    if (!mongoose.Types.ObjectId.isValid(recipientId)) {
+    let resolvedRecipientId = recipientId;
+
+    try {
+      // If caller passed a Tutor _id instead of a User _id, resolve it
+      if (mongoose.Types.ObjectId.isValid(recipientId)) {
+        const maybeTutor = await Tutor.findById(recipientId)
+          .select("user")
+          .lean();
+        if (maybeTutor && maybeTutor.user) {
+          resolvedRecipientId = maybeTutor.user.toString();
+        }
+      }
+    } catch (err) {
+      console.warn(
+        `Error while attempting to resolve recipientId ${recipientId} as Tutor:`,
+        err.message
+      );
+      // continue and attempt to use the original recipientId below
+    }
+
+    // Validate resolvedRecipientId
+    if (!mongoose.Types.ObjectId.isValid(resolvedRecipientId)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid recipient ID format" });
+    }
+
+    // Prevent creating a conversation with self
+    if (resolvedRecipientId.toString() === userId.toString()) {
       return res.status(400).json({
         success: false,
-        message: "Invalid recipient ID format",
+        message: "Cannot create conversation with yourself",
       });
     }
 
-    // Check if recipient exists
-    const recipient = await User.findById(recipientId);
+    // Check if recipient (user) exists
+    const recipient = await User.findById(resolvedRecipientId).select(
+      "_id role"
+    );
     if (!recipient) {
-      return res.status(404).json({
-        success: false,
-        message: "Recipient not found",
-      });
+      return res
+        .status(404)
+        .json({ success: false, message: "Recipient not found" });
     }
 
-    // Check if conversation already exists between these users
+    // Check if conversation already exists between these users (use resolved recipient id)
     const existingConversation = await Conversation.findOne({
-      participants: { $all: [userId, recipientId] },
+      participants: { $all: [userId, resolvedRecipientId] },
     });
 
     if (existingConversation) {
@@ -171,27 +441,29 @@ exports.createConversation = async (req, res) => {
     }
 
     // Determine the type of conversation based on user roles
-    const currentUser = await User.findById(userId);
+    const currentUser = await User.findById(userId).select("_id role");
     let conversationType = "inquiry";
     let tutorId = null;
     let studentId = null;
 
     // If one user is a tutor and the other is a student
-    if (currentUser.role === "tutor" && recipient.role === "student") {
-      const tutor = await Tutor.findOne({ user: userId });
-      const student = await Student.findOne({ user: recipientId });
+    if (currentUser && recipient) {
+      if (currentUser.role === "tutor" && recipient.role === "student") {
+        const tutor = await Tutor.findOne({ user: userId });
+        const student = await Student.findOne({ user: resolvedRecipientId });
 
-      if (tutor && student) {
-        tutorId = tutor._id;
-        studentId = student._id;
-      }
-    } else if (currentUser.role === "student" && recipient.role === "tutor") {
-      const tutor = await Tutor.findOne({ user: recipientId });
-      const student = await Student.findOne({ user: userId });
+        if (tutor && student) {
+          tutorId = tutor._id;
+          studentId = student._id;
+        }
+      } else if (currentUser.role === "student" && recipient.role === "tutor") {
+        const tutor = await Tutor.findOne({ user: resolvedRecipientId });
+        const student = await Student.findOne({ user: userId });
 
-      if (tutor && student) {
-        tutorId = tutor._id;
-        studentId = student._id;
+        if (tutor && student) {
+          tutorId = tutor._id;
+          studentId = student._id;
+        }
       }
     }
 
@@ -204,19 +476,42 @@ exports.createConversation = async (req, res) => {
       type: conversationType,
     });
 
-    await newConversation.save();
-
+    try {
+      await newConversation.save();
+    } catch (saveErr) {
+      // Handle duplicate key error which can occur if unique index is hit concurrently
+      if (saveErr && saveErr.code === 11000) {
+        console.warn(
+          "Duplicate conversation detected when saving, attempting to find existing conversation..."
+        );
+        const found = await Conversation.findOne({
+          participants: { $all: [userId, resolvedRecipientId] },
+        });
+        if (found) {
+          return res.status(200).json({
+            success: true,
+            message: "Conversation already exists",
+            conversationId: found._id,
+          });
+        }
+      }
+      // Re-throw if we couldn't handle it
+      throw saveErr;
+    }
     res.status(201).json({
       success: true,
       conversationId: newConversation._id,
       message: "Conversation created successfully",
     });
   } catch (error) {
-    console.error("Error creating conversation:", error);
+    console.error(
+      "Error creating conversation:",
+      error && error.stack ? error.stack : error
+    );
     res.status(500).json({
       success: false,
       message: "Failed to create conversation",
-      error: error.message,
+      error: error.message || String(error),
     });
   }
 };
@@ -256,7 +551,7 @@ exports.getMessagesByConversation = async (req, res) => {
 
     // Get messages with pagination
     const messages = await Message.find({ conversation: conversationId })
-      .sort({ createdAt: -1 })
+      .sort({ createdAt: 1 })
       .skip(skip)
       .limit(limit)
       .populate({
@@ -281,20 +576,24 @@ exports.getMessagesByConversation = async (req, res) => {
     }
 
     // Format messages for the client with consistent sender data
-    const formattedMessages = messages.map((message) => ({
-      id: message._id,
-      content: message.content,
-      sender: formatUserData(message.sender),
-      isSentByCurrentUser: message.sender._id.toString() === userId,
-      createdAt: message.createdAt,
-      attachments: message.attachments || [],
-      read: message.read,
-    }));
+    const formattedMessages = await Promise.all(
+      messages.map(async (message) => ({
+        id: message._id,
+        content: message.content,
+        sender: await formatUserData(message.sender),
+        isSentByCurrentUser: message.sender._id.toString() === userId,
+        createdAt: message.createdAt,
+        attachments: message.attachments || [],
+        read: message.read,
+      }))
+    );
 
     res.status(200).json({
       success: true,
       messages: formattedMessages,
-      totalCount: await Message.countDocuments({ conversation: conversationId }),
+      totalCount: await Message.countDocuments({
+        conversation: conversationId,
+      }),
     });
   } catch (error) {
     console.error("Error getting messages:", error);
@@ -333,14 +632,21 @@ exports.sendMessage = async (req, res) => {
     if (!conversation.participants.includes(senderId)) {
       return res.status(403).json({
         success: false,
-        message: "You don't have permission to send messages in this conversation",
+        message:
+          "You don't have permission to send messages in this conversation",
       });
     }
 
-    // Create and save the new message
+    // Determine receiver (the other participant) and create the message
+    const receiverId = conversation.participants.find(
+      (p) => p.toString() !== senderId.toString()
+    );
+
+    // Create and save the new message (receiver is required by schema)
     const newMessage = new Message({
       conversation: conversationId,
       sender: senderId,
+      receiver: receiverId,
       content,
       read: false,
     });
@@ -356,7 +662,10 @@ exports.sendMessage = async (req, res) => {
       if (participantId.toString() !== senderId) {
         const currentCount =
           conversation.unreadCount.get(participantId.toString()) || 0;
-        conversation.unreadCount.set(participantId.toString(), currentCount + 1);
+        conversation.unreadCount.set(
+          participantId.toString(),
+          currentCount + 1
+        );
       }
     });
 
@@ -371,16 +680,17 @@ exports.sendMessage = async (req, res) => {
     const formattedMessage = {
       id: newMessage._id,
       content: newMessage.content,
-      sender: formatUserData(sender),
+      sender: await formatUserData(sender),
       createdAt: newMessage.createdAt,
       read: newMessage.read,
     };
 
-    // Emit the message to all participants via WebSocket
-    req.io.to(conversationId).emit("new-message", {
-      conversationId,
-      message: formattedMessage,
-    });
+    // Broadcast the message using the chat service (it will use the websocket service if configured)
+    try {
+      chatService.addMessage(conversationId, formattedMessage);
+    } catch (err) {
+      console.error("Error broadcasting message via chatService:", err);
+    }
 
     res.status(201).json({
       success: true,
@@ -496,11 +806,20 @@ exports.clearConversation = async (req, res) => {
     });
     await conversation.save();
 
-    // Notify other participants via WebSocket
-    req.io.to(conversationId).emit("conversation-cleared", {
-      conversationId,
-      clearedBy: userId,
-    });
+    // Notify other participants via chatService (which uses websocketService)
+    try {
+      chatService.addMessage(conversationId, {
+        id: `system-clear-${Date.now()}`,
+        content: "__conversation_cleared__",
+        sender: { id: userId, name: "System" },
+        createdAt: new Date(),
+      });
+    } catch (err) {
+      console.error(
+        "Error notifying conversation cleared via chatService:",
+        err
+      );
+    }
 
     res.status(200).json({
       success: true,
@@ -515,3 +834,71 @@ exports.clearConversation = async (req, res) => {
     });
   }
 };
+
+// Get message statistics for students
+const getStudentMessageStats = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // Find conversations where the user is a participant
+    const conversations = await Conversation.find({
+      participants: userId,
+    });
+
+    // Count unread messages across all conversations
+    let unreadCount = 0;
+    for (const conv of conversations) {
+      unreadCount += conv.unreadCount.get(userId.toString()) || 0;
+    }
+
+    res.status(200).json({
+      success: true,
+      unreadCount,
+      totalConversations: conversations.length,
+      timestamp: new Date(),
+    });
+  } catch (error) {
+    console.error("Error fetching student message stats:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch message statistics",
+      error: error.message,
+    });
+  }
+};
+
+// Get message statistics for tutors
+const getTutorMessageStats = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // Find conversations where the user is a participant
+    const conversations = await Conversation.find({
+      participants: userId,
+    });
+
+    // Count unread messages across all conversations
+    let unreadCount = 0;
+    for (const conv of conversations) {
+      unreadCount += conv.unreadCount.get(userId.toString()) || 0;
+    }
+
+    res.status(200).json({
+      success: true,
+      unreadCount,
+      totalConversations: conversations.length,
+      timestamp: new Date(),
+    });
+  } catch (error) {
+    console.error("Error fetching tutor message stats:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch message statistics",
+      error: error.message,
+    });
+  }
+};
+
+// Export the new functions
+exports.getStudentMessageStats = getStudentMessageStats;
+exports.getTutorMessageStats = getTutorMessageStats;

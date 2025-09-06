@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Container, Row, Col } from "react-bootstrap";
+import { Container, Row, Col, Badge, Button } from "react-bootstrap";
 import { useAuth } from "../../../shared/context/AuthContext";
+import { useRealtimeDashboard } from "../../../shared/hooks/useRealtimeDashboard";
 import tutorService from "../../../shared/services/tutor.service";
 import tutorChatService from "../../../shared/services/tutor-chat.service";
+import sessionRequestService from "../../../shared/services/sessionRequestService";
 
 // Import components
 import {
@@ -13,6 +15,7 @@ import {
   VerificationStatusSection,
   SessionRequestsSection,
 } from "./components";
+import MyStudentsSection from "./components/MyStudents";
 
 // Import styles
 import "./styles/dashboard-styles.css";
@@ -23,26 +26,62 @@ import "./styles/dashboard-styles.css";
  */
 const TutorDashboard = () => {
   const { currentUser } = useAuth();
-  const [upcomingSessions, setUpcomingSessions] = useState([]);
-  const [sessionRequests, setSessionRequests] = useState([]);
-  const [verificationStatus, setVerificationStatus] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [messageStats, setMessageStats] = useState({
-    unreadCount: 0,
-    totalConversations: 0,
-    responseRate: 0,
-    averageResponseTime: 0,
+
+  // Initialize real-time dashboard data
+  const {
+    dashboardData,
+    connectionStatus,
+    refreshData,
+    updateDashboardData,
+    isConnected,
+  } = useRealtimeDashboard("tutor", {
+    upcomingSessions: [],
+    verificationStatus: null,
+    messageStats: {
+      unreadCount: 0,
+      totalConversations: 0,
+      responseRate: 0,
+      averageResponseTime: 0,
+    },
+    sessionRequests: [],
+    dashboardStats: {
+      totalSessions: 0,
+      totalHours: 0,
+      totalStudents: 0,
+      completedSessions: 0,
+      upcomingSessions: 0,
+      pendingRequests: 0,
+      averageRating: 0,
+    },
+    pendingRequestsCount: 0,
   });
+
+  const {
+    upcomingSessions,
+    verificationStatus,
+    messageStats,
+    sessionRequests,
+    dashboardStats,
+    pendingRequestsCount,
+    lastUpdated,
+  } = dashboardData;
 
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
 
       // Fetch data in parallel for better performance
-      const [sessions, requests, status, msgStats] = await Promise.all([
+      const [
+        sessionsResponse,
+        status,
+        msgStats,
+        requests,
+        dashboardStats,
+        pendingRequestsCount,
+      ] = await Promise.all([
         tutorService.getScheduledSessions("upcoming"),
-        tutorService.getScheduledSessions("pending"),
         tutorService.getVerificationStatus(),
         tutorChatService.getTutorMessageStats().catch((err) => ({
           success: false,
@@ -53,15 +92,35 @@ const TutorDashboard = () => {
             averageResponseTime: 0,
           },
         })),
+        sessionRequestService.getRequestsForTutor().catch(() => []),
+        tutorService.getDashboardStats(),
+        tutorService.getPendingRequestsCount(),
       ]);
 
-      setUpcomingSessions(sessions);
-      setSessionRequests(requests);
-      setVerificationStatus(status);
-
-      if (msgStats && msgStats.success) {
-        setMessageStats(msgStats.stats);
-      }
+      // Update real-time dashboard data
+      updateDashboardData({
+        upcomingSessions: sessionsResponse || [],
+        verificationStatus: status,
+        messageStats: msgStats?.success
+          ? msgStats.stats
+          : {
+              unreadCount: 0,
+              totalConversations: 0,
+              responseRate: 0,
+              averageResponseTime: 0,
+            },
+        sessionRequests: requests || [],
+        dashboardStats: dashboardStats || {
+          totalSessions: 0,
+          totalHours: 0,
+          totalStudents: 0,
+          completedSessions: 0,
+          upcomingSessions: 0,
+          pendingRequests: 0,
+          averageRating: 0,
+        },
+        pendingRequestsCount: pendingRequestsCount || 0,
+      });
 
       setLoading(false);
     } catch (err) {
@@ -77,6 +136,42 @@ const TutorDashboard = () => {
 
   return (
     <Container className="py-5">
+      {/* Real-time Connection Status */}
+      <Row className="mb-3">
+        <Col>
+          <div className="d-flex align-items-center justify-content-between">
+            <div className="d-flex align-items-center">
+              <Badge
+                bg={isConnected ? "success" : "secondary"}
+                text={isConnected ? "white" : "white"}
+                className="me-2"
+              >
+                <i
+                  className={`fas fa-circle me-1 ${
+                    isConnected ? "text-white" : "text-white"
+                  }`}
+                ></i>
+                {isConnected ? "Live Updates" : "Offline"}
+              </Badge>
+              {lastUpdated && (
+                <small className="text-muted">
+                  Last updated: {new Date(lastUpdated).toLocaleTimeString()}
+                </small>
+              )}
+            </div>
+            <Button
+              variant="outline-primary"
+              size="sm"
+              onClick={() => refreshData()}
+              disabled={loading}
+            >
+              <i className="fas fa-sync-alt me-1"></i>
+              Refresh
+            </Button>
+          </div>
+        </Col>
+      </Row>
+
       {/* Welcome Header with action buttons */}
       <WelcomeHeaderSection user={currentUser} messageStats={messageStats} />
 
@@ -84,8 +179,8 @@ const TutorDashboard = () => {
       <StatsCardsSection
         messageStats={messageStats}
         sessionCount={upcomingSessions.length}
-        hoursTaught={24} // Placeholder, replace with actual data
-        requestCount={sessionRequests.length}
+        requestCount={pendingRequestsCount || 0}
+        totalStudents={dashboardStats?.totalStudents || 0}
       />
 
       <Row>
@@ -99,7 +194,16 @@ const TutorDashboard = () => {
             <SessionRequestsSection
               sessionRequests={sessionRequests}
               onStatusChange={fetchDashboardData}
+              onRefresh={(requests) =>
+                updateDashboardData({ sessionRequests: requests })
+              }
+              loading={loading}
             />
+          </div>
+
+          {/* My Students Section */}
+          <div className="mt-4">
+            <MyStudentsSection />
           </div>
         </Col>
 

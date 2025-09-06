@@ -7,6 +7,7 @@ import { TeachingInfoEdit } from "./components";
 import { QualificationsEdit } from "./components";
 import { SubjectsEdit } from "./components";
 import { DocumentsEdit } from "./components";
+import { PhotoEdit } from "./components";
 
 // Import styles
 import "./styles/profile-edit-styles.css";
@@ -125,6 +126,8 @@ const ProfileEdit = () => {
             onCancel={handleCancel}
           />
         );
+      case "profilePicture":
+        return <PhotoEdit onSave={handleSave} onCancel={handleCancel} />;
       case "teaching":
         return (
           <TeachingInfoEdit

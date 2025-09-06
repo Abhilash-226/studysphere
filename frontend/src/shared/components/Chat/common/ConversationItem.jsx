@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { Badge } from "react-bootstrap";
 import Avatar from "./Avatar";
-import { formatConversationTime } from "../utils/formatters";
+import { formatConversationTime } from "../utils/chatUtils";
 import { formatImageUrl } from "../../../utils/imageUtils";
 import "./ChatComponents.css";
 
@@ -42,7 +42,9 @@ const ConversationItem = ({ conversation, to }) => {
             <small className="text-muted">{otherUser.email}</small>
           </div>
           <small className="text-muted conversation-time">
-            {formatConversationTime(updatedAt)}
+            {formatConversationTime(
+              conversation.lastMessageTime || conversation.updatedAt
+            )}
           </small>
         </div>
 

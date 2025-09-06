@@ -14,10 +14,11 @@ class TutorChatService {
   // Get tutor message statistics
   async getTutorMessageStats() {
     try {
-      const response = await api.get("/tutor-chat/tutor-message-stats");
+      const response = await api.get("/chat/tutor/stats");
       return response.data;
     } catch (error) {
-      return this.handleError(error);
+      console.error("Error fetching tutor message stats:", error);
+      return { unreadCount: 0, totalConversations: 0 };
     }
   }
 

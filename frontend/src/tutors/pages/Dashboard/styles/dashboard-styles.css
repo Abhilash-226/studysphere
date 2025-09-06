@@ -129,3 +129,40 @@
 .shadow-sm {
   box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
 }
+
+/* Badge styling for tutor dashboard */
+.badge {
+  font-weight: 600;
+  border-radius: 50px;
+  padding: 0.35em 0.65em;
+  font-size: 0.75rem;
+}
+
+/* Connection status badge styling */
+.badge.bg-success {
+  background-color: #28a745 !important;
+  color: white !important;
+}
+
+.badge.bg-secondary {
+  background-color: #6c757d !important;
+  color: white !important;
+}
+
+/* Ensure proper contrast for all badge text colors */
+.badge.text-white {
+  color: white !important;
+}
+
+.badge.text-dark {
+  color: #212529 !important;
+}
+
+/* Connection indicator styling */
+.badge .fas.fa-circle {
+  font-size: 0.5rem;
+}
+
+.badge .fas.fa-circle.text-white {
+  color: white !important;
+}

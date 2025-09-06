@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, ListGroup, Badge, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { FaCalendarAlt, FaVideo, FaUserGraduate } from "react-icons/fa";
+import { FaCalendarAlt, FaVideo, FaUserGraduate, FaUser } from "react-icons/fa";
 import "./UpcomingSessionsSection.css";
 
 /**
@@ -11,6 +11,9 @@ import "./UpcomingSessionsSection.css";
  * @returns {React.ReactElement} - Rendered component
  */
 const UpcomingSessionsSection = ({ sessions = [] }) => {
+  // Ensure sessions is always an array
+  const sessionsList = Array.isArray(sessions) ? sessions : [];
+
   // Format date function
   const formatDate = (dateString) => {
     const options = { weekday: "short", month: "short", day: "numeric" };
@@ -35,7 +38,7 @@ const UpcomingSessionsSection = ({ sessions = [] }) => {
         </Link>
       </Card.Header>
 
-      {sessions.length === 0 ? (
+      {sessionsList.length === 0 ? (
         <Card.Body className="text-center py-4">
           <div className="mb-3">
             <FaCalendarAlt size={48} className="text-muted" />
@@ -47,7 +50,7 @@ const UpcomingSessionsSection = ({ sessions = [] }) => {
         </Card.Body>
       ) : (
         <ListGroup variant="flush">
-          {sessions.map((session) => (
+          {sessionsList.map((session) => (
             <ListGroup.Item
               key={session.id}
               className="d-flex justify-content-between align-items-center"
@@ -79,6 +82,15 @@ const UpcomingSessionsSection = ({ sessions = [] }) => {
                     <FaVideo className="me-1" /> Join
                   </Button>
                 )}
+                <Button
+                  as={Link}
+                  to={`/tutor/student/${session.student.id}`}
+                  variant="outline-info"
+                  size="sm"
+                  className="me-2"
+                >
+                  <FaUser className="me-1" /> Profile
+                </Button>
                 <Button variant="outline-secondary" size="sm">
                   Details
                 </Button>

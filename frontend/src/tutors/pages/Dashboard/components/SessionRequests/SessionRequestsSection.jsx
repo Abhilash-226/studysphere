@@ -1,64 +1,134 @@
-import React, { useState } from "react";
-import { Card, ListGroup, Badge, Button, Modal, Form } from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import {
+  Card,
+  ListGroup,
+  Badge,
+  Button,
+  Modal,
+  Form,
+  Alert,
+} from "react-bootstrap";
 import {
   FaCheck,
   FaTimes,
   FaCalendarCheck,
   FaUserGraduate,
+  FaClock,
+  FaMapMarkerAlt,
+  FaVideo,
+  FaDollarSign,
 } from "react-icons/fa";
-import tutorService from "../../../../../shared/services/tutor.service";
+import sessionRequestService from "../../../../../shared/services/sessionRequestService";
 import "./SessionRequestsSection.css";
 
 /**
  * SessionRequestsSection - Component for displaying and handling tutor session requests
  * @param {Object} props - Component props
- * @param {Array} props.sessionRequests - List of session requests
+ * @param {Array} props.sessionRequests - Array of session requests (from real-time data)
  * @param {Function} props.onStatusChange - Function to call when a session status changes
+ * @param {Function} props.onRefresh - Function to refresh session requests
+ * @param {boolean} props.loading - Loading state
  * @returns {React.ReactElement} - Rendered component
  */
-const SessionRequestsSection = ({ sessionRequests = [], onStatusChange }) => {
+const SessionRequestsSection = ({
+  sessionRequests: propSessionRequests = [],
+  onStatusChange,
+  onRefresh,
+  loading: propLoading = false,
+}) => {
+  const [sessionRequests, setSessionRequests] = useState(propSessionRequests);
+  const [loading, setLoading] = useState(propLoading);
+  const [error, setError] = useState("");
   const [showModal, setShowModal] = useState(false);
-  const [rejectReason, setRejectReason] = useState("");
-  const [currentSessionId, setCurrentSessionId] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [declineMessage, setDeclineMessage] = useState("");
+  const [currentRequestId, setCurrentRequestId] = useState(null);
+  const [actionLoading, setActionLoading] = useState(false);
 
-  // Handle accept session request
-  const handleAccept = async (sessionId) => {
+  // Update local state when props change (real-time updates)
+  useEffect(() => {
+    setSessionRequests(propSessionRequests);
+    setLoading(propLoading);
+  }, [propSessionRequests, propLoading]);
+
+  // Fetch session requests on component mount (fallback if no props provided)
+  useEffect(() => {
+    if (propSessionRequests.length === 0 && !propLoading) {
+      fetchSessionRequests();
+    }
+  }, []);
+
+  const fetchSessionRequests = async () => {
     try {
       setLoading(true);
-      await tutorService.acceptSession(sessionId);
+      setError("");
+      const requests = await sessionRequestService.getRequestsForTutor();
+      setSessionRequests(requests);
+      if (onRefresh) {
+        onRefresh(requests);
+      }
+    } catch (err) {
+      setError("Failed to load session requests");
+      console.error("Error fetching session requests:", err);
+    } finally {
       setLoading(false);
+    }
+  };
+
+  // Handle accept session request
+  const handleAccept = async (requestId) => {
+    try {
+      setActionLoading(true);
+      await sessionRequestService.acceptRequest(requestId);
+
+      // Refresh the requests list
+      await fetchSessionRequests();
 
       if (onStatusChange) {
         onStatusChange();
       }
     } catch (error) {
       console.error("Error accepting session:", error);
-      setLoading(false);
+
+      let errorMessage = "Failed to accept session request";
+      if (error.message && error.message.includes("Conflict")) {
+        errorMessage =
+          "Scheduling conflict: You already have a session scheduled at this time";
+      }
+
+      setError(errorMessage);
+    } finally {
+      setActionLoading(false);
     }
   };
 
-  // Open reject modal with session ID
-  const openRejectModal = (sessionId) => {
-    setCurrentSessionId(sessionId);
-    setRejectReason("");
+  // Open decline modal with request ID
+  const openDeclineModal = (requestId) => {
+    setCurrentRequestId(requestId);
+    setDeclineMessage("");
     setShowModal(true);
   };
 
-  // Handle reject session request
-  const handleReject = async () => {
+  // Handle decline session request
+  const handleDecline = async () => {
     try {
-      setLoading(true);
-      await tutorService.rejectSession(currentSessionId, rejectReason);
+      setActionLoading(true);
+      await sessionRequestService.declineRequest(
+        currentRequestId,
+        declineMessage
+      );
       setShowModal(false);
-      setLoading(false);
+
+      // Refresh the requests list
+      await fetchSessionRequests();
 
       if (onStatusChange) {
         onStatusChange();
       }
     } catch (error) {
-      console.error("Error rejecting session:", error);
-      setLoading(false);
+      setError("Failed to decline session request");
+      console.error("Error declining session:", error);
+    } finally {
+      setActionLoading(false);
     }
   };
 
@@ -89,7 +159,25 @@ const SessionRequestsSection = ({ sessionRequests = [], onStatusChange }) => {
           )}
         </Card.Header>
 
-        {sessionRequests.length === 0 ? (
+        {error && (
+          <Alert
+            variant="danger"
+            className="m-3"
+            dismissible
+            onClose={() => setError("")}
+          >
+            {error}
+          </Alert>
+        )}
+
+        {loading ? (
+          <Card.Body className="text-center py-4">
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+            <p className="mt-2 text-muted">Loading session requests...</p>
+          </Card.Body>
+        ) : sessionRequests.length === 0 ? (
           <Card.Body className="text-center py-4">
             <div className="mb-3">
               <FaCalendarCheck size={48} className="text-muted" />
@@ -104,55 +192,96 @@ const SessionRequestsSection = ({ sessionRequests = [], onStatusChange }) => {
             {sessionRequests.map((request) => (
               <ListGroup.Item
                 key={request._id}
-                className="d-flex justify-content-between align-items-center session-request-item"
+                className="d-flex justify-content-between align-items-start session-request-item p-3"
               >
-                <div className="d-flex align-items-start">
-                  <div className="session-time me-3 text-center">
-                    <div className="fw-bold">
-                      {formatDate(request.startTime)}
-                    </div>
-                    <div>{formatTime(request.startTime)}</div>
-                  </div>
-                  <div>
-                    <div className="d-flex align-items-center mb-1">
-                      <FaUserGraduate className="me-2 text-primary" />
-                      <span className="fw-bold">
-                        {request.student?.firstName} {request.student?.lastName}
-                      </span>
-                    </div>
-                    <div className="d-flex align-items-center mb-2">
-                      <Badge bg="info" className="me-2">
-                        {request.subject}
-                      </Badge>
-                      <span className="text-muted">
-                        {request.duration} minutes
-                      </span>
-                    </div>
-                    {request.notes && (
-                      <div className="session-request-notes text-muted">
-                        <small>{request.notes}</small>
+                <div className="flex-grow-1">
+                  <div className="d-flex justify-content-between align-items-start mb-2">
+                    <div>
+                      <div className="d-flex align-items-center mb-1">
+                        <FaUserGraduate className="me-2 text-primary" />
+                        <span className="fw-bold">
+                          {request.student?.firstName}{" "}
+                          {request.student?.lastName}
+                        </span>
                       </div>
-                    )}
+                      <h6 className="mb-1">{request.title}</h6>
+                    </div>
+                    <div className="text-end">
+                      <div className="d-flex align-items-center text-success mb-1">
+                        <FaDollarSign className="me-1" />
+                        <span className="fw-bold">
+                          ${request.proposedPrice}
+                        </span>
+                      </div>
+                      <Badge bg="info">{request.subject}</Badge>
+                    </div>
                   </div>
-                </div>
-                <div className="session-request-actions">
-                  <Button
-                    variant="outline-success"
-                    size="sm"
-                    className="me-2"
-                    onClick={() => handleAccept(request._id)}
-                    disabled={loading}
-                  >
-                    <FaCheck className="me-1" /> Accept
-                  </Button>
-                  <Button
-                    variant="outline-danger"
-                    size="sm"
-                    onClick={() => openRejectModal(request._id)}
-                    disabled={loading}
-                  >
-                    <FaTimes className="me-1" /> Reject
-                  </Button>
+
+                  <div className="row mb-2">
+                    <div className="col-md-6">
+                      <div className="d-flex align-items-center mb-1">
+                        <FaClock className="me-2 text-muted" />
+                        <small className="text-muted">
+                          {formatDate(request.requestedStartTime)} •{" "}
+                          {formatTime(request.requestedStartTime)} -{" "}
+                          {formatTime(request.requestedEndTime)}
+                        </small>
+                      </div>
+                    </div>
+                    <div className="col-md-6">
+                      <div className="d-flex align-items-center mb-1">
+                        {request.mode === "online" ? (
+                          <>
+                            <FaVideo className="me-2 text-muted" />
+                            <small className="text-muted">Online Session</small>
+                          </>
+                        ) : (
+                          <>
+                            <FaMapMarkerAlt className="me-2 text-muted" />
+                            <small className="text-muted">
+                              {request.location}
+                            </small>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {request.description && (
+                    <div className="mb-2">
+                      <small className="text-muted fw-bold">Description:</small>
+                      <p className="mb-1 small">{request.description}</p>
+                    </div>
+                  )}
+
+                  {request.message && (
+                    <div className="mb-2">
+                      <small className="text-muted fw-bold">
+                        Student Message:
+                      </small>
+                      <p className="mb-1 small text-muted">{request.message}</p>
+                    </div>
+                  )}
+
+                  <div className="session-request-actions">
+                    <Button
+                      variant="outline-success"
+                      size="sm"
+                      className="me-2"
+                      onClick={() => handleAccept(request._id)}
+                      disabled={actionLoading}
+                    >
+                      <FaCheck className="me-1" /> Accept
+                    </Button>
+                    <Button
+                      variant="outline-danger"
+                      size="sm"
+                      onClick={() => openDeclineModal(request._id)}
+                      disabled={actionLoading}
+                    >
+                      <FaTimes className="me-1" /> Decline
+                    </Button>
+                  </div>
                 </div>
               </ListGroup.Item>
             ))}
@@ -160,20 +289,20 @@ const SessionRequestsSection = ({ sessionRequests = [], onStatusChange }) => {
         )}
       </Card>
 
-      {/* Reject Session Modal */}
+      {/* Decline Session Modal */}
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Reject Session Request</Modal.Title>
+          <Modal.Title>Decline Session Request</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form.Group>
-            <Form.Label>Reason for rejection (optional)</Form.Label>
+            <Form.Label>Message to student (optional)</Form.Label>
             <Form.Control
               as="textarea"
               rows={3}
-              placeholder="Provide a reason for rejecting this session request..."
-              value={rejectReason}
-              onChange={(e) => setRejectReason(e.target.value)}
+              placeholder="Provide a reason or message for declining this session request..."
+              value={declineMessage}
+              onChange={(e) => setDeclineMessage(e.target.value)}
             />
           </Form.Group>
         </Modal.Body>
@@ -181,8 +310,12 @@ const SessionRequestsSection = ({ sessionRequests = [], onStatusChange }) => {
           <Button variant="secondary" onClick={() => setShowModal(false)}>
             Cancel
           </Button>
-          <Button variant="danger" onClick={handleReject} disabled={loading}>
-            {loading ? "Rejecting..." : "Reject Session"}
+          <Button
+            variant="danger"
+            onClick={handleDecline}
+            disabled={actionLoading}
+          >
+            {actionLoading ? "Declining..." : "Decline Request"}
           </Button>
         </Modal.Footer>
       </Modal>

@@ -22,3 +22,7 @@ logs
 # OS/System files
 .DS_Store
 Thumbs.db
+
+# Uploaded files
+backend/uploads/
+uploads/

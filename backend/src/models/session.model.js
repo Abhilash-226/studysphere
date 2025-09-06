@@ -88,6 +88,35 @@ const sessionSchema = new mongoose.Schema(
         },
       },
     ],
+    // Additional fields for session management
+    cancelReason: {
+      type: String,
+      trim: true,
+    },
+    cancelledAt: {
+      type: Date,
+    },
+    cancelledBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    completedAt: {
+      type: Date,
+    },
+    completionNotes: {
+      type: String,
+      trim: true,
+    },
+    reviewedAt: {
+      type: Date,
+    },
+    rescheduleReason: {
+      type: String,
+      trim: true,
+    },
+    rescheduledAt: {
+      type: Date,
+    },
   },
   {
     timestamps: true,

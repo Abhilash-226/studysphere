@@ -89,11 +89,10 @@ export const formatUserName = (user) => {
   if (user.name && user.name.trim() !== "") return user.name;
 
   // Otherwise construct from firstName and lastName
-  return (
-    `${user.firstName || ""} ${user.lastName || ""}`.trim() || "Unknown User"
-  );
-};
+  const fullName = `${user.firstName || ""} ${user.lastName || ""}`.trim();
 
+  return fullName || "Unknown User";
+};
 /**
  * Normalize user object to have consistent properties
  * @param {Object} user - User data object

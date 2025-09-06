@@ -8,6 +8,7 @@ import BecomeTutor from "../components/BecomeTutor";
 import TutorProfile from "./Profile";
 import TutorDetailsPage from "./TutorDetailsPage";
 import TutorMessagesPage from "./TutorMessages/TutorMessagesPage";
+import { StudentProfileViewer } from "./StudentProfile";
 import ProfileEdit from "./ProfileEdit";
 
 export {
@@ -22,4 +23,5 @@ export {
   TutorDetailsPage,
   TutorMessagesPage,
   ProfileEdit as TutorProfileEdit,
+  StudentProfileViewer,
 };

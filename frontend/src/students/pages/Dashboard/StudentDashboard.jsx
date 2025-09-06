@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Card, Alert, Button } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Alert,
+  Button,
+  Badge,
+} from "react-bootstrap";
 import { useAuth } from "../../../shared/context/AuthContext";
+import { useRealtimeDashboard } from "../../../shared/hooks/useRealtimeDashboard";
 import studentService from "../../../shared/services/student.service";
 import chatService from "../../../shared/services/chat.service";
 import api from "../../../shared/services/api.service";
@@ -17,15 +26,41 @@ import {
 
 const StudentDashboard = () => {
   const { currentUser, logout } = useAuth();
-  const [upcomingSessions, setUpcomingSessions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [roleInfo, setRoleInfo] = useState(null);
-  const [messageStats, setMessageStats] = useState({
-    unreadCount: 0,
-    totalConversations: 0,
+
+  // Initialize real-time dashboard data
+  const {
+    dashboardData,
+    connectionStatus,
+    refreshData,
+    updateDashboardData,
+    isConnected,
+  } = useRealtimeDashboard("student", {
+    upcomingSessions: [],
+    messageStats: {
+      unreadCount: 0,
+      totalConversations: 0,
+    },
+    recommendedTutors: [],
+    dashboardStats: {
+      totalSessions: 0,
+      upcomingSessions: 0,
+      completedSessions: 0,
+      totalTutors: 0,
+    },
+    notificationCount: 0,
   });
-  const [recommendedTutors, setRecommendedTutors] = useState([]);
+
+  const {
+    upcomingSessions,
+    messageStats,
+    recommendedTutors,
+    dashboardStats,
+    notificationCount,
+    lastUpdated,
+  } = dashboardData;
 
   useEffect(() => {
     const checkUserRole = async () => {
@@ -45,17 +80,36 @@ const StudentDashboard = () => {
         await checkUserRole();
 
         // Fetch data in parallel for better performance
-        const [sessions, messages, tutors] = await Promise.all([
-          studentService.getBookedSessions("upcoming"),
-          chatService
-            .getStudentMessageStats()
-            .catch(() => ({ unreadCount: 0, totalConversations: 0 })),
-          studentService.getRecommendedTutors().catch(() => []),
-        ]);
+        const [sessions, messages, tutors, stats, notifications] =
+          await Promise.all([
+            studentService.getBookedSessions("upcoming"),
+            chatService
+              .getStudentMessageStats()
+              .catch(() => ({ unreadCount: 0, totalConversations: 0 })),
+            studentService.getRecommendedTutors().catch(() => []),
+            studentService.getDashboardStats().catch(() => ({
+              totalSessions: 0,
+              upcomingSessions: 0,
+              completedSessions: 0,
+              totalTutors: 0,
+            })),
+            studentService.getNotificationCount().catch(() => 0),
+          ]);
 
-        setUpcomingSessions(sessions);
-        setMessageStats(messages);
-        setRecommendedTutors(tutors);
+        // Update real-time dashboard data
+        updateDashboardData({
+          upcomingSessions: sessions || [],
+          messageStats: messages || { unreadCount: 0, totalConversations: 0 },
+          recommendedTutors: tutors || [],
+          dashboardStats: stats?.data ||
+            stats || {
+              totalSessions: 0,
+              upcomingSessions: 0,
+              completedSessions: 0,
+              totalTutors: 0,
+            },
+          notificationCount: notifications || 0,
+        });
         setLoading(false);
       } catch (err) {
         let errorMessage = "Failed to load dashboard data";
@@ -78,9 +132,45 @@ const StudentDashboard = () => {
     <Container className="py-5">
       <WelcomeHeader
         userName={currentUser?.firstName || "Student"}
-        notificationCount={roleInfo ? 1 : 0}
+        notificationCount={notificationCount || 0}
         unreadMessageCount={messageStats.unreadCount}
       />
+
+      {/* Real-time Connection Status */}
+      <Row className="mb-3">
+        <Col>
+          <div className="d-flex align-items-center justify-content-between">
+            <div className="d-flex align-items-center">
+              <Badge
+                bg={isConnected ? "success" : "secondary"}
+                text={isConnected ? "white" : "white"}
+                className="me-2"
+              >
+                <i
+                  className={`fas fa-circle me-1 ${
+                    isConnected ? "text-white" : "text-white"
+                  }`}
+                ></i>
+                {isConnected ? "Live Updates" : "Offline"}
+              </Badge>
+              {lastUpdated && (
+                <small className="text-muted">
+                  Last updated: {new Date(lastUpdated).toLocaleTimeString()}
+                </small>
+              )}
+            </div>
+            <Button
+              variant="outline-primary"
+              size="sm"
+              onClick={() => refreshData()}
+              disabled={loading}
+            >
+              <i className="fas fa-sync-alt me-1"></i>
+              Refresh
+            </Button>
+          </div>
+        </Col>
+      </Row>
 
       {error && (
         <Alert variant="danger" className="mb-4">
@@ -106,8 +196,8 @@ const StudentDashboard = () => {
 
       <StatsCards
         stats={{
-          sessionCount: upcomingSessions?.length || 0,
-          tutorCount: recommendedTutors?.length || 30,
+          sessionCount: dashboardStats?.totalSessions || 0,
+          tutorCount: dashboardStats?.totalTutors || 0,
           unreadMessages: messageStats?.unreadCount || 0,
           upcomingCount: upcomingSessions?.length || 0,
         }}

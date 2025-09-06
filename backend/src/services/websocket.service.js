@@ -1,5 +1,8 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/user.model");
+const Message = require("../models/message.model");
+const Conversation = require("../models/conversation.model");
+const mongoose = require("mongoose");
 
 // Store active connections with userIds
 const activeConnections = new Map();
@@ -45,6 +48,35 @@ function setupWebSocket(io) {
     // Join a room for user-specific messages
     socket.join(`user:${socket.userId}`);
 
+    // Dashboard-specific events
+    socket.on("subscribe_dashboard", (data) => {
+      const { role } = data;
+      socket.join(`dashboard:${role}`);
+      socket.join(`dashboard:user:${socket.userId}`);
+      console.log(`User ${socket.userId} subscribed to ${role} dashboard`);
+    });
+
+    socket.on("unsubscribe_dashboard", () => {
+      socket.leave(`dashboard:${socket.userRole}`);
+      socket.leave(`dashboard:user:${socket.userId}`);
+      console.log(`User ${socket.userId} unsubscribed from dashboard`);
+    });
+
+    socket.on("request_data_refresh", async (data) => {
+      const { dataType } = data;
+      console.log(`User ${socket.userId} requested ${dataType} refresh`);
+
+      try {
+        // Emit refresh request to trigger data update
+        socket.emit("data_refresh_requested", {
+          dataType,
+          timestamp: new Date(),
+        });
+      } catch (error) {
+        console.error("Error handling data refresh request:", error);
+      }
+    });
+
     // Handle joining a conversation
     socket.on("join-conversation", (conversationId) => {
       socket.join(`conversation:${conversationId}`);
@@ -59,20 +91,121 @@ function setupWebSocket(io) {
       console.log(`User ${socket.userId} left conversation: ${conversationId}`);
     });
 
-    // Handle disconnect
+    // Handle sending a message
+    socket.on("send_message", async (messageData) => {
+      console.log(`Message from ${socket.userId}:`, messageData);
+
+      try {
+        // Basic validation
+        if (!messageData.content || !messageData.conversationId) {
+          console.error("Invalid message data:", messageData);
+          socket.emit("message_error", {
+            error: "Missing content or conversation ID",
+            messageId: messageData.messageId,
+          });
+          return;
+        }
+
+        // Validate conversation ID
+        if (!mongoose.Types.ObjectId.isValid(messageData.conversationId)) {
+          console.error(
+            "Invalid conversation ID format:",
+            messageData.conversationId
+          );
+          socket.emit("message_error", {
+            error: "Invalid conversation ID",
+            messageId: messageData.messageId,
+          });
+          return;
+        }
+
+        // Check if conversation exists and if the user is a participant
+        const conversation = await Conversation.findById(
+          messageData.conversationId
+        );
+        if (!conversation) {
+          console.error("Conversation not found:", messageData.conversationId);
+          socket.emit("message_error", {
+            error: "Conversation not found",
+            messageId: messageData.messageId,
+          });
+          return;
+        }
+
+        // Check if user is participant
+        const isParticipant = conversation.participants.some(
+          (participantId) => participantId.toString() === socket.userId
+        );
+
+        if (!isParticipant) {
+          console.error(
+            "User not authorized for conversation:",
+            messageData.conversationId
+          );
+          socket.emit("message_error", {
+            error: "Not authorized to send messages in this conversation",
+            messageId: messageData.messageId,
+          });
+          return;
+        }
+
+        // Create and save the message
+        const message = new Message({
+          sender: socket.userId,
+          conversation: messageData.conversationId,
+          content: messageData.content,
+          timestamp: new Date(),
+        });
+
+        await message.save();
+
+        // Populate sender information
+        await message.populate("sender", "firstName lastName profileImage");
+
+        // Update conversation's last message
+        conversation.lastMessage = message._id;
+        conversation.lastActivity = new Date();
+        await conversation.save();
+
+        const messageResponse = {
+          _id: message._id,
+          content: message.content,
+          sender: message.sender,
+          timestamp: message.timestamp,
+          conversationId: messageData.conversationId,
+          messageId: messageData.messageId, // Include original messageId for client tracking
+        };
+
+        // Send success response to sender
+        socket.emit("message_sent", messageResponse);
+
+        // Broadcast to all users in the conversation
+        socket
+          .to(`conversation:${messageData.conversationId}`)
+          .emit("message_received", messageResponse);
+
+        console.log(
+          `Message saved and broadcast for conversation ${messageData.conversationId}`
+        );
+      } catch (error) {
+        console.error("Error handling message:", error);
+        socket.emit("message_error", {
+          error: "Failed to send message",
+          messageId: messageData.messageId,
+        });
+      }
+    });
+
+    // Handle disconnection
     socket.on("disconnect", () => {
       console.log(`User ${socket.userId} disconnected`);
       activeConnections.delete(socket.userId);
     });
   });
 
+  // Return utility functions
   return {
-    // Function to send a message to a specific user
-    sendToUser: (userId, eventName, data) => {
-      io.to(`user:${userId}`).emit(eventName, data);
-    },
-
-    // Function to send a message to a conversation
+    // Function to send message to a specific conversation
     sendToConversation: (
       conversationId,
       eventName,
@@ -114,6 +247,40 @@ function setupWebSocket(io) {
     // Get all active connections
     getActiveConnections: () => {
       return activeConnections;
+    },
+
+    // Dashboard notification functions
+    notifyDashboardUpdate: (userId, data) => {
+      io.to(`dashboard:user:${userId}`).emit("dashboard_update", data);
+    },
+
+    notifySessionUpdate: (userIds, sessionData) => {
+      userIds.forEach((userId) => {
+        io.to(`dashboard:user:${userId}`).emit("session_update", sessionData);
+      });
+    },
+
+    notifySessionRequestUpdate: (tutorId, requestData) => {
+      io.to(`dashboard:user:${tutorId}`).emit(
+        "session_request_update",
+        requestData
+      );
+    },
+
+    notifyMessageStatsUpdate: (userId, statsData) => {
+      io.to(`dashboard:user:${userId}`).emit("message_stats_update", statsData);
+    },
+
+    notifyVerificationStatusUpdate: (tutorId, statusData) => {
+      io.to(`dashboard:user:${tutorId}`).emit(
+        "verification_status_update",
+        statusData
+      );
+    },
+
+    // Broadcast to all users of a specific role
+    broadcastToRole: (role, event, data) => {
+      io.to(`dashboard:${role}`).emit(event, data);
     },
   };
 }

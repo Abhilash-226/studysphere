@@ -1,0 +1,267 @@
+.session-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.session-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.session-card.scheduled {
+  border-left: 4px solid #007bff;
+}
+
+.session-card.completed {
+  border-left: 4px solid #28a745;
+}
+
+.session-card.cancelled {
+  border-left: 4px solid #dc3545;
+  opacity: 0.8;
+}
+
+.session-card.rescheduled {
+  border-left: 4px solid #ffc107;
+}
+
+/* Header */
+.session-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.status-badge {
+  font-size: 0.75rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+.session-price {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #28a745;
+  display: flex;
+  align-items: center;
+}
+
+/* Title and Subject */
+.session-title {
+  margin-bottom: 0.5rem;
+  color: #2c3e50;
+  font-weight: 600;
+  font-size: 1.1rem;
+  line-height: 1.3;
+}
+
+.subject-badge {
+  background-color: #f8f9fa;
+  color: #007bff;
+  border: 1px solid #007bff;
+  font-size: 0.75rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 15px;
+}
+
+/* User Info */
+.user-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 0.75rem;
+  border: 2px solid #e9ecef;
+}
+
+.user-details {
+  flex: 1;
+}
+
+.user-name {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+/* Session Details */
+.session-details {
+  margin-bottom: 1rem;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+.detail-icon {
+  width: 16px;
+  margin-right: 0.5rem;
+  color: #007bff;
+}
+
+/* Rating */
+.session-rating {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.rating-stars {
+  display: flex;
+  gap: 2px;
+  margin-right: 0.5rem;
+}
+
+.star-filled {
+  color: #ffc107;
+  font-size: 0.9rem;
+}
+
+.star-empty {
+  color: #e9ecef;
+  font-size: 0.9rem;
+}
+
+/* Description */
+.session-description {
+  font-size: 0.9rem;
+  color: #6c757d;
+  margin-bottom: 1rem;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Actions */
+.session-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.session-actions .btn {
+  font-size: 0.85rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+}
+
+.session-actions .btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Rating Input */
+.rating-input {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 0.5rem;
+}
+
+.rating-star {
+  font-size: 1.5rem;
+  color: #e9ecef;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.rating-star:hover,
+.rating-star.active {
+  color: #ffc107;
+}
+
+.rating-star:hover ~ .rating-star {
+  color: #e9ecef;
+}
+
+/* Modal Styling */
+.modal-header {
+  border-bottom: 1px solid #e9ecef;
+  padding-bottom: 1rem;
+}
+
+.modal-title {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.modal-footer {
+  border-top: 1px solid #e9ecef;
+  padding-top: 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .session-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .session-actions {
+    justify-content: flex-start;
+  }
+  
+  .session-actions .btn {
+    flex: 1;
+    min-width: auto;
+    justify-content: center;
+  }
+  
+  .user-info {
+    padding: 0.5rem;
+  }
+  
+  .user-avatar {
+    width: 35px;
+    height: 35px;
+  }
+}
+
+@media (max-width: 576px) {
+  .session-card {
+    margin-bottom: 0.75rem;
+  }
+  
+  .session-title {
+    font-size: 1rem;
+  }
+  
+  .detail-item {
+    font-size: 0.85rem;
+  }
+  
+  .session-actions .btn {
+    font-size: 0.8rem;
+    padding: 0.35rem 0.6rem;
+  }
+}

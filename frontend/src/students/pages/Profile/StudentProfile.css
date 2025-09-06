@@ -1,0 +1,573 @@
+.student-profile {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+/* Profile Image Container */
+.profile-image-container {
+  position: relative;
+  display: inline-block;
+}
+
+.profile-image {
+  transition: transform 0.3s ease;
+  border: 4px solid #fff !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.profile-image:hover {
+  transform: scale(1.05);
+}
+
+.profile-completion-card {
+  border-left: 4px solid #007bff;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.profile-completion-card .card-body {
+  padding: 1.5rem;
+}
+
+.completion-suggestions {
+  background-color: #e7f3ff;
+  border: 1px solid #b3d7ff;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.completion-suggestions h6 {
+  color: #0066cc;
+  margin-bottom: 0.5rem;
+}
+
+.completion-suggestions ul {
+  margin-bottom: 0;
+  color: #004080;
+}
+
+/* Enhanced Tabs */
+.nav-pills-custom .nav-link {
+  color: #6c757d;
+  border: none;
+  padding: 15px 25px;
+  margin: 0 5px;
+  border-radius: 50px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  background-color: transparent;
+}
+
+.nav-pills-custom .nav-link:hover {
+  color: #007bff;
+  background-color: rgba(0, 123, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+.nav-pills-custom .nav-link.active {
+  color: white;
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+}
+
+.nav-tabs .nav-link {
+  color: #6c757d;
+  border: none;
+  padding: 1rem 1.5rem;
+}
+
+.nav-tabs .nav-link.active {
+  color: #007bff;
+  background-color: white;
+  border-color: #dee2e6 #dee2e6 white;
+}
+
+.nav-tabs .nav-link:hover {
+  border-color: transparent;
+  color: #007bff;
+}
+
+.card {
+  border: none !important;
+  border-radius: 15px !important;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.08) !important;
+  margin-bottom: 1.5rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 35px rgba(0, 0, 0, 0.12) !important;
+}
+
+.card-body {
+  padding: 2rem;
+}
+
+.form-label {
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+
+/* Enhanced Form Controls */
+.form-control, .form-select {
+  border: 2px solid #e9ecef;
+  border-radius: 10px;
+  padding: 12px 16px;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+.form-control:disabled,
+.form-select:disabled {
+  background-color: #f8f9fa;
+  border-color: #e9ecef;
+  color: #6c757d;
+}
+
+.btn-group-profile {
+  gap: 0.5rem;
+}
+
+.profile-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.profile-stats {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  display: block;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  opacity: 0.9;
+}
+
+.learning-style-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.learning-style-item {
+  padding: 1rem;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.learning-style-item:hover {
+  border-color: #007bff;
+  background-color: #f8f9fa;
+}
+
+.learning-style-item.selected {
+  border-color: #007bff;
+  background-color: #e7f3ff;
+}
+
+.section-divider {
+  border-top: 1px solid #dee2e6;
+  margin: 2rem 0;
+}
+
+@media (max-width: 768px) {
+  .profile-stats {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .btn-group-profile {
+    flex-direction: column;
+  }
+  
+  .btn-group-profile .btn {
+    width: 100%;
+  }
+}
+
+.alert-profile-tips {
+  background-color: #fff3cd;
+  border-color: #ffeaa7;
+  color: #856404;
+}
+
+/* Enhanced Buttons */
+.btn {
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+}
+
+/* Custom Progress Bar */
+.progress {
+  height: 10px;
+  border-radius: 50px;
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.progress-bar {
+  border-radius: 50px;
+  transition: width 0.6s ease;
+}
+
+/* Alert Enhancements */
+.alert {
+  border: none;
+  border-radius: 12px;
+  padding: 16px 20px;
+}
+
+/* Form Groups Enhancement */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+/* Textarea Enhancement */
+.form-control[rows] {
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* Badge Enhancement */
+.badge {
+  font-size: 0.75rem;
+  padding: 6px 12px;
+  border-radius: 50px;
+}
+
+/* Information display styles */
+.info-item {
+  margin-bottom: 1rem;
+}
+
+.info-label {
+  font-weight: 600;
+  color: #495057;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.info-value {
+  font-size: 1rem;
+  color: #212529;
+  line-height: 1.4;
+}
+
+.info-value .text-muted {
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+/* Outline primary badge styling with proper contrast */
+.badge.bg-outline-primary {
+  color: #0d6efd !important;
+  border: 1px solid #0d6efd !important;
+  background: rgba(13, 110, 253, 0.1) !important;
+  font-weight: 600;
+}
+
+.badge.bg-outline-primary:hover {
+  color: white !important;
+  background: #0d6efd !important;
+}
+
+/* Fix for Bootstrap outline badges */
+.badge[class*="outline"] {
+  background-color: transparent !important;
+}
+
+.badge.text-bg-outline-primary {
+  color: #0d6efd !important;
+  background-color: rgba(13, 110, 253, 0.1) !important;
+  border: 1px solid #0d6efd !important;
+}
+
+/* Additional outline variants */
+.badge.bg-outline-primary,
+.badge.outline-primary {
+  color: #0d6efd !important;
+  background-color: rgba(13, 110, 253, 0.1) !important;
+  border: 1px solid #0d6efd !important;
+}
+
+.badge.bg-outline-success,
+.badge.outline-success {
+  color: #198754 !important;
+  background-color: rgba(25, 135, 84, 0.1) !important;
+  border: 1px solid #198754 !important;
+}
+
+.badge.bg-outline-warning,
+.badge.outline-warning {
+  color: #f57c00 !important;
+  background-color: rgba(245, 124, 0, 0.1) !important;
+  border: 1px solid #f57c00 !important;
+}
+
+.badge.bg-outline-info,
+.badge.outline-info {
+  color: #0dcaf0 !important;
+  background-color: rgba(13, 202, 240, 0.1) !important;
+  border: 1px solid #0dcaf0 !important;
+}
+
+.badge.bg-success {
+  background: linear-gradient(135deg, #28a745, #20c997) !important;
+  color: white !important;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 8px 12px;
+}
+
+.badge.bg-primary {
+  background: linear-gradient(135deg, #007bff, #0056b3) !important;
+  color: white !important;
+  font-weight: 600;
+}
+
+.badge.bg-warning {
+  background: linear-gradient(135deg, #ffc107, #e0a800) !important;
+  color: #212529 !important;
+  font-weight: 600;
+}
+
+.badge.bg-info {
+  background: linear-gradient(135deg, #17a2b8, #138496) !important;
+  color: white !important;
+  font-weight: 600;
+}
+
+.badge.bg-secondary {
+  background: linear-gradient(135deg, #6c757d, #545b62) !important;
+  color: white !important;
+  font-weight: 600;
+}
+
+/* Enhanced badge styles with guaranteed contrast */
+.badge {
+  font-size: 0.875rem !important;
+  padding: 8px 16px !important;
+  border-radius: 50px !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  letter-spacing: 0.025em;
+  border: none;
+  text-decoration: none;
+  text-shadow: none !important;
+  display: inline-block;
+  position: relative;
+}
+
+/* Ensure proper contrast for all badge types */
+.badge.bg-primary {
+  background: linear-gradient(135deg, #007bff, #0056b3) !important;
+  color: white !important;
+  border: none !important;
+}
+
+.badge.bg-success {
+  background: linear-gradient(135deg, #28a745, #20c997) !important;
+  color: white !important;
+  border: none !important;
+}
+
+.badge.bg-warning {
+  background: linear-gradient(135deg, #ffc107, #e0a800) !important;
+  color: #000000 !important;
+  border: none !important;
+}
+
+.badge.bg-info {
+  background: linear-gradient(135deg, #17a2b8, #138496) !important;
+  color: white !important;
+  border: none !important;
+}
+
+.badge.bg-secondary {
+  background: linear-gradient(135deg, #6c757d, #545b62) !important;
+  color: white !important;
+  border: none !important;
+}
+
+.badge.bg-light {
+  background: #f8f9fa !important;
+  color: #495057 !important;
+  border: 1px solid #dee2e6 !important;
+}
+
+.badge.bg-dark {
+  background: #343a40 !important;
+  color: white !important;
+  border: none !important;
+}
+
+/* Force text color inheritance for better contrast */
+.badge * {
+  color: inherit !important;
+}
+
+/* Remove conflicting text color overrides */
+.badge {
+  text-shadow: none !important;
+}
+
+/* Ensure consistent text colors for outline badges */
+.badge[class*="outline"] {
+  font-weight: 600 !important;
+}
+
+/* Custom text colors only when needed */
+.badge.text-white { color: white !important; }
+.badge.text-black { color: #000000 !important; }
+.badge.text-muted { color: #6c757d !important; }
+
+/* Custom badge colors with guaranteed contrast */
+.badge.bg-teal {
+  background: linear-gradient(135deg, #20c997, #17a2b8) !important;
+  color: white !important;
+}
+
+.badge.bg-orange {
+  background: linear-gradient(135deg, #fd7e14, #e0a800) !important;
+  color: white !important;
+}
+
+.badge.bg-purple {
+  background: linear-gradient(135deg, #6f42c1, #563d7c) !important;
+  color: white !important;
+}
+
+.alert.alert-info {
+  border-left: 4px solid #17a2b8;
+  background: rgba(23, 162, 184, 0.1);
+  border: 1px solid rgba(23, 162, 184, 0.2);
+}
+
+.info-value .fas, .info-value .fa {
+  font-size: 0.9rem;
+}
+
+/* Responsive Design Enhancements */
+@media (max-width: 768px) {
+  .profile-image {
+    width: 80px !important;
+    height: 80px !important;
+  }
+  
+  .nav-pills-custom .nav-link {
+    padding: 10px 15px;
+    margin: 2px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Final badge contrast fixes - highest specificity */
+.student-profile .badge.bg-primary,
+.student-profile .badge[class*="bg-primary"] {
+  background: linear-gradient(135deg, #007bff, #0056b3) !important;
+  color: white !important;
+  border: none !important;
+}
+
+.student-profile .badge.bg-success,
+.student-profile .badge[class*="bg-success"] {
+  background: linear-gradient(135deg, #28a745, #20c997) !important;
+  color: white !important;
+  border: none !important;
+}
+
+.student-profile .badge.bg-warning,
+.student-profile .badge[class*="bg-warning"] {
+  background: linear-gradient(135deg, #ffc107, #e0a800) !important;
+  color: #000000 !important;
+  border: none !important;
+  text-shadow: none !important;
+}
+
+.student-profile .badge.bg-info,
+.student-profile .badge[class*="bg-info"] {
+  background: linear-gradient(135deg, #17a2b8, #138496) !important;
+  color: white !important;
+  border: none !important;
+}
+
+.student-profile .badge.bg-secondary,
+.student-profile .badge[class*="bg-secondary"] {
+  background: linear-gradient(135deg, #6c757d, #545b62) !important;
+  color: white !important;
+  border: none !important;
+}
+
+/* Ensure outline badges have proper contrast */
+.student-profile .badge[class*="outline-primary"],
+.student-profile .badge.bg-outline-primary {
+  color: #0d6efd !important;
+  background-color: rgba(13, 110, 253, 0.1) !important;
+  border: 1px solid #0d6efd !important;
+}
+
+.student-profile .badge[class*="outline-primary"]:hover,
+.student-profile .badge.bg-outline-primary:hover {
+  color: white !important;
+  background-color: #0d6efd !important;
+  border-color: #0d6efd !important;
+}
+
+.progress-indicator {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.progress-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: bold;
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}

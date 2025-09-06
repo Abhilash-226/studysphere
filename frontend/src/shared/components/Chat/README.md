@@ -22,18 +22,25 @@ The chat system is built with a modular, component-based architecture that promo
 4. **Message history** with date separators
 5. **Responsive design** that works on both desktop and mobile devices
 
-## Components
+### Components
 
-### Common Components
+#### Common Components
 
 - `Avatar.jsx` - User avatar display with configurable sizes
-- `ChatHeader.jsx` - Header showing conversation user info and actions
 - `MessageBubble.jsx` - Individual message display with styling
-- `ChatInput.jsx` - Message input with send functionality
 - `DateSeparator.jsx` - Visual separator for messages on different dates
 - `ConversationItem.jsx` - List item for a single conversation
+
+#### Main Components
+
+- `ChatHeader.jsx` - Header showing conversation user info and actions
+- `MessageInput.jsx` - Message input with send functionality
 - `ConversationList.jsx` - List of all conversations with search functionality
 - `MessageList.jsx` - Scrollable list of messages with date separators
+
+#### Pages
+
+- `ChatPage.jsx` - Main chat page container
 
 ### State Management
 
@@ -42,6 +49,11 @@ The chat system is built with a modular, component-based architecture that promo
 ### Custom Hooks
 
 - `useChatService.js` - Hook for accessing chat functionality
+
+### Utilities
+
+- `formatters.js` - Date and text formatting utilities
+- `chatUtils.js` - Chat-specific utility functions
 
 ## Integration
 
@@ -66,7 +78,7 @@ import {
   ChatProvider,
   ConversationList,
   MessageList,
-  ChatInput,
+  MessageInput,
 } from "../shared/components/Chat";
 ```
 

@@ -3,7 +3,7 @@ import { Button, Modal, Form, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import chatService from "../../../shared/services/chat.service";
 import { useAuth } from "../../../shared/context/AuthContext";
-import "./ContactTutorButton.css";
+import { findExistingConversation } from "./utils/chatUtils";
 
 const ContactTutorButton = ({ tutorId, tutorName }) => {
   const { isAuthenticated, currentUser } = useAuth();
@@ -49,23 +49,41 @@ const ContactTutorButton = ({ tutorId, tutorName }) => {
       setSending(true);
       setError(null);
 
-      // Make sure we have a valid tutorId
-      const validTutorId = tutorId || "default-tutor-id";
-      console.log("Creating conversation with tutorId:", validTutorId);
+      // Validate that we have a proper tutorId
+      if (!tutorId) {
+        setError("Tutor ID is required to send a message.");
+        return;
+      }
 
-      // Use startConversation which handles both creation and sending the first message
-      const response = await chatService.startConversation(
-        validTutorId,
-        message
-      );
-      console.log("Start conversation response:", response);
+      console.log("Creating conversation with tutorId:", tutorId);
 
-      if (response.success) {
-        handleCloseModal();
-        navigate(`/messages/${response.conversation.id}`);
+      // First check if conversation already exists by creating conversation
+      // The backend will return existing conversation if it exists
+      const createResponse = await chatService.createConversation(tutorId);
+      console.log("Create conversation response:", createResponse);
+
+      if (createResponse.success) {
+        // If conversation exists or was created, send the message
+        const sendResponse = await chatService.sendMessage(
+          createResponse.conversationId,
+          message
+        );
+
+        if (sendResponse.success) {
+          handleCloseModal();
+          // Navigate to the correct chat route based on user role
+          const chatPath =
+            currentUser.role === "student" ? "/student/chat" : "/tutor/chat";
+          navigate(`${chatPath}/${createResponse.conversationId}`);
+        } else {
+          setError(
+            sendResponse.message || "Failed to send message. Please try again."
+          );
+        }
       } else {
         setError(
-          response.message || "Failed to send message. Please try again."
+          createResponse.message ||
+            "Failed to create conversation. Please try again."
         );
       }
     } catch (error) {

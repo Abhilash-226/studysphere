@@ -3,6 +3,7 @@ const { validationResult } = require("express-validator");
 const User = require("../models/user.model");
 const Tutor = require("../models/tutor.model");
 const Student = require("../models/student.model");
+const emailService = require("../services/email.service");
 
 // Helper function to generate JWT token
 const generateToken = (userId) => {
@@ -72,19 +73,52 @@ exports.register = async (req, res) => {
       await student.save();
     }
 
-    // Generate token
-    const token = generateToken(user._id);
+    // Generate email verification token and send verification email
+    try {
+      const verificationToken = user.generateEmailVerificationToken();
+      await user.save();
+
+      const verificationUrl = `${process.env.FRONTEND_URL}/verify-email/${verificationToken}`;
+      await emailService.sendEmailVerification(
+        user.email,
+        `${user.firstName} ${user.lastName}`,
+        verificationUrl
+      );
+    } catch (emailError) {
+      console.warn(
+        "Failed to send verification email during registration:",
+        emailError
+      );
+      // Don't fail registration if email sending fails
+    }
+
+    // Send additional emails based on role
+    try {
+      if (role === "student") {
+        // Students get welcome email after verification, so we skip it here
+      } else if (role === "tutor") {
+        // Send verification pending email to tutors
+        await emailService.sendVerificationPendingEmail(
+          user.email,
+          `${user.firstName} ${user.lastName}`
+        );
+      }
+    } catch (emailError) {
+      console.warn("Failed to send role-specific email:", emailError);
+    }
 
     res.status(201).json({
-      message: "User registered successfully",
-      token,
+      message:
+        "User registered successfully. Please check your email to verify your account.",
       user: {
         id: user._id,
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
         role: user.role,
+        isEmailVerified: user.isEmailVerified,
       },
+      emailVerificationRequired: true,
     });
   } catch (error) {
     console.error("Registration error:", error);
@@ -112,6 +146,15 @@ exports.login = async (req, res) => {
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    // Check if email is verified
+    if (!user.isEmailVerified) {
+      return res.status(403).json({
+        message: "Please verify your email address before logging in.",
+        emailVerificationRequired: true,
+        canResendEmail: user.canRequestVerificationEmail(),
+      });
     }
 
     // Update last login

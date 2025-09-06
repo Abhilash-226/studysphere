@@ -1,20 +1,29 @@
-import React, { createContext, useState, useEffect, useCallback } from "react";
+import React, {
+  createContext,
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+} from "react";
 import PropTypes from "prop-types";
 import io from "socket.io-client";
+import {
+  normalizeConversation,
+  normalizeMessage,
+  sortConversationsByTime,
+} from "../utils/chatUtils";
 
-// Create the chat context
-export const ChatContext = createContext();
+const ChatContext = createContext();
 
-/**
- * ChatProvider component for managing chat state and socket connections
- *
- * @component
- * @param {Object} props - Component props
- * @param {React.ReactNode} props.children - Child components
- * @param {string} props.userId - Current user ID
- * @param {string} props.userRole - User role (student or tutor)
- */
-export const ChatProvider = ({ children, userId, userRole }) => {
+export const useChatContext = () => {
+  const context = React.useContext(ChatContext);
+  if (!context) {
+    throw new Error("useChatContext must be used within a ChatProvider");
+  }
+  return context;
+};
+
+const ChatProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const [connected, setConnected] = useState(false);
   const [conversations, setConversations] = useState([]);
@@ -23,99 +32,121 @@ export const ChatProvider = ({ children, userId, userRole }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Initialize socket connection
+  // Use ref to store the latest fetchMessages function
+  const fetchMessagesRef = useRef();
+  const fetchConversationsRef = useRef();
+
+  // Use ref to track if we've already auto-selected a conversation
+  const hasAutoSelected = useRef(false);
+
+  // Get user data from localStorage
+  const token = localStorage.getItem("token");
+  const userData = localStorage.getItem("user");
+  const userId = userData ? JSON.parse(userData).id : null;
+  const userRole = userData ? JSON.parse(userData).role : null;
+
+  // Store userId in ref to avoid recreating functions
+  const userIdRef = useRef(userId);
+  userIdRef.current = userId; // Socket connection
   useEffect(() => {
-    if (!userId) return;
-
-    // Create socket connection
-    const newSocket = io(
-      process.env.REACT_APP_API_URL || "http://localhost:5000",
-      {
-        query: {
+    if (token && userId) {
+      const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const newSocket = io(API_URL, {
+        auth: {
+          token,
           userId,
-          userRole,
         },
-      }
-    );
+        transports: ["websocket", "polling"],
+      });
 
-    // Set up event listeners
-    newSocket.on("connect", () => {
-      console.log("Socket connected");
-      setConnected(true);
-      setError(null);
-    });
+      newSocket.on("connect", () => {
+        console.log("Connected to server");
+        setConnected(true);
+      });
 
-    newSocket.on("disconnect", () => {
-      console.log("Socket disconnected");
-      setConnected(false);
-    });
+      newSocket.on("disconnect", () => {
+        console.log("Disconnected from server");
+        setConnected(false);
+      });
 
-    newSocket.on("error", (err) => {
-      console.error("Socket error:", err);
-      setError("Connection error. Please try again later.");
-    });
+      newSocket.on("new_message", (message) => {
+        console.log("Received new message via WebSocket:", message);
+        console.log(
+          "Current conversations:",
+          conversations.map((c) => ({ id: c.id, _id: c._id }))
+        );
+        console.log("Message conversation ID:", message.conversationId);
 
-    newSocket.on("new_message", (message) => {
-      // Add new message to messages if it's for the active conversation
-      if (
-        activeConversation &&
-        message.conversationId === activeConversation.id
-      ) {
-        setMessages((prev) => [...prev, message]);
-      }
+        setMessages((prev) => {
+          console.log(
+            "Adding message to messages array, current length:",
+            prev.length
+          );
+          const updatedMessages = [...prev, message];
+          // Sort messages to ensure proper chronological order
+          return updatedMessages.sort(
+            (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+          );
+        });
 
-      // Update conversation list to show new message
-      setConversations((prev) => {
-        return prev.map((conv) => {
-          if (conv.id === message.conversationId) {
-            // Update unread count for non-active conversations
-            const isActive =
-              activeConversation && activeConversation.id === conv.id;
-            return {
-              ...conv,
-              lastMessage: message,
-              updatedAt: message.createdAt,
-              unreadCount: isActive ? 0 : (conv.unreadCount || 0) + 1,
-            };
-          }
-          return conv;
+        // Update conversation last message
+        setConversations((prev) =>
+          prev.map((conv) => {
+            console.log(
+              "Checking conversation",
+              conv.id,
+              "against message conversationId",
+              message.conversationId
+            );
+            return conv.id === message.conversationId ||
+              conv._id === message.conversationId
+              ? {
+                  ...conv,
+                  lastMessage: message,
+                  unreadCount: conv.unreadCount + 1,
+                }
+              : conv;
+          })
+        );
+      });
+
+      newSocket.on("message_delivered", (data) => {
+        console.log("Message delivered:", data);
+        setMessages((prev) => {
+          const updatedMessages = prev.map((msg) =>
+            msg.id === data.tempId ? { ...data.message, pending: false } : msg
+          );
+          // Sort messages to ensure proper chronological order
+          return updatedMessages.sort(
+            (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+          );
         });
       });
-    });
 
-    // Save socket instance
-    setSocket(newSocket);
+      newSocket.on("message_error", (data) => {
+        console.error("Message error:", data);
+        // Remove the failed optimistic message
+        setMessages((prev) => prev.filter((msg) => msg.id !== data.messageId));
+        setError(data.error || "Failed to send message");
+      });
 
-    // Clean up on unmount
-    return () => {
-      if (newSocket) {
+      setSocket(newSocket);
+
+      return () => {
         newSocket.disconnect();
-      }
-    };
-  }, [userId, userRole]);
-
-  // Effect to update active conversation when it changes in the list
-  useEffect(() => {
-    if (activeConversation && conversations.length > 0) {
-      const updatedActiveConv = conversations.find(
-        (c) => c.id === activeConversation.id
-      );
-      if (updatedActiveConv) {
-        setActiveConversation(updatedActiveConv);
-      }
+      };
     }
-  }, [conversations, activeConversation]);
+  }, [token, userId]);
 
   // Fetch conversations
   const fetchConversations = useCallback(async () => {
-    if (!userId) return;
+    if (!userIdRef.current) {
+      return;
+    }
 
     setLoading(true);
     try {
-      const endpoint =
-        userRole === "tutor"
-          ? "/api/tutors/chat/conversations"
-          : "/api/students/chat/conversations";
+      const endpoint = "/api/chat/conversations";
 
       const response = await fetch(endpoint, {
         headers: {
@@ -126,7 +157,26 @@ export const ChatProvider = ({ children, userId, userRole }) => {
       if (!response.ok) throw new Error("Failed to fetch conversations");
 
       const data = await response.json();
-      setConversations(data);
+
+      // Extract conversations array from the response
+      const conversationsArray = data.conversations || data || [];
+
+      // Normalize and sort conversations using ref for userId
+      const normalizedConversations = conversationsArray
+        .map((conv) => normalizeConversation(conv, userIdRef.current))
+        .filter((conv) => conv !== null);
+
+      const sortedConversations = sortConversationsByTime(
+        normalizedConversations
+      );
+
+      setConversations(sortedConversations);
+
+      // Reset auto-selection flag when conversations are refreshed
+      if (sortedConversations.length === 0) {
+        hasAutoSelected.current = false;
+      }
+
       setError(null);
     } catch (err) {
       console.error("Error fetching conversations:", err);
@@ -134,19 +184,17 @@ export const ChatProvider = ({ children, userId, userRole }) => {
     } finally {
       setLoading(false);
     }
-  }, [userId, userRole]);
+  }, []); // Remove userId dependency, use ref instead
 
-  // Fetch messages for a conversation
+  // Store the latest fetchConversations in ref
+  fetchConversationsRef.current = fetchConversations;
   const fetchMessages = useCallback(
     async (conversationId) => {
       if (!conversationId) return;
 
       setLoading(true);
       try {
-        const endpoint =
-          userRole === "tutor"
-            ? `/api/tutors/chat/${conversationId}/messages`
-            : `/api/students/chat/${conversationId}/messages`;
+        const endpoint = `/api/chat/conversations/${conversationId}/messages`;
 
         const response = await fetch(endpoint, {
           headers: {
@@ -157,16 +205,30 @@ export const ChatProvider = ({ children, userId, userRole }) => {
         if (!response.ok) throw new Error("Failed to fetch messages");
 
         const data = await response.json();
-        setMessages(data);
+        // Extract messages array from the response
+        const messagesArray = data.messages || data || [];
 
-        // Mark conversation as read
-        if (activeConversation && activeConversation.id === conversationId) {
-          setConversations((prev) =>
-            prev.map((conv) =>
-              conv.id === conversationId ? { ...conv, unreadCount: 0 } : conv
-            )
-          );
+        // Normalize messages using ref to get current userId
+        const normalizedMessages = messagesArray
+          .map((msg) => normalizeMessage(msg, userIdRef.current))
+          .filter((msg) => msg !== null)
+          .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt)); // Ensure chronological order
+
+        setMessages(normalizedMessages);
+
+        // Join the conversation room for real-time updates
+        if (socket && connected) {
+          socket.emit("join-conversation", conversationId);
+          console.log("Joined conversation room:", conversationId);
         }
+
+        // TODO: Mark conversation as read without triggering re-renders
+        // For now, commenting out to prevent infinite loops
+        // setConversations((prev) =>
+        //   prev.map((conv) =>
+        //     conv._id === conversationId ? { ...conv, unreadCount: 0 } : conv
+        //   )
+        // );
 
         setError(null);
       } catch (err) {
@@ -176,69 +238,214 @@ export const ChatProvider = ({ children, userId, userRole }) => {
         setLoading(false);
       }
     },
-    [userRole, activeConversation]
+    [socket, connected] // Add socket dependencies for join-conversation
   );
+
+  // Store the latest fetchMessages in ref
+  fetchMessagesRef.current = fetchMessages;
+
+  // Set active conversation and fetch messages
+  const setActiveConversationAndFetch = useCallback(
+    (conversation) => {
+      setActiveConversation(conversation);
+      if (conversation && fetchMessagesRef.current) {
+        // Use ref to avoid dependency chain
+        fetchMessagesRef.current(conversation._id);
+      } else {
+        setMessages([]);
+      }
+    },
+    [] // No dependencies to prevent recreating
+  );
+
+  // Store the latest setActiveConversationAndFetch in ref for stable access
+  const setActiveConversationAndFetchRef = useRef();
+  setActiveConversationAndFetchRef.current = setActiveConversationAndFetch;
+
+  // Debug: Monitor activeConversation changes (only log once)
+  const lastLoggedConversation = useRef(null);
+  useEffect(() => {
+    if (
+      activeConversation?._id &&
+      activeConversation._id !== lastLoggedConversation.current
+    ) {
+      console.log("Active conversation set:", activeConversation._id);
+      lastLoggedConversation.current = activeConversation._id;
+    }
+  }, [activeConversation]);
+
+  // Auto-select first conversation if none is active
+  const conversationsLength = conversations.length;
+  const hasConversations = conversationsLength > 0;
+
+  useEffect(() => {
+    // Only auto-select if we have conversations, no active conversation, and haven't auto-selected yet
+    if (hasConversations && !activeConversation && !hasAutoSelected.current) {
+      console.log(
+        "Auto-selecting first conversation with ID:",
+        conversations[0]?._id
+      );
+      hasAutoSelected.current = true;
+      // Use ref to avoid dependency issues
+      if (setActiveConversationAndFetchRef.current) {
+        setActiveConversationAndFetchRef.current(conversations[0]);
+      }
+    }
+  }, [hasConversations, activeConversation]); // Depend on boolean values, not the array
+
+  // Fetch conversations on mount and when user changes
+  useEffect(() => {
+    if (userId && token) {
+      // Call directly to avoid dependency issues
+      (async () => {
+        if (!userId) return;
+
+        setLoading(true);
+        try {
+          const endpoint = "/api/chat/conversations";
+          const API_URL =
+            import.meta.env.VITE_API_URL || "http://localhost:5000";
+          const fullUrl = `${API_URL}${endpoint}`;
+
+          const response = await fetch(fullUrl, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          });
+
+          if (!response.ok) throw new Error("Failed to fetch conversations");
+
+          const data = await response.json();
+
+          // Extract conversations array from the response
+          const conversationsArray = data.conversations || data || [];
+
+          // Normalize and sort conversations
+          const normalizedConversations = conversationsArray
+            .map((conv) => normalizeConversation(conv, userId))
+            .filter((conv) => conv !== null);
+
+          const sortedConversations = sortConversationsByTime(
+            normalizedConversations
+          );
+
+          setConversations(sortedConversations);
+
+          // Reset auto-selection flag when conversations are refreshed
+          if (sortedConversations.length === 0) {
+            hasAutoSelected.current = false;
+          }
+
+          setError(null);
+        } catch (err) {
+          console.error("Error fetching conversations:", err);
+          setError("Failed to load conversations. Please try again.");
+        } finally {
+          setLoading(false);
+        }
+      })();
+    }
+  }, [userId, token]); // Direct implementation to avoid dependency cycles
 
   // Send a message
   const sendMessage = useCallback(
     (content, conversationId) => {
-      if (!socket || !connected || !content || !conversationId) return;
+      if (!socket || !connected || !content || !conversationId) {
+        console.log("SendMessage failed - missing requirements:", {
+          hasSocket: !!socket,
+          connected,
+          hasContent: !!content,
+          hasConversationId: !!conversationId,
+        });
+        return;
+      }
 
       const messageData = {
         content,
         conversationId,
-        senderId: userId,
+        senderId: userIdRef.current,
         createdAt: new Date().toISOString(),
+        messageId: `temp-${Date.now()}`, // Add messageId for backend
       };
 
+      console.log("Sending message via WebSocket:", messageData);
       socket.emit("send_message", messageData);
 
       // Optimistically add message to state
       const optimisticMessage = {
         ...messageData,
-        id: `temp-${Date.now()}`,
+        id: messageData.messageId,
         pending: true,
       };
 
-      setMessages((prev) => [...prev, optimisticMessage]);
+      console.log("Adding optimistic message:", optimisticMessage);
+      setMessages((prev) => {
+        console.log("Current messages before adding optimistic:", prev.length);
+        const updatedMessages = [...prev, optimisticMessage];
+        // Sort messages to ensure proper chronological order
+        return updatedMessages.sort(
+          (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+        );
+      });
     },
-    [socket, connected, userId]
+    [socket, connected] // Remove userId dependency, use ref instead
   );
 
-  // Set active conversation and fetch its messages
-  const setActiveConversationAndFetchMessages = useCallback(
-    (conversation) => {
-      setActiveConversation(conversation);
-      if (conversation) {
-        fetchMessages(conversation.id);
+  // Create a new conversation
+  const createConversation = useCallback(
+    async (otherUserId, otherUserRole) => {
+      try {
+        const endpoint = "/api/chat/conversations";
 
-        // Mark conversation as read
-        setConversations((prev) =>
-          prev.map((conv) =>
-            conv.id === conversation.id ? { ...conv, unreadCount: 0 } : conv
-          )
-        );
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({
+            otherUserId,
+            otherUserRole,
+          }),
+        });
+
+        if (!response.ok) throw new Error("Failed to create conversation");
+
+        const data = await response.json();
+
+        // Add the new conversation to the list
+        setConversations((prev) => [data.conversation, ...prev]);
+
+        // Set as active conversation
+        setActiveConversationAndFetch(data.conversation);
+
+        return data.conversation;
+      } catch (err) {
+        console.error("Error creating conversation:", err);
+        setError("Failed to create conversation. Please try again.");
+        return null;
       }
     },
-    [fetchMessages]
+    [setActiveConversationAndFetch]
   );
 
-  // Context value
   const value = {
+    socket,
     connected,
-    loading,
-    error,
     conversations,
     activeConversation,
     messages,
+    loading,
+    setLoading,
+    error,
+    userRole,
+    userId,
     fetchConversations,
     fetchMessages,
     sendMessage,
-    setActiveConversation: setActiveConversationAndFetchMessages,
-    totalUnreadCount: conversations.reduce(
-      (sum, conv) => sum + (conv.unreadCount || 0),
-      0
-    ),
+    createConversation,
+    setActiveConversation: setActiveConversationAndFetch,
+    setError,
   };
 
   return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>;
@@ -246,8 +453,7 @@ export const ChatProvider = ({ children, userId, userRole }) => {
 
 ChatProvider.propTypes = {
   children: PropTypes.node.isRequired,
-  userId: PropTypes.string.isRequired,
-  userRole: PropTypes.oneOf(["student", "tutor"]).isRequired,
 };
 
+export { ChatContext, ChatProvider };
 export default ChatProvider;

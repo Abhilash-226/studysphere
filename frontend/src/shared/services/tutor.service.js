@@ -14,11 +14,37 @@ class TutorService {
   // Update tutor profile
   async updateProfile(profileData) {
     try {
-      // FormData is already passed from the profile setup component
-      const response = await api.put("/tutors/profile", profileData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+      let requestData = profileData;
+      let headers = {};
+
+      // Check if profileData is already FormData or contains files
+      if (!(profileData instanceof FormData)) {
+        // Check if there are any File objects in the data
+        const hasFiles = Object.values(profileData).some(
+          (value) => value instanceof File
+        );
+
+        if (hasFiles) {
+          // Convert to FormData if there are files
+          const formData = new FormData();
+          Object.entries(profileData).forEach(([key, value]) => {
+            if (value !== null && value !== undefined) {
+              formData.append(key, value);
+            }
+          });
+          requestData = formData;
+          headers["Content-Type"] = "multipart/form-data";
+        } else {
+          // Use JSON for regular data without files
+          headers["Content-Type"] = "application/json";
+        }
+      } else {
+        // Already FormData
+        headers["Content-Type"] = "multipart/form-data";
+      }
+
+      const response = await api.put("/tutors/profile", requestData, {
+        headers,
       });
       return response.data;
     } catch (error) {
@@ -71,7 +97,12 @@ class TutorService {
   async getScheduledSessions(status = "all") {
     try {
       const response = await api.get(`/tutors/sessions?status=${status}`);
-      return response.data;
+
+      // Extract the sessions array from the response structure
+      const sessions =
+        response.data?.sessions || response.data?.data || response.data || [];
+
+      return sessions;
     } catch (error) {
       throw this.handleError(error);
     }
@@ -121,13 +152,44 @@ class TutorService {
     }
   }
 
-  // Get tutor verification status
-  async getVerificationStatus() {
+  // Get tutor dashboard statistics
+  async getDashboardStats() {
     try {
-      const response = await api.get("/tutors/verification-status");
+      const response = await api.get("/tutors/dashboard-stats");
       return response.data;
     } catch (error) {
-      throw this.handleError(error);
+      console.error("Error fetching dashboard stats:", error);
+      // Return default values if API fails
+      return {
+        totalSessions: 0,
+        totalHours: 0,
+        totalStudents: 0,
+        completedSessions: 0,
+        pendingRequests: 0,
+        averageRating: 0,
+      };
+    }
+  }
+
+  // Get tutor notification count
+  async getNotificationCount() {
+    try {
+      const response = await api.get("/tutors/notifications/count");
+      return response.data?.count || 0;
+    } catch (error) {
+      console.error("Error fetching notification count:", error);
+      return 0;
+    }
+  }
+
+  // Get pending session requests count
+  async getPendingRequestsCount() {
+    try {
+      const response = await api.get("/tutors/session-requests/count");
+      return response.data?.count || 0;
+    } catch (error) {
+      console.error("Error fetching pending requests count:", error);
+      return 0;
     }
   }
 

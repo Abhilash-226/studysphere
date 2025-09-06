@@ -63,9 +63,22 @@ const LoginForm = ({ userType = "student" }) => {
         setError("Login failed. Please check your credentials.");
       }
     } catch (err) {
-      setError(
-        err.message || "An error occurred during login. Please try again."
-      );
+      // Check if it's an email verification error
+      if (err.message && err.message.includes("verify your email")) {
+        setError(
+          <div>
+            {err.message}
+            <br />
+            <Link to="/resend-verification" className="text-primary">
+              Need to resend verification email?
+            </Link>
+          </div>
+        );
+      } else {
+        setError(
+          err.message || "An error occurred during login. Please try again."
+        );
+      }
     } finally {
       setIsSubmitting(false);
     }

@@ -4,6 +4,7 @@ import UpcomingSessionsSection from "./UpcomingSessions";
 import MessageCenterSection from "./MessageCenter";
 import VerificationStatusSection from "./VerificationStatus";
 import SessionRequestsSection from "./SessionRequests";
+import TutorSessionManagement from "./SessionManagement/TutorSessionManagement";
 
 export {
   WelcomeHeaderSection,
@@ -12,4 +13,5 @@ export {
   MessageCenterSection,
   VerificationStatusSection,
   SessionRequestsSection,
+  TutorSessionManagement,
 };

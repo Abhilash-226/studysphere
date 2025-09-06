@@ -240,6 +240,7 @@ class ChatService {
       return {
         success: true,
         conversation: {
+          _id: conversationId,
           id: conversationId,
         },
         message: "Conversation started successfully",
@@ -332,6 +333,28 @@ class ChatService {
         "An unexpected error occurred",
       error: error,
     };
+  }
+
+  // Get message statistics for students
+  async getStudentMessageStats() {
+    try {
+      const response = await api.get("/chat/student/stats");
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching student message stats:", error);
+      return { unreadCount: 0, totalConversations: 0 };
+    }
+  }
+
+  // Get message statistics for tutors
+  async getTutorMessageStats() {
+    try {
+      const response = await api.get("/chat/tutor/stats");
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching tutor message stats:", error);
+      return { unreadCount: 0, totalConversations: 0 };
+    }
   }
 }
 

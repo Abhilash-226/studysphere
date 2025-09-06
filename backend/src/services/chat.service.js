@@ -24,7 +24,7 @@ const chatService = {
     if (websocketService) {
       websocketService.sendToConversation(
         conversationId,
-        "new-message",
+        "new_message",
         message
       );
     }

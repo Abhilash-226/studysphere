@@ -26,7 +26,10 @@ const MessageBubble = ({ message, isSentByCurrentUser }) => {
           </span>
           {isSentByCurrentUser && (
             <span className="message-status">
-              {message.read && <span className="read-indicator">Read</span>}
+              {message.delivered && (
+                <span className="delivered-indicator">✓</span>
+              )}
+              {message.read && <span className="read-indicator">✓✓</span>}
             </span>
           )}
         </div>

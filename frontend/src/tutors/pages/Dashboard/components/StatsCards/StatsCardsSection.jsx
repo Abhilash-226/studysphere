@@ -1,12 +1,6 @@
 import React from "react";
 import { Row, Col, Card } from "react-bootstrap";
-import {
-  FaCalendarAlt,
-  FaChalkboardTeacher,
-  FaEnvelope,
-  FaClock,
-  FaBell,
-} from "react-icons/fa";
+import { FaCalendarAlt, FaEnvelope, FaBell, FaUsers } from "react-icons/fa";
 import "./StatsCardsSection.css";
 
 /**
@@ -14,15 +8,15 @@ import "./StatsCardsSection.css";
  * @param {Object} props - Component props
  * @param {Object} props.messageStats - Message statistics data
  * @param {number} props.sessionCount - Number of upcoming sessions
- * @param {number} props.hoursTaught - Total hours taught
  * @param {number} props.requestCount - Number of pending session requests
+ * @param {number} props.totalStudents - Total number of students taught
  * @returns {React.ReactElement} - Rendered component
  */
 const StatsCardsSection = ({
   messageStats = {},
   sessionCount = 0,
-  hoursTaught = 0,
   requestCount = 0,
+  totalStudents = 0,
 }) => {
   return (
     <Row className="mb-4">
@@ -35,19 +29,6 @@ const StatsCardsSection = ({
             <div>
               <h6 className="mb-0">Upcoming Sessions</h6>
               <h3 className="mb-0">{sessionCount}</h3>
-            </div>
-          </Card.Body>
-        </Card>
-      </Col>
-      <Col md={3}>
-        <Card className="dashboard-stat-card bg-success bg-gradient text-dark">
-          <Card.Body className="d-flex align-items-center p-3">
-            <div className="stat-icon me-3">
-              <FaChalkboardTeacher size={28} />
-            </div>
-            <div>
-              <h6 className="mb-0">Hours Taught</h6>
-              <h3 className="mb-0">{hoursTaught}</h3>
             </div>
           </Card.Body>
         </Card>
@@ -74,6 +55,19 @@ const StatsCardsSection = ({
             <div>
               <h6 className="mb-0">Unread Messages</h6>
               <h3 className="mb-0">{messageStats.unreadCount || 0}</h3>
+            </div>
+          </Card.Body>
+        </Card>
+      </Col>
+      <Col md={3}>
+        <Card className="dashboard-stat-card bg-secondary bg-gradient text-dark">
+          <Card.Body className="d-flex align-items-center p-3">
+            <div className="stat-icon me-3">
+              <FaUsers size={28} />
+            </div>
+            <div>
+              <h6 className="mb-0">Students Taught</h6>
+              <h3 className="mb-0">{totalStudents}</h3>
             </div>
           </Card.Body>
         </Card>

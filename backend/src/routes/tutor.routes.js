@@ -20,9 +20,6 @@ router.get(
   tutorController.getProfile
 );
 
-// GET single tutor (public)
-router.get("/:id", tutorController.getTutorById);
-
 // GET tutor verification status (protected - tutor only)
 router.get(
   "/verification-status",
@@ -30,6 +27,41 @@ router.get(
   checkRole(["tutor"]),
   tutorController.getVerificationStatus
 );
+
+// GET tutor dashboard statistics (protected - tutor only)
+router.get(
+  "/dashboard-stats",
+  authenticateToken,
+  checkRole(["tutor"]),
+  tutorController.getDashboardStats
+);
+
+// GET tutor notification count (protected - tutor only)
+router.get(
+  "/notifications/count",
+  authenticateToken,
+  checkRole(["tutor"]),
+  tutorController.getNotificationCount
+);
+
+// GET tutor pending session requests count (protected - tutor only)
+router.get(
+  "/session-requests/count",
+  authenticateToken,
+  checkRole(["tutor"]),
+  tutorController.getPendingRequestsCount
+);
+
+// GET tutor sessions (protected - tutor only)
+router.get(
+  "/sessions",
+  authenticateToken,
+  checkRole(["tutor"]),
+  tutorController.getTutorSessions
+);
+
+// GET single tutor (public) - IMPORTANT: This must be AFTER all other specific routes
+router.get("/:id", tutorController.getTutorById);
 
 // UPDATE tutor profile (protected - tutor only)
 router.put(

@@ -5,6 +5,14 @@
   padding: 0;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  overflow-x: hidden;
+}
+
 .app-container {
   display: flex;
   flex-direction: column;

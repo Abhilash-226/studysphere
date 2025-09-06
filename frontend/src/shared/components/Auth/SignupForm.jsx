@@ -220,28 +220,62 @@ const SignupForm = ({ userType = "student" }) => {
       // Register the user first
       const response = await authService.register(userData);
 
-      // For tutors, upload verification documents
-      if (userType === "tutor" && response.user && response.token) {
-        // Upload ID document
-        if (uploadedFiles.idDocument) {
-          await authService.uploadIdDocument(uploadedFiles.idDocument);
-        }
+      // Check if email verification is required
+      if (response.emailVerificationRequired) {
+        // Show success message with verification reminder
+        alert(
+          `Registration successful! Please check your email (${formData.email}) to verify your account before logging in.`
+        );
 
-        // Upload qualification document
-        if (uploadedFiles.qualificationDocument) {
-          await authService.uploadQualificationDocument(
-            uploadedFiles.qualificationDocument
+        // For tutors, handle document uploads but don't log in
+        if (userType === "tutor") {
+          // Upload ID document if provided
+          if (uploadedFiles.idDocument) {
+            try {
+              // We need to upload using a temporary token or handle differently
+              // For now, we'll skip uploads until after verification
+              console.log(
+                "Document upload will be handled after email verification"
+              );
+            } catch (uploadError) {
+              console.error("Document upload failed:", uploadError);
+            }
+          }
+
+          // Redirect to login with verification message
+          navigate(
+            `/login-${userType}?message=Registration successful! Please verify your email to complete your account setup.`
+          );
+        } else {
+          // For students, redirect to login
+          navigate(
+            `/login-${userType}?message=Registration successful! Please verify your email and then log in.`
           );
         }
-
-        // Log in tutors immediately and redirect to profile setup
-        login(response.user, response.token, userType);
-        navigate("/tutor/profile-setup");
-      } else if (response.user && response.token) {
-        // For students, log them in automatically
-        login(response.user, response.token, userType);
       } else {
-        setError("Registration completed, but login failed.");
+        // Legacy flow for backward compatibility
+        if (userType === "tutor" && response.user && response.token) {
+          // Upload documents and proceed as before
+          if (uploadedFiles.idDocument) {
+            await authService.uploadIdDocument(uploadedFiles.idDocument);
+          }
+
+          if (uploadedFiles.qualificationDocument) {
+            await authService.uploadQualificationDocument(
+              uploadedFiles.qualificationDocument
+            );
+          }
+
+          login(response.user, response.token, userType);
+          navigate("/tutor/profile-setup");
+        } else if (response.user && response.token) {
+          login(response.user, response.token, userType);
+          navigate(
+            userType === "student" ? "/student/dashboard" : "/tutor/dashboard"
+          );
+        } else {
+          setError("Registration completed, but login failed.");
+        }
       }
     } catch (err) {
       setError(
