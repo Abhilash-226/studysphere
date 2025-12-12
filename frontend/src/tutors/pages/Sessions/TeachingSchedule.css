@@ -1,0 +1,305 @@
+/* Teaching Schedule Page Styles */
+.teaching-schedule-page {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.teaching-schedule-page h2 {
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.teaching-schedule-page .text-primary {
+  color: #007bff !important;
+}
+
+/* Filter Buttons */
+.filter-button {
+  border-radius: 20px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: 2px solid;
+}
+
+.filter-button:hover {
+  transform: translateY(-1px);
+}
+
+.filter-button .badge {
+  font-size: 0.7rem;
+}
+
+/* Search Input */
+.search-input {
+  border-radius: 25px;
+  border: 2px solid #e9ecef;
+  padding: 0.5rem 1rem;
+  transition: all 0.2s ease;
+}
+
+.search-input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Session Cards */
+.session-card {
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.session-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Status-based card styling */
+.session-card.scheduled {
+  border-left: 5px solid #007bff;
+}
+
+.session-card.completed {
+  border-left: 5px solid #28a745;
+}
+
+.session-card.cancelled {
+  border-left: 5px solid #dc3545;
+}
+
+.session-card.rescheduled {
+  border-left: 5px solid #ffc107;
+}
+
+/* Status Badge */
+.status-badge {
+  font-size: 0.75rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 15px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Session Info */
+.session-subject {
+  color: #2c3e50;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.session-topic {
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+/* Student Info */
+.student-info {
+  background: rgba(0, 123, 255, 0.05);
+  padding: 0.75rem;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 123, 255, 0.1);
+}
+
+.student-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #007bff;
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
+}
+
+.student-name {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.9rem;
+}
+
+/* Session Time */
+.session-time {
+  background: #f8f9fa;
+  padding: 0.75rem;
+  border-radius: 10px;
+  border: 1px solid #e9ecef;
+}
+
+.session-time .fa {
+  width: 16px;
+  color: #6c757d;
+}
+
+/* Session Actions */
+.session-actions .btn {
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.session-actions .btn-success {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  border: none;
+  box-shadow: 0 2px 10px rgba(40, 167, 69, 0.3);
+}
+
+.session-actions .btn-success:hover {
+  background: linear-gradient(135deg, #218838, #1e9a7d);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+}
+
+.session-actions .dropdown-toggle {
+  border: 2px solid #6c757d;
+}
+
+.session-actions .dropdown-toggle:hover {
+  background: #6c757d;
+  border-color: #6c757d;
+  color: white;
+}
+
+/* Main Cards */
+.teaching-schedule-page .card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.teaching-schedule-page .card-body {
+  padding: 1.5rem;
+}
+
+/* Action Buttons */
+.teaching-schedule-page .btn {
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.teaching-schedule-page .btn-outline-primary {
+  border: 2px solid #007bff;
+  color: #007bff;
+}
+
+.teaching-schedule-page .btn-outline-primary:hover {
+  background: #007bff;
+  border-color: #007bff;
+  transform: translateY(-1px);
+}
+
+/* Empty State */
+.teaching-schedule-page .text-center .fa {
+  opacity: 0.6;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .teaching-schedule-page {
+    padding: 1rem 0;
+  }
+  
+  .teaching-schedule-page .card-body {
+    padding: 1rem;
+  }
+  
+  .filter-button {
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .session-info {
+    font-size: 0.9rem;
+  }
+  
+  .student-avatar {
+    width: 35px;
+    height: 35px;
+  }
+  
+  .session-actions .btn {
+    font-size: 0.8rem;
+    padding: 0.375rem 0.75rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .teaching-schedule-page h2 {
+    font-size: 1.5rem;
+  }
+  
+  .session-subject {
+    font-size: 1rem;
+  }
+  
+  .filter-button .badge {
+    display: none;
+  }
+  
+  .session-actions {
+    text-align: center;
+  }
+  
+  .session-actions .btn {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* Loading State */
+.teaching-schedule-page .spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+/* Alert Styling */
+.teaching-schedule-page .alert {
+  border-radius: 12px;
+  border: none;
+  padding: 1rem 1.5rem;
+}
+
+/* Animation for content load */
+.session-card {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Price Display */
+.text-success {
+  color: #28a745 !important;
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+  border-radius: 10px;
+  border: none;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.dropdown-item {
+  padding: 0.5rem 1rem;
+  transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background: #f8f9fa;
+  transform: translateX(5px);
+}
+
+.dropdown-item.text-danger:hover {
+  background: #dc3545;
+  color: white !important;
+}

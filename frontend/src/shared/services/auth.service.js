@@ -137,6 +137,46 @@ class AuthService {
     }
   }
 
+  // Verify OTP for email verification
+  async verifyOTP(email, otp) {
+    try {
+      const response = await api.post("/auth/verify-otp", { email, otp });
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error);
+    }
+  }
+
+  // Resend OTP for email verification
+  async resendOTP(email) {
+    try {
+      const response = await api.post("/auth/resend-otp", { email });
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error);
+    }
+  }
+
+  // Google OAuth Sign In/Sign Up
+  async googleAuth(credential, role = "student") {
+    try {
+      const response = await api.post("/auth/google", { credential, role });
+      if (response.data.token) {
+        // Store token both directly and within the user object
+        localStorage.setItem("token", response.data.token);
+
+        // Make sure the user object also contains the token
+        const userData = response.data.user || {};
+        userData.token = response.data.token;
+
+        localStorage.setItem("user", JSON.stringify(userData));
+      }
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error);
+    }
+  }
+
   // Error handler
   handleError(error) {
     if (error.response && error.response.data) {

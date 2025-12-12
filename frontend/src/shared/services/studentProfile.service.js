@@ -72,6 +72,7 @@ class StudentProfileService {
    */
   calculateCompleteness(profile) {
     const requiredFields = [
+      "gender",
       "grade",
       "academicLevel",
       "school",
@@ -147,6 +148,9 @@ class StudentProfileService {
    */
   getDefaultProfile() {
     return {
+      // User-level information
+      gender: "",
+      // Student-specific information
       grade: "",
       academicLevel: "",
       school: "",
@@ -174,6 +178,9 @@ class StudentProfileService {
         city: "",
         state: "",
         country: "",
+        address: "",
+        postalCode: "",
+        timeZone: "",
       },
     };
   }

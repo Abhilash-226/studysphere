@@ -9,7 +9,7 @@ const tutorSchema = new mongoose.Schema(
     },
     qualification: {
       type: String,
-      required: true,
+      required: false, // Made optional - collected during profile setup
       trim: true,
     },
     experience: {
@@ -18,12 +18,12 @@ const tutorSchema = new mongoose.Schema(
     },
     specialization: {
       type: String,
-      required: true,
+      required: false, // Made optional - collected during profile setup
       trim: true,
     },
     universityName: {
       type: String,
-      required: true,
+      required: false, // Made optional - collected during profile setup
       trim: true,
     },
     graduationYear: {
@@ -64,6 +64,10 @@ const tutorSchema = new mongoose.Schema(
     verifiedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+    },
+    isProfileComplete: {
+      type: Boolean,
+      default: false,
     },
     bio: {
       type: String,
@@ -118,6 +122,9 @@ const tutorSchema = new mongoose.Schema(
       city: String,
       state: String,
       country: String,
+      address: String,
+      postalCode: String,
+      timeZone: String,
     },
   },
   {

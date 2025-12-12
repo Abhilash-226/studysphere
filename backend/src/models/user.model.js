@@ -35,6 +35,11 @@ const userSchema = new mongoose.Schema(
       enum: ["student", "tutor", "admin"],
       default: "student",
     },
+    gender: {
+      type: String,
+      enum: ["Male", "Female", "Other", "Prefer not to say"],
+      trim: true,
+    },
     profileImage: {
       type: String,
       default: "",
@@ -58,6 +63,20 @@ const userSchema = new mongoose.Schema(
     },
     lastVerificationEmailSent: {
       type: Date,
+      select: false,
+    },
+    // OTP-based email verification fields
+    emailOTP: {
+      type: String,
+      select: false,
+    },
+    emailOTPExpiry: {
+      type: Date,
+      select: false,
+    },
+    emailOTPAttempts: {
+      type: Number,
+      default: 0,
       select: false,
     },
     isPhoneVerified: {
@@ -155,6 +174,39 @@ userSchema.methods.canRequestVerificationEmail = function () {
     allowed: true,
     attemptsLeft: MAX_ATTEMPTS_PER_DAY - this.emailVerificationAttempts,
   };
+};
+
+// Generate 6-digit OTP for email verification
+userSchema.methods.generateEmailOTP = function () {
+  // Generate 6-digit OTP
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+  // Store hashed OTP for security
+  const crypto = require("crypto");
+  this.emailOTP = crypto.createHash("sha256").update(otp).digest("hex");
+  this.emailOTPExpiry = Date.now() + 10 * 60 * 1000; // 10 minutes expiry
+  this.emailOTPAttempts = 0;
+  this.lastVerificationEmailSent = Date.now();
+
+  return otp; // Return plain OTP to send via email
+};
+
+// Verify OTP
+userSchema.methods.verifyEmailOTP = function (otp) {
+  const crypto = require("crypto");
+  const hashedOTP = crypto.createHash("sha256").update(otp).digest("hex");
+
+  // Check if OTP matches and is not expired
+  if (this.emailOTP === hashedOTP && this.emailOTPExpiry > Date.now()) {
+    return { valid: true };
+  }
+
+  // Check if expired
+  if (this.emailOTPExpiry && this.emailOTPExpiry < Date.now()) {
+    return { valid: false, reason: "expired" };
+  }
+
+  return { valid: false, reason: "invalid" };
 };
 
 const User = mongoose.model("User", userSchema);

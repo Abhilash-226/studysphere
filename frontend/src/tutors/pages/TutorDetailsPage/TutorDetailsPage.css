@@ -45,6 +45,18 @@
   margin-bottom: 15px;
 }
 
+.tutor-gender {
+  text-align: center;
+}
+
+.gender-badge {
+  background-color: #f3e8ff !important;
+  color: #7c3aed !important;
+  border: 1px solid #e9d5ff;
+  font-size: 0.9rem;
+  padding: 6px 12px;
+}
+
 .tutor-rating {
   display: flex;
   align-items: center;

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import uploadService from "../../../../../shared/services/upload.service";
+import { formatImageUrl } from "../../../../../shared/utils/imageUtils";
 import tutorService from "../../../../../shared/services/tutor.service";
 import { useAuth } from "../../../../../shared/context/AuthContext";
 import { FaSpinner, FaTimes, FaCheck } from "react-icons/fa";
@@ -23,7 +24,7 @@ const PhotoEdit = ({ onCancel, onSave }) => {
 
   useEffect(() => {
     if (user?.profileImage) {
-      const imageUrl = uploadService.getImageUrl(user.profileImage);
+      const imageUrl = formatImageUrl(user.profileImage);
       setCurrentImage(imageUrl);
       setImagePreview(imageUrl);
     }
@@ -125,7 +126,7 @@ const PhotoEdit = ({ onCancel, onSave }) => {
                 alt="Profile Preview"
                 onError={(e) => {
                   e.target.onerror = null;
-                  e.target.src = "/images/tutors/tutor-placeholder.svg";
+                  e.target.src = "/images/default-avatar.png";
                 }}
               />
             ) : (

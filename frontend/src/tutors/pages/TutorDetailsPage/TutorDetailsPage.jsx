@@ -158,6 +158,14 @@ const TutorDetailsPage = () => {
               <h2 className="tutor-name">{tutor.name}</h2>
               <p className="tutor-specialization">{tutor.specialization}</p>
 
+              {tutor.gender && (
+                <div className="tutor-gender mb-2">
+                  <Badge bg="secondary" className="gender-badge">
+                    {tutor.gender}
+                  </Badge>
+                </div>
+              )}
+
               <div className="tutor-rating mb-3">
                 {tutor.rating ? (
                   <>

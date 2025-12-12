@@ -1,5 +1,5 @@
 .qualification-details-step {
-  max-width: 700px;
+  max-width: 800px;
   margin: 0 auto;
 }
 
@@ -10,13 +10,23 @@
 .form-group label {
   display: block;
   margin-bottom: 8px;
+  font-weight: 500;
+  color: #333;
 }
 
 .form-group select, .form-group input[type="text"] {
   width: 100%;
-  padding: 8px 12px;
+  padding: 10px 14px;
   border: 1px solid #ced4da;
-  border-radius: 4px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group select:focus, .form-group input[type="text"]:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+  outline: none;
 }
 
 .help-text {
@@ -85,31 +95,113 @@
   cursor: pointer;
 }
 
+/* Document Uploads Section */
+.document-uploads {
+  background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+  border-radius: 16px;
+  padding: 30px;
+  margin-top: 30px;
+}
+
+.document-uploads h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin-bottom: 8px;
+}
+
+.document-uploads > .help-text {
+  margin-bottom: 24px;
+}
+
 .document-uploads > div {
   margin-bottom: 20px;
 }
 
+/* Required Documents Section */
+.id-proof-section,
+.qualification-doc-section {
+  padding: 24px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  border-left: 4px solid #0d6efd;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  margin-bottom: 20px;
+}
+
+.id-proof-section label,
+.qualification-doc-section label {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #1a1a2e;
+  display: block;
+  margin-bottom: 12px;
+}
+
+/* Optional Documents Grid */
+.optional-documents-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 16px;
+}
+
+.optional-doc-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  border: 2px dashed #dee2e6;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.optional-doc-card:hover {
+  border-color: #0d6efd;
+  box-shadow: 0 4px 12px rgba(13, 110, 253, 0.1);
+}
+
+.optional-doc-card.has-file {
+  border-color: #198754;
+  border-style: solid;
+  background: linear-gradient(135deg, #f0fff4 0%, #e8f8ed 100%);
+}
+
+.optional-doc-card label {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #333;
+  display: block;
+  margin-bottom: 12px;
+}
+
+/* File Upload Styling */
 .file-upload {
   margin-bottom: 10px;
 }
 
 .file-upload-label {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  padding: 8px 16px;
-  background-color: #f8f9fa;
-  border: 1px solid #ced4da;
-  border-radius: 4px;
+  justify-content: center;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 0.9rem;
+  font-weight: 500;
+  transition: transform 0.2s, box-shadow 0.2s;
+  width: 100%;
 }
 
 .file-upload-label:hover {
-  background-color: #e9ecef;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
 }
 
 .file-upload-icon {
-  margin-right: 8px;
+  margin-right: 10px;
+  font-size: 1.1rem;
 }
 
 .file-upload input[type="file"] {
@@ -117,7 +209,69 @@
 }
 
 .file-name {
-  margin-top: 5px;
+  margin-top: 10px;
   font-size: 0.85rem;
   color: #0d6efd;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.file-name.success {
+  color: #198754;
+  font-weight: 600;
+}
+
+/* Section Headers */
+.optional-docs-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 30px;
+  margin-bottom: 8px;
+}
+
+.optional-docs-header h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin: 0;
+}
+
+.optional-docs-header::after {
+  content: '';
+  flex-grow: 1;
+  height: 2px;
+  background: linear-gradient(to right, #dee2e6, transparent);
+}
+
+/* Required Asterisk */
+.required {
+  color: #dc3545;
+  font-weight: bold;
+}
+
+/* Spacing Utilities */
+.mt-4 {
+  margin-top: 1.5rem;
+}
+
+.mb-3 {
+  margin-bottom: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .optional-documents-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .document-uploads {
+    padding: 20px;
+  }
+  
+  .id-proof-section,
+  .qualification-doc-section {
+    padding: 16px;
+  }
 }

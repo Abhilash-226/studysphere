@@ -1,4 +1,5 @@
 import api from "./api.service";
+import { formatImageUrl } from "../utils/imageUtils";
 
 class UploadService {
   /**
@@ -26,36 +27,15 @@ class UploadService {
 
   /**
    * Get the full URL for a profile image
+   * @deprecated Use formatImageUrl from imageUtils instead for consistency
    * @param {string} imagePath - The relative path to the image
    * @returns {string} Full URL to the image
    */
   getImageUrl(imagePath) {
-    try {
-      if (!imagePath || imagePath === "" || imagePath.includes("undefined")) {
-        return "/images/avatar-placeholder.jpg";
-      }
-
-      // If it's already a full URL or starts with /images, return as is
-      if (imagePath.startsWith("http") || imagePath.startsWith("/images/")) {
-        return imagePath;
-      }
-
-      // Otherwise, construct the full URL
-      const normalizedPath = imagePath.replace(/\\/g, "/");
-      let apiUrl;
-
-      try {
-        apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
-      } catch (error) {
-        // Fallback if import.meta.env is not available
-        apiUrl = "http://localhost:5000";
-      }
-
-      return `${apiUrl}/${normalizedPath}`;
-    } catch (error) {
-      console.warn("Error processing image URL:", error);
-      return "/images/avatar-placeholder.jpg";
-    }
+    console.warn(
+      "uploadService.getImageUrl is deprecated. Please use formatImageUrl from imageUtils instead."
+    );
+    return formatImageUrl(imagePath);
   }
   /**
    * Validate image file before upload

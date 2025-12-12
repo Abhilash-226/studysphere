@@ -181,6 +181,11 @@ exports.getAllSessions = async (req, res) => {
           message: "Student profile not found",
         });
       }
+      console.log("=== getAllSessions Debug ===");
+      console.log("User ID from token:", userId);
+      console.log("Student profile found:", student._id.toString());
+      console.log("Student profile user ID:", student.user.toString());
+      console.log("=== End Debug ===");
       query.student = student._id;
     } else if (userRole === "tutor") {
       const tutor = await Tutor.findOne({ user: userId });
@@ -276,6 +281,96 @@ exports.getAllSessions = async (req, res) => {
   }
 };
 
+// Get tutor's sessions (teaching schedule)
+exports.getTutorSessions = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { status, page = 1, limit = 10 } = req.query;
+
+    // Find tutor profile
+    const tutor = await Tutor.findOne({ user: userId });
+    if (!tutor) {
+      return res.status(404).json({
+        success: false,
+        message: "Tutor profile not found",
+      });
+    }
+
+    let query = { tutor: tutor._id };
+
+    // Filter by status if provided
+    if (status && status !== "all") {
+      query.status = status;
+    }
+
+    // Calculate pagination
+    const skip = (page - 1) * limit;
+
+    // Get sessions with pagination
+    const sessions = await Session.find(query)
+      .populate([
+        {
+          path: "student",
+          populate: {
+            path: "user",
+            select: "firstName lastName email profileImage",
+          },
+        },
+      ])
+      .sort({ startTime: -1 })
+      .skip(skip)
+      .limit(parseInt(limit));
+
+    const totalSessions = await Session.countDocuments(query);
+
+    // Format sessions for tutor perspective
+    const formattedSessions = sessions.map((session) => ({
+      id: session._id,
+      title: session.title,
+      subject: session.subject,
+      description: session.description,
+      startTime: session.startTime,
+      endTime: session.endTime,
+      mode: session.mode,
+      location: session.location,
+      price: session.price,
+      status: session.status,
+      paymentStatus: session.paymentStatus,
+      rating: session.rating,
+      review: session.review,
+      student: {
+        id: session.student._id,
+        name: `${session.student.user.firstName} ${session.student.user.lastName}`,
+        email: session.student.user.email,
+        profileImage: session.student.user.profileImage,
+        grade: session.student.grade,
+        curriculum: session.student.curriculum,
+      },
+      createdAt: session.createdAt,
+      updatedAt: session.updatedAt,
+    }));
+
+    res.status(200).json({
+      success: true,
+      sessions: formattedSessions,
+      pagination: {
+        currentPage: parseInt(page),
+        totalPages: Math.ceil(totalSessions / limit),
+        totalSessions,
+        hasNext: page * limit < totalSessions,
+        hasPrev: page > 1,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching tutor sessions:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch tutor sessions",
+      error: error.message,
+    });
+  }
+};
+
 // Get single session by ID
 exports.getSessionById = async (req, res) => {
   try {
@@ -308,10 +403,32 @@ exports.getSessionById = async (req, res) => {
     }
 
     // Check if user has access to this session
+    console.log("=== Session Access Debug ===");
+    console.log("User ID from token:", userId);
+    console.log("User role from token:", userRole);
+    console.log(
+      "Session student user ID:",
+      session.student?.user?._id?.toString()
+    );
+    console.log("Session tutor user ID:", session.tutor?.user?._id?.toString());
+
+    // Fix: Convert userId to string for proper comparison
+    const userIdString = userId.toString();
+
     const hasAccess =
       (userRole === "student" &&
-        session.student.user._id.toString() === userId) ||
-      (userRole === "tutor" && session.tutor.user._id.toString() === userId);
+        session.student.user._id.toString() === userIdString) ||
+      (userRole === "tutor" &&
+        session.tutor.user._id.toString() === userIdString);
+
+    console.log("User ID as string:", userIdString);
+    console.log(
+      "Student comparison:",
+      userRole === "student",
+      session.student.user._id.toString() === userIdString
+    );
+    console.log("Has access:", hasAccess);
+    console.log("=== End Debug ===");
 
     if (!hasAccess) {
       return res.status(403).json({

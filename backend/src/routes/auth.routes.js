@@ -54,6 +54,23 @@ router.post(
   authController.resetPassword
 );
 
+// Verify OTP for email verification
+router.post(
+  "/verify-otp",
+  [
+    check("email", "Please include a valid email").isEmail(),
+    check("otp", "OTP is required").isLength({ min: 6, max: 6 }),
+  ],
+  authController.verifyOTP
+);
+
+// Resend OTP for email verification
+router.post(
+  "/resend-otp",
+  [check("email", "Please include a valid email").isEmail()],
+  authController.resendOTP
+);
+
 // Upload ID document for tutors
 router.post(
   "/upload-id",
@@ -69,6 +86,9 @@ router.post(
   documentUpload.single("qualificationDocument"),
   uploadController.uploadQualificationDocument
 );
+
+// Google OAuth authentication
+router.post("/google", authController.googleAuth);
 
 // Include email verification routes
 router.use("/", emailVerificationRoutes);

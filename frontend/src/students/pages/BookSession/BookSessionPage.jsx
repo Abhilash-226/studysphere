@@ -24,6 +24,7 @@ import {
 import sessionRequestService from "../../../shared/services/sessionRequestService";
 import tutorService from "../../../shared/services/tutor.service";
 import uploadService from "../../../shared/services/upload.service";
+import { formatImageUrl } from "../../../shared/utils/imageUtils";
 import { useAuth } from "../../../shared/context/AuthContext";
 import "./BookSessionPage.css";
 
@@ -58,15 +59,8 @@ const BookSessionPage = () => {
   const handleImageError = (e) => {
     console.warn(`Failed to load tutor profile image:`, e.target.src);
     e.target.onerror = null;
-
-    // Try different fallback images in order
-    if (e.target.src.includes("avatar-placeholder.jpg")) {
-      e.target.src = "/images/tutors/tutor-placeholder.svg";
-    } else if (e.target.src.includes("tutor-placeholder.svg")) {
-      e.target.src = "/images/default-avatar.png";
-    } else {
-      e.target.src = "/images/avatar-placeholder.jpg";
-    }
+    // Use consistent fallback image
+    e.target.src = "/images/default-avatar.png";
   };
   const [success, setSuccess] = useState(false);
 
@@ -334,7 +328,7 @@ const BookSessionPage = () => {
             <Card.Body>
               <div className="text-center mb-3">
                 <img
-                  src={uploadService.getImageUrl(
+                  src={formatImageUrl(
                     tutorData?.image || tutorData?.profileImage
                   )}
                   alt={tutorData?.name}

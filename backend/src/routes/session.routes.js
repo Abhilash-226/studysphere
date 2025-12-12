@@ -16,6 +16,14 @@ router.post(
 // GET all sessions for current user (protected)
 router.get("/", authenticateToken, sessionController.getAllSessions);
 
+// GET tutor's sessions (teaching schedule) (protected - tutor only)
+router.get(
+  "/tutor",
+  authenticateToken,
+  checkRole(["tutor"]),
+  sessionController.getTutorSessions
+);
+
 // GET session statistics (protected)
 router.get(
   "/statistics",

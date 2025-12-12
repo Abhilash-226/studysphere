@@ -1,0 +1,196 @@
+.sessions-page {
+  min-height: 100vh;
+}
+
+.sessions-header h2 {
+  color: #2c3e50;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.sessions-header p {
+  font-size: 1.1rem;
+}
+
+/* Filter Buttons */
+.filter-btn {
+  border-radius: 20px;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+  transform: translateY(-1px);
+}
+
+.search-input {
+  border-radius: 20px;
+  border: 1px solid #dee2e6;
+  padding: 0.5rem 1rem;
+}
+
+.search-input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Session Cards */
+.session-card {
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.session-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.session-card.upcoming {
+  border-left: 4px solid #007bff;
+}
+
+.session-card.completed {
+  border-left: 4px solid #28a745;
+}
+
+.session-card.cancelled {
+  border-left: 4px solid #dc3545;
+}
+
+.session-card.pending {
+  border-left: 4px solid #ffc107;
+}
+
+.status-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.4rem 0.8rem;
+  border-radius: 15px;
+}
+
+.session-subject {
+  color: #2c3e50;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.session-topic {
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+  font-style: italic;
+}
+
+.tutor-info {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.tutor-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tutor-name {
+  font-weight: 500;
+  color: #2c3e50;
+  font-size: 0.95rem;
+}
+
+.session-time {
+  background-color: #fff;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 0.75rem;
+  margin-top: 1rem;
+}
+
+.session-time .fa-calendar-alt,
+.session-time .fa-clock {
+  color: #6c757d;
+  width: 16px;
+}
+
+/* Empty State */
+.sessions-page .card .fa-calendar-alt {
+  color: #6c757d;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .sessions-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .filter-btn {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .session-card {
+    margin-bottom: 1rem;
+  }
+
+  .tutor-info {
+    padding: 0.75rem;
+  }
+
+  .session-time {
+    padding: 0.6rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .sessions-page {
+    padding: 1rem 0;
+  }
+
+  .sessions-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .status-badge {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.6rem;
+  }
+}
+
+/* Animation for loading states */
+.sessions-page .spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+/* Hover effects */
+.session-card .btn:hover {
+  transform: translateY(-1px);
+}
+
+/* Status-specific styling */
+.session-card.upcoming .status-badge {
+  background-color: #007bff !important;
+}
+
+.session-card.completed .status-badge {
+  background-color: #28a745 !important;
+}
+
+.session-card.cancelled .status-badge {
+  background-color: #dc3545 !important;
+}
+
+.session-card.pending .status-badge {
+  background-color: #ffc107 !important;
+  color: #212529 !important;
+}

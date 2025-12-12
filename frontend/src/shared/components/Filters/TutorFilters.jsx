@@ -37,11 +37,33 @@ const TutorFilters = ({
       </div>
 
       <FilterGroup title="Teaching Mode" initiallyCollapsed={false}>
-        <RadioFilter
+        <CheckboxFilter
           options={filterOptions.teachingModes || []}
-          selectedValue={filters.teachingMode}
-          onChange={(value) => handleFilterChange("teachingMode", value)}
+          selectedValues={filters.teachingMode || []}
+          onChange={(values) => handleFilterChange("teachingMode", values)}
           name="teachingMode"
+          showCount={true}
+        />
+      </FilterGroup>
+
+      <FilterGroup title="Gender" initiallyCollapsed={false}>
+        <CheckboxFilter
+          options={
+            filterOptions.genders || [
+              { value: "Male", label: "Male", count: 0 },
+              { value: "Female", label: "Female", count: 0 },
+              { value: "Other", label: "Other", count: 0 },
+              {
+                value: "Prefer not to say",
+                label: "Prefer not to say",
+                count: 0,
+              },
+            ]
+          }
+          selectedValues={filters.gender || []}
+          onChange={(values) => handleFilterChange("gender", values)}
+          name="gender"
+          showCount={true}
         />
       </FilterGroup>
 
@@ -55,17 +77,20 @@ const TutorFilters = ({
         />
       </FilterGroup>
 
-      {filters.teachingMode === "offline" && (
-        <FilterGroup title="Location" initiallyCollapsed={false}>
-          <CheckboxFilter
-            options={filterOptions.locations || []}
-            selectedValues={filters.locations || []}
-            onChange={(values) => handleFilterChange("locations", values)}
-            name="locations"
-            showCount={true}
-          />
-        </FilterGroup>
-      )}
+      {Array.isArray(filters.teachingMode) &&
+        (filters.teachingMode.includes("offline") ||
+          filters.teachingMode.includes("offline_home") ||
+          filters.teachingMode.includes("offline_classroom")) && (
+          <FilterGroup title="Location" initiallyCollapsed={false}>
+            <CheckboxFilter
+              options={filterOptions.locations || []}
+              selectedValues={filters.locations || []}
+              onChange={(values) => handleFilterChange("locations", values)}
+              name="locations"
+              showCount={true}
+            />
+          </FilterGroup>
+        )}
 
       <FilterGroup title="Experience (Years)" initiallyCollapsed={false}>
         <RangeFilter

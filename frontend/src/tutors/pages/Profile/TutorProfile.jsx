@@ -107,6 +107,7 @@ const TutorProfile = () => {
     subjects,
     profileImage,
     graduationYear,
+    location,
     documents = {},
   } = profile;
 
@@ -152,7 +153,11 @@ const TutorProfile = () => {
 
         <Col lg={8}>
           {/* About Me Section */}
-          <AboutMeSection bio={bio} onEdit={handleSectionEdit} />
+          <AboutMeSection
+            bio={bio}
+            location={location}
+            onEdit={handleSectionEdit}
+          />
 
           {/* Qualifications and Subjects in a two-column layout */}
           <Row className="mb-4">

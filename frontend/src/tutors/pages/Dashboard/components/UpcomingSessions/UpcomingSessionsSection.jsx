@@ -1,7 +1,13 @@
 import React from "react";
 import { Card, ListGroup, Badge, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { FaCalendarAlt, FaVideo, FaUserGraduate, FaUser } from "react-icons/fa";
+import {
+  FaCalendarAlt,
+  FaVideo,
+  FaUserGraduate,
+  FaUser,
+  FaInfoCircle,
+} from "react-icons/fa";
 import "./UpcomingSessionsSection.css";
 
 /**
@@ -91,8 +97,13 @@ const UpcomingSessionsSection = ({ sessions = [] }) => {
                 >
                   <FaUser className="me-1" /> Profile
                 </Button>
-                <Button variant="outline-secondary" size="sm">
-                  Details
+                <Button
+                  as={Link}
+                  to={`/tutor/sessions/${session.id}`}
+                  variant="outline-secondary"
+                  size="sm"
+                >
+                  <FaInfoCircle className="me-1" /> Details
                 </Button>
               </div>
             </ListGroup.Item>

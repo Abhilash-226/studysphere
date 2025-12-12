@@ -14,7 +14,7 @@ exports.getStudentProfileById = async (req, res) => {
     const student = await Student.findById(studentId)
       .populate({
         path: "user",
-        select: "firstName lastName email profileImage createdAt",
+        select: "firstName lastName email profileImage gender createdAt",
       })
       .lean();
 
@@ -130,7 +130,7 @@ exports.getMyProfile = async (req, res) => {
     const student = await Student.findOne({ user: userId })
       .populate({
         path: "user",
-        select: "firstName lastName email profileImage",
+        select: "firstName lastName email profileImage gender",
       })
       .lean();
 
@@ -161,22 +161,31 @@ exports.getMyProfile = async (req, res) => {
 exports.updateProfile = async (req, res) => {
   try {
     const userId = req.user.id;
-    const updateData = req.body;
+    const updateData = { ...req.body };
+
+    // Extract gender from updateData for User model update
+    const { gender, ...studentData } = updateData;
 
     // Remove fields that shouldn't be updated directly
-    delete updateData.user;
-    delete updateData._id;
-    delete updateData.profileCompleteness;
-    delete updateData.createdAt;
-    delete updateData.updatedAt;
+    delete studentData.user;
+    delete studentData._id;
+    delete studentData.profileCompleteness;
+    delete studentData.createdAt;
+    delete studentData.updatedAt;
 
+    // Update gender in User model if provided
+    if (gender !== undefined) {
+      await User.findByIdAndUpdate(userId, { gender }, { runValidators: true });
+    }
+
+    // Update student profile
     const student = await Student.findOneAndUpdate(
       { user: userId },
-      updateData,
+      studentData,
       { new: true, runValidators: true }
     ).populate({
       path: "user",
-      select: "firstName lastName email profileImage",
+      select: "firstName lastName email profileImage gender",
     });
 
     if (!student) {

@@ -3,7 +3,7 @@ import { Card, Row, Col, Button, Badge, Alert } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { FaUsers, FaUser, FaEye, FaGraduationCap } from "react-icons/fa";
 import studentProfileService from "../../../../../shared/services/studentProfile.service";
-import uploadService from "../../../../../shared/services/upload.service";
+import { formatImageUrl } from "../../../../../shared/utils/imageUtils";
 import "./MyStudentsSection.css";
 
 /**
@@ -99,11 +99,11 @@ const MyStudentsSection = () => {
                 <div className="student-card">
                   <div className="d-flex align-items-center mb-2">
                     <img
-                      src={uploadService.getImageUrl(student.profileImage)}
+                      src={formatImageUrl(student.profileImage)}
                       alt={student.name}
                       className="student-avatar me-3"
                       onError={(e) => {
-                        e.target.src = "/images/avatar-placeholder.jpg";
+                        e.target.src = "/images/default-avatar.png";
                       }}
                     />
                     <div className="flex-grow-1">

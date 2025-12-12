@@ -9,12 +9,15 @@ import {
   EmailVerificationPage,
   ResendVerificationPage,
 } from "./shared/components/EmailVerification";
+import OTPVerification from "./shared/components/Auth/OTPVerification";
 import {
   StudentLogin,
   StudentSignup,
   StudentDashboard,
   StudentProfile,
+  Sessions,
 } from "./students/pages";
+import SessionDetails from "./students/pages/Sessions/SessionDetails";
 import BookSessionPage from "./students/pages/BookSession/BookSessionPage";
 import {
   TutorLogin,
@@ -30,6 +33,8 @@ import {
   TutorMessagesPage,
   StudentProfileViewer,
 } from "./tutors/pages";
+import TeachingSchedule from "./tutors/pages/Sessions/TeachingSchedule";
+import TutorSessionDetails from "./tutors/pages/Sessions/TutorSessionDetails";
 import ChatPage from "./shared/components/Chat/pages/ChatPage";
 import { AuthProvider } from "./shared/context/AuthContext";
 import { ProtectedRoute } from "./shared/components/Route";
@@ -82,6 +87,7 @@ const App = () => {
                   path="/resend-verification"
                   element={<ResendVerificationPage />}
                 />
+                <Route path="/verify-otp" element={<OTPVerification />} />
 
                 <Route path="/tutors" element={<TutorsPage />} />
                 <Route
@@ -113,9 +119,10 @@ const App = () => {
                     element={<StudentDashboard />}
                   />
                   <Route path="/student/profile" element={<StudentProfile />} />
+                  <Route path="/student/sessions" element={<Sessions />} />
                   <Route
-                    path="/student/sessions"
-                    element={<div>Student Sessions (To be implemented)</div>}
+                    path="/student/sessions/:sessionId"
+                    element={<SessionDetails />}
                   />
                   <Route path="/book/:tutorId" element={<BookSessionPage />} />
                   <Route path="/student/chat" element={<ChatPage />} />
@@ -150,7 +157,11 @@ const App = () => {
                   />
                   <Route
                     path="/tutor/sessions"
-                    element={<div>Tutor Sessions (To be implemented)</div>}
+                    element={<TeachingSchedule />}
+                  />
+                  <Route
+                    path="/tutor/sessions/:sessionId"
+                    element={<TutorSessionDetails />}
                   />
                   <Route path="/tutor/chat" element={<ChatPage />} />
                   <Route

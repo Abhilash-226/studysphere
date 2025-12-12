@@ -232,31 +232,84 @@ class TutorService {
       }
 
       if (filters.subjects) {
-        queryParams.append("subjects", filters.subjects);
+        if (Array.isArray(filters.subjects)) {
+          filters.subjects.forEach((subject) => {
+            queryParams.append("subjects", subject);
+          });
+        } else {
+          queryParams.append("subjects", filters.subjects);
+        }
       }
 
       if (filters.location) {
-        queryParams.append("location", filters.location);
+        if (Array.isArray(filters.location)) {
+          filters.location.forEach((loc) => {
+            queryParams.append("location", loc);
+          });
+        } else {
+          queryParams.append("location", filters.location);
+        }
+      } else if (filters.locations) {
+        if (Array.isArray(filters.locations)) {
+          filters.locations.forEach((loc) => {
+            queryParams.append("location", loc);
+          });
+        } else {
+          queryParams.append("location", filters.locations);
+        }
       }
 
-      if (filters.minExperience) {
-        queryParams.append("minExperience", filters.minExperience);
+      // Handle experience range filter
+      if (filters.experience) {
+        if (
+          Array.isArray(filters.experience) &&
+          filters.experience.length === 2
+        ) {
+          queryParams.append("minExperience", filters.experience[0]);
+          queryParams.append("maxExperience", filters.experience[1]);
+        } else if (filters.minExperience) {
+          queryParams.append("minExperience", filters.minExperience);
+        }
       }
 
-      if (filters.minPrice) {
-        queryParams.append("minPrice", filters.minPrice);
+      // Handle price range filter
+      if (filters.price) {
+        if (Array.isArray(filters.price) && filters.price.length === 2) {
+          queryParams.append("minPrice", filters.price[0]);
+          queryParams.append("maxPrice", filters.price[1]);
+        }
+      } else {
+        if (filters.minPrice) {
+          queryParams.append("minPrice", filters.minPrice);
+        }
+        if (filters.maxPrice) {
+          queryParams.append("maxPrice", filters.maxPrice);
+        }
       }
 
-      if (filters.maxPrice) {
-        queryParams.append("maxPrice", filters.maxPrice);
-      }
-
-      if (filters.minRating) {
+      // Handle rating filter
+      if (filters.rating) {
+        if (Array.isArray(filters.rating) && filters.rating.length > 0) {
+          // Get the minimum rating from selected ratings
+          const minRating = Math.min(...filters.rating.map((r) => parseInt(r)));
+          queryParams.append("minRating", minRating);
+        }
+      } else if (filters.minRating) {
         queryParams.append("minRating", filters.minRating);
       }
 
       if (filters.day) {
         queryParams.append("day", filters.day);
+      }
+
+      if (filters.gender) {
+        if (Array.isArray(filters.gender)) {
+          filters.gender.forEach((gender) => {
+            queryParams.append("gender", gender);
+          });
+        } else {
+          queryParams.append("gender", filters.gender);
+        }
       }
 
       const response = await api.get(`/tutors?${queryParams.toString()}`);

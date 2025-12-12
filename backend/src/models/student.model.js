@@ -31,7 +31,7 @@ const studentSchema = new mongoose.Schema(
     currentGPA: {
       type: Number,
       min: 0,
-      max: 4.0,
+      max: 10.0,
     },
 
     // Academic Information
@@ -133,6 +133,9 @@ const studentSchema = new mongoose.Schema(
       city: String,
       state: String,
       country: String,
+      address: String,
+      postalCode: String,
+      timeZone: String,
     },
     preferredTeachingMode: {
       type: [String],

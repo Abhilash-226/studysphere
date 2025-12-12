@@ -22,6 +22,7 @@ import {
 } from "react-icons/fa";
 import studentProfileService from "../../../shared/services/studentProfile.service";
 import uploadService from "../../../shared/services/upload.service";
+import { formatImageUrl } from "../../../shared/utils/imageUtils";
 import { useAuth } from "../../../shared/context/AuthContext";
 import { ProfileImageUpload } from "./components";
 import "./StudentProfile.css";
@@ -65,6 +66,7 @@ const StudentProfile = () => {
     "10+ hours/week",
   ];
   const parentInvolvementLevels = ["High", "Medium", "Low", "Independent"];
+  const genderOptions = ["Male", "Female", "Other", "Prefer not to say"];
 
   // Load profile data
   useEffect(() => {
@@ -78,10 +80,14 @@ const StudentProfile = () => {
 
       if (response.success) {
         setProfile(response.student);
-        setFormData({
+        // Combine student data with user data (including gender)
+        const combinedData = {
           ...studentProfileService.getDefaultProfile(),
           ...response.student,
-        });
+          // Include gender from user object
+          gender: response.student.user?.gender || "",
+        };
+        setFormData(combinedData);
       } else {
         // Profile doesn't exist yet, use default
         setProfile(studentProfileService.getDefaultProfile());
@@ -155,6 +161,7 @@ const StudentProfile = () => {
 
     // For enum fields, remove them entirely if they're empty
     const enumFields = [
+      "gender",
       "academicLevel",
       "studySchedulePreference",
       "availableStudyTime",
@@ -311,7 +318,7 @@ const StudentProfile = () => {
               <Col md={2} className="text-center mb-3 mb-md-0">
                 <div className="profile-image-container position-relative">
                   <img
-                    src={uploadService.getImageUrl(currentUser?.profileImage)}
+                    src={formatImageUrl(currentUser?.profileImage)}
                     alt="Profile"
                     className="profile-image rounded-circle border border-3 border-light shadow"
                     style={{
@@ -320,7 +327,7 @@ const StudentProfile = () => {
                       objectFit: "cover",
                     }}
                     onError={(e) => {
-                      e.target.src = "/images/avatar-placeholder.jpg";
+                      e.target.src = "/images/default-avatar.png";
                     }}
                   />
                   <Badge
@@ -539,6 +546,19 @@ const StudentProfile = () => {
                       </Col>
                     </Row>
 
+                    <Row className="mb-4">
+                      <Col md={6}>
+                        <div className="info-item mb-3">
+                          <label className="info-label">Gender</label>
+                          <div className="info-value">
+                            {formData.gender || (
+                              <span className="text-muted">Not specified</span>
+                            )}
+                          </div>
+                        </div>
+                      </Col>
+                    </Row>
+
                     <div className="info-item mb-3">
                       <label className="info-label">Bio</label>
                       <div className="info-value">
@@ -657,6 +677,31 @@ const StudentProfile = () => {
                             placeholder="0.00 - 4.00"
                             className="form-control-lg"
                           />
+                        </Form.Group>
+                      </Col>
+                    </Row>
+
+                    <Row>
+                      <Col md={6}>
+                        <Form.Group className="mb-4">
+                          <Form.Label className="fw-semibold">
+                            Gender (optional)
+                          </Form.Label>
+                          <Form.Select
+                            value={formData.gender || ""}
+                            onChange={(e) =>
+                              handleInputChange("gender", e.target.value)
+                            }
+                            disabled={!isEditing}
+                            className="form-control-lg"
+                          >
+                            <option value="">Select gender</option>
+                            {genderOptions.map((gender) => (
+                              <option key={gender} value={gender}>
+                                {gender}
+                              </option>
+                            ))}
+                          </Form.Select>
                         </Form.Group>
                       </Col>
                     </Row>
@@ -1193,38 +1238,96 @@ const StudentProfile = () => {
                       </div>
                     </div>
 
-                    <Row className="mb-4">
-                      <Col md={6}>
-                        <div className="info-item">
-                          <label className="info-label">City</label>
-                          <div className="info-value">
-                            {formData.location?.city ? (
-                              <div className="d-flex align-items-center">
-                                <i className="fas fa-map-marker-alt text-danger me-2"></i>
-                                <span>{formData.location.city}</span>
-                              </div>
-                            ) : (
-                              <span className="text-muted">Not specified</span>
+                    <div className="info-item mb-4">
+                      <label className="info-label">Location</label>
+                      <div className="info-value">
+                        <Row>
+                          <Col md={6}>
+                            <div className="mb-2">
+                              <strong>City:</strong>{" "}
+                              {formData.location?.city ? (
+                                <span className="text-primary">
+                                  {formData.location.city}
+                                </span>
+                              ) : (
+                                <span className="text-muted">
+                                  Not specified
+                                </span>
+                              )}
+                            </div>
+                          </Col>
+                          <Col md={6}>
+                            <div className="mb-2">
+                              <strong>State/Province:</strong>{" "}
+                              {formData.location?.state ? (
+                                <span className="text-primary">
+                                  {formData.location.state}
+                                </span>
+                              ) : (
+                                <span className="text-muted">
+                                  Not specified
+                                </span>
+                              )}
+                            </div>
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col md={6}>
+                            <div className="mb-2">
+                              <strong>Country:</strong>{" "}
+                              {formData.location?.country ? (
+                                <span className="text-primary">
+                                  {formData.location.country}
+                                </span>
+                              ) : (
+                                <span className="text-muted">
+                                  Not specified
+                                </span>
+                              )}
+                            </div>
+                          </Col>
+                          <Col md={6}>
+                            <div className="mb-2">
+                              <strong>Postal Code:</strong>{" "}
+                              {formData.location?.postalCode ? (
+                                <span className="text-primary">
+                                  {formData.location.postalCode}
+                                </span>
+                              ) : (
+                                <span className="text-muted">
+                                  Not specified
+                                </span>
+                              )}
+                            </div>
+                          </Col>
+                        </Row>
+                        {(formData.location?.address ||
+                          formData.location?.timeZone) && (
+                          <Row>
+                            {formData.location?.address && (
+                              <Col md={6}>
+                                <div className="mb-2">
+                                  <strong>Address:</strong>{" "}
+                                  <span className="text-primary">
+                                    {formData.location.address}
+                                  </span>
+                                </div>
+                              </Col>
                             )}
-                          </div>
-                        </div>
-                      </Col>
-                      <Col md={6}>
-                        <div className="info-item">
-                          <label className="info-label">Country</label>
-                          <div className="info-value">
-                            {formData.location?.country ? (
-                              <div className="d-flex align-items-center">
-                                <i className="fas fa-globe text-info me-2"></i>
-                                <span>{formData.location.country}</span>
-                              </div>
-                            ) : (
-                              <span className="text-muted">Not specified</span>
+                            {formData.location?.timeZone && (
+                              <Col md={6}>
+                                <div className="mb-2">
+                                  <strong>Time Zone:</strong>{" "}
+                                  <span className="text-primary">
+                                    {formData.location.timeZone}
+                                  </span>
+                                </div>
+                              </Col>
                             )}
-                          </div>
-                        </div>
-                      </Col>
-                    </Row>
+                          </Row>
+                        )}
+                      </div>
+                    </div>
                   </>
                 ) : (
                   // Edit Mode
@@ -1329,6 +1432,26 @@ const StudentProfile = () => {
                       <Col md={6}>
                         <Form.Group className="mb-4">
                           <Form.Label className="fw-semibold">
+                            State/Province
+                          </Form.Label>
+                          <Form.Control
+                            type="text"
+                            value={formData.location?.state || ""}
+                            onChange={(e) =>
+                              handleLocationChange("state", e.target.value)
+                            }
+                            disabled={!isEditing}
+                            placeholder="Your state or province"
+                            className="form-control-lg"
+                          />
+                        </Form.Group>
+                      </Col>
+                    </Row>
+
+                    <Row>
+                      <Col md={6}>
+                        <Form.Group className="mb-4">
+                          <Form.Label className="fw-semibold">
                             Country
                           </Form.Label>
                           <Form.Control
@@ -1339,6 +1462,60 @@ const StudentProfile = () => {
                             }
                             disabled={!isEditing}
                             placeholder="Your country"
+                            className="form-control-lg"
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col md={6}>
+                        <Form.Group className="mb-4">
+                          <Form.Label className="fw-semibold">
+                            Postal Code
+                          </Form.Label>
+                          <Form.Control
+                            type="text"
+                            value={formData.location?.postalCode || ""}
+                            onChange={(e) =>
+                              handleLocationChange("postalCode", e.target.value)
+                            }
+                            disabled={!isEditing}
+                            placeholder="Your postal/zip code"
+                            className="form-control-lg"
+                          />
+                        </Form.Group>
+                      </Col>
+                    </Row>
+
+                    <Row>
+                      <Col md={6}>
+                        <Form.Group className="mb-4">
+                          <Form.Label className="fw-semibold">
+                            Address (optional)
+                          </Form.Label>
+                          <Form.Control
+                            type="text"
+                            value={formData.location?.address || ""}
+                            onChange={(e) =>
+                              handleLocationChange("address", e.target.value)
+                            }
+                            disabled={!isEditing}
+                            placeholder="Your street address"
+                            className="form-control-lg"
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col md={6}>
+                        <Form.Group className="mb-4">
+                          <Form.Label className="fw-semibold">
+                            Time Zone (optional)
+                          </Form.Label>
+                          <Form.Control
+                            type="text"
+                            value={formData.location?.timeZone || ""}
+                            onChange={(e) =>
+                              handleLocationChange("timeZone", e.target.value)
+                            }
+                            disabled={!isEditing}
+                            placeholder="e.g., UTC+5:30, EST, PST"
                             className="form-control-lg"
                           />
                         </Form.Group>

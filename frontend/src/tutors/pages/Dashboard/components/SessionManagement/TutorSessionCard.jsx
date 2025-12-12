@@ -8,6 +8,7 @@ import {
   OverlayTrigger,
   Tooltip,
 } from "react-bootstrap";
+import { formatImageUrl } from "../../../../../shared/utils/imageUtils";
 import {
   FaCalendarAlt,
   FaClock,
@@ -141,12 +142,12 @@ const TutorSessionCard = ({ session, onAction }) => {
           {/* Student Info */}
           <div className="student-info">
             <img
-              src={
-                session.student?.profileImage ||
-                "/images/avatar-placeholder.jpg"
-              }
+              src={formatImageUrl(session.student?.profileImage)}
               alt={session.student?.name}
               className="student-avatar"
+              onError={(e) => {
+                e.target.src = "/images/default-avatar.png";
+              }}
             />
             <div className="student-details">
               <h6 className="student-name">{session.student?.name}</h6>

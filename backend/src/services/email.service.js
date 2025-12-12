@@ -148,6 +148,65 @@ exports.sendEmailVerification = async (email, name, verificationUrl) => {
 };
 
 /**
+ * Send OTP email for email verification
+ * @param {string} email - User email
+ * @param {string} name - User's name
+ * @param {string} otp - 6-digit OTP code
+ */
+exports.sendOTPEmail = async (email, name, otp) => {
+  const subject = "Your StudySphere Verification Code";
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+      <div style="text-align: center; margin-bottom: 30px;">
+        <h1 style="color: #4a6cf7; margin: 0;">StudySphere</h1>
+        <p style="color: #666; margin: 5px 0;">Your Learning Journey Starts Here</p>
+      </div>
+      
+      <div style="background: #f8f9fa; padding: 30px; border-radius: 10px; margin-bottom: 20px;">
+        <h2 style="color: #333; margin-top: 0;">Email Verification Code</h2>
+        <p style="color: #666; line-height: 1.5;">Hello ${name},</p>
+        <p style="color: #666; line-height: 1.5;">
+          Thank you for signing up with StudySphere! Please use the verification code below to complete your registration:
+        </p>
+        
+        <div style="text-align: center; margin: 30px 0;">
+          <div style="background: #4a6cf7; color: white; padding: 20px 40px; display: inline-block; border-radius: 10px; font-size: 32px; font-weight: bold; letter-spacing: 8px;">
+            ${otp}
+          </div>
+        </div>
+        
+        <p style="color: #666; line-height: 1.5; text-align: center; font-size: 14px;">
+          Enter this code on the verification page to verify your email address.
+        </p>
+      </div>
+      
+      <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+        <p style="color: #856404; margin: 0; font-size: 14px;">
+          <strong>⚠️ Important:</strong> This code will expire in 10 minutes for security reasons.
+        </p>
+      </div>
+      
+      <div style="background: #f8d7da; border: 1px solid #f5c6cb; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+        <p style="color: #721c24; margin: 0; font-size: 14px;">
+          <strong>🔒 Security Tip:</strong> Never share this code with anyone. StudySphere will never ask for your verification code.
+        </p>
+      </div>
+      
+      <div style="border-top: 1px solid #eee; padding-top: 20px; font-size: 14px; color: #666;">
+        <p>If you didn't create an account with StudySphere, you can safely ignore this email.</p>
+        <p>Need help? Contact our support team at support@studysphere.com</p>
+        <p style="margin-bottom: 0;">
+          Best regards,<br>
+          The StudySphere Team
+        </p>
+      </div>
+    </div>
+  `;
+
+  return await this.sendEmail(email, subject, html);
+};
+
+/**
  * Send a welcome email to new users
  * @param {string} email - User email
  * @param {string} name - User's name

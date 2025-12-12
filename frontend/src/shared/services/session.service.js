@@ -85,11 +85,71 @@ class SessionService {
     }
   }
 
+  // Get student's sessions
+  async getStudentSessions(status = null) {
+    try {
+      const params = status ? { status } : {};
+      const response = await api.get("/sessions", { params });
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error);
+    }
+  }
+
+  // Get tutor's sessions (teaching schedule)
+  async getTutorSessions(status = null) {
+    try {
+      const params = status ? { status } : {};
+      const response = await api.get("/sessions/tutor", { params });
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error);
+    }
+  }
+
+  // Mark session as completed (tutor action)
+  async markSessionCompleted(sessionId) {
+    try {
+      const response = await api.patch(`/sessions/${sessionId}/complete`);
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error);
+    }
+  }
+
+  // Cancel session (tutor or student action)
+  async cancelSession(sessionId, reason = "") {
+    try {
+      const response = await api.patch(`/sessions/${sessionId}/cancel`, {
+        reason,
+      });
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error);
+    }
+  }
+
+  // Reschedule session
+  async rescheduleSession(sessionId, newDateTime, reason = "") {
+    try {
+      const response = await api.patch(`/sessions/${sessionId}/reschedule`, {
+        dateTime: newDateTime,
+        reason,
+      });
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error);
+    }
+  }
+
   // Error handler
   handleError(error) {
+    console.log("SessionService handleError:", error);
     if (error.response && error.response.data) {
+      console.log("Error response data:", error.response.data);
       return error.response.data;
     }
+    console.log("Network or unknown error:", error.message);
     return { message: "Network error or server is unavailable" };
   }
 }

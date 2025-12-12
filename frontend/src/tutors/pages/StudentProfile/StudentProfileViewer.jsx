@@ -27,7 +27,7 @@ import {
   FaCheckCircle,
 } from "react-icons/fa";
 import studentProfileService from "../../../shared/services/studentProfile.service";
-import uploadService from "../../../shared/services/upload.service";
+import { formatImageUrl } from "../../../shared/utils/imageUtils";
 import "./StudentProfileViewer.css";
 
 const StudentProfileViewer = () => {
@@ -131,7 +131,7 @@ const StudentProfileViewer = () => {
             <Row className="align-items-center">
               <Col md={2}>
                 <img
-                  src={uploadService.getImageUrl(student.user.profileImage)}
+                  src={formatImageUrl(student.user.profileImage)}
                   alt={student.user.firstName}
                   className="profile-image"
                   style={{
@@ -142,7 +142,7 @@ const StudentProfileViewer = () => {
                     border: "4px solid white",
                   }}
                   onError={(e) => {
-                    e.target.src = "/images/avatar-placeholder.jpg";
+                    e.target.src = "/images/default-avatar.png";
                   }}
                 />
               </Col>

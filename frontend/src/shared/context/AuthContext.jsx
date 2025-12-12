@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   // Login function
-  const login = (userData, token, role) => {
+  const login = (userData, token, role, customRedirect = null) => {
     const userObject = {
       ...userData,
       token,
@@ -50,8 +50,10 @@ export const AuthProvider = ({ children }) => {
     setCurrentUser(userObject);
     setError(null);
 
-    // Redirect based on role
-    if (role === "student") {
+    // Redirect based on custom path or role
+    if (customRedirect) {
+      navigate(customRedirect);
+    } else if (role === "student") {
       navigate("/student/dashboard");
     } else if (role === "tutor") {
       navigate("/tutor/dashboard");

@@ -176,18 +176,23 @@ const QualificationDetails = ({ profileData, updateProfileData }) => {
       </div>
 
       <div className="form-group document-uploads">
-        <h3>Additional Supporting Documents</h3>
+        <h3>Identity Verification & Supporting Documents</h3>
         <p className="help-text mb-3">
-          Upload additional documents to enhance your profile credibility. ID
-          and qualification documents were already provided during signup.
+          Upload your ID proof for verification and additional documents to
+          enhance your profile credibility.
         </p>
 
-        <div>
-          <label>Mark Sheet / Academic Transcript (Optional)</label>
+        {/* ID Proof - Required */}
+        <div className="id-proof-section">
+          <label>
+            Government ID Proof <span className="required">*</span>
+          </label>
           <div className="file-upload">
             <label className="file-upload-label">
-              <span className="file-upload-icon">📊</span>
-              <span>Upload Mark Sheet</span>
+              <span className="file-upload-icon">🪪</span>
+              <span>
+                Upload ID Proof (Aadhaar/PAN/Passport/Driving License)
+              </span>
               <input
                 type="file"
                 accept=".pdf,.jpg,.jpeg,.png"
@@ -197,31 +202,37 @@ const QualificationDetails = ({ profileData, updateProfileData }) => {
                     updateProfileData({
                       documents: {
                         ...profileData.documents,
-                        markSheet: file,
+                        idDocument: file,
                       },
                     });
                   }
                 }}
               />
             </label>
-            {profileData.documents?.markSheet && (
-              <div className="file-name">
-                {profileData.documents.markSheet.name}
+            {profileData.documents?.idDocument && (
+              <div className="file-name success">
+                ✓ {profileData.documents.idDocument.name}
               </div>
             )}
           </div>
           <p className="help-text">
-            Upload your academic mark sheet or transcripts to showcase your
-            academic performance
+            <strong>Required:</strong> Upload a clear copy of your
+            government-issued ID (Aadhaar Card, PAN Card, Passport, or Driving
+            License) for identity verification. This is mandatory to become a
+            verified tutor.
           </p>
         </div>
 
-        <div>
-          <label>Teaching Experience Certificate (Optional)</label>
+        {/* Qualification Document - Required */}
+        <div className="qualification-doc-section mt-4">
+          <label>
+            Highest Qualification Certificate{" "}
+            <span className="required">*</span>
+          </label>
           <div className="file-upload">
             <label className="file-upload-label">
-              <span className="file-upload-icon">📝</span>
-              <span>Upload Experience Certificate</span>
+              <span className="file-upload-icon">🎓</span>
+              <span>Upload Qualification Certificate/Degree</span>
               <input
                 type="file"
                 accept=".pdf,.jpg,.jpeg,.png"
@@ -231,57 +242,138 @@ const QualificationDetails = ({ profileData, updateProfileData }) => {
                     updateProfileData({
                       documents: {
                         ...profileData.documents,
-                        experienceCertificate: file,
+                        qualificationDocument: file,
                       },
                     });
                   }
                 }}
               />
             </label>
-            {profileData.documents?.experienceCertificate && (
-              <div className="file-name">
-                {profileData.documents.experienceCertificate.name}
+            {profileData.documents?.qualificationDocument && (
+              <div className="file-name success">
+                ✓ {profileData.documents.qualificationDocument.name}
               </div>
             )}
           </div>
           <p className="help-text">
-            If you have prior teaching experience, upload certificates from
-            previous institutions
+            <strong>Required:</strong> Upload your highest qualification
+            certificate or degree to verify your educational background.
           </p>
         </div>
 
-        <div>
-          <label>Additional Certifications (Optional)</label>
-          <div className="file-upload">
-            <label className="file-upload-label">
-              <span className="file-upload-icon">🏆</span>
-              <span>Upload Additional Certificates</span>
-              <input
-                type="file"
-                accept=".pdf,.jpg,.jpeg,.png"
-                onChange={(e) => {
-                  const file = e.target.files[0];
-                  if (file) {
-                    updateProfileData({
-                      documents: {
-                        ...profileData.documents,
-                        additionalCertificates: file,
-                      },
-                    });
-                  }
-                }}
-              />
-            </label>
-            {profileData.documents?.additionalCertificates && (
-              <div className="file-name">
-                {profileData.documents.additionalCertificates.name}
-              </div>
-            )}
+        {/* Optional Documents Section */}
+        <div className="optional-docs-header">
+          <h4>Optional Supporting Documents</h4>
+        </div>
+        <p className="help-text mb-3">
+          These documents are optional but can enhance your profile credibility.
+        </p>
+
+        <div className="optional-documents-grid">
+          <div
+            className={`optional-doc-card ${
+              profileData.documents?.markSheet ? "has-file" : ""
+            }`}
+          >
+            <label>Mark Sheet / Academic Transcript</label>
+            <div className="file-upload">
+              <label className="file-upload-label">
+                <span className="file-upload-icon">📊</span>
+                <span>Upload Mark Sheet</span>
+                <input
+                  type="file"
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                      updateProfileData({
+                        documents: {
+                          ...profileData.documents,
+                          markSheet: file,
+                        },
+                      });
+                    }
+                  }}
+                />
+              </label>
+              {profileData.documents?.markSheet && (
+                <div className="file-name success">
+                  ✓ {profileData.documents.markSheet.name}
+                </div>
+              )}
+            </div>
+            <p className="help-text">Showcase your academic performance</p>
           </div>
-          <p className="help-text">
-            Upload any additional certifications or specialized training
-            documents
-          </p>
+
+          <div
+            className={`optional-doc-card ${
+              profileData.documents?.experienceCertificate ? "has-file" : ""
+            }`}
+          >
+            <label>Teaching Experience Certificate</label>
+            <div className="file-upload">
+              <label className="file-upload-label">
+                <span className="file-upload-icon">📝</span>
+                <span>Upload Certificate</span>
+                <input
+                  type="file"
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                      updateProfileData({
+                        documents: {
+                          ...profileData.documents,
+                          experienceCertificate: file,
+                        },
+                      });
+                    }
+                  }}
+                />
+              </label>
+              {profileData.documents?.experienceCertificate && (
+                <div className="file-name success">
+                  ✓ {profileData.documents.experienceCertificate.name}
+                </div>
+              )}
+            </div>
+            <p className="help-text">Prior teaching experience certificates</p>
+          </div>
+
+          <div
+            className={`optional-doc-card ${
+              profileData.documents?.additionalCertificates ? "has-file" : ""
+            }`}
+          >
+            <label>Additional Certifications</label>
+            <div className="file-upload">
+              <label className="file-upload-label">
+                <span className="file-upload-icon">🏆</span>
+                <span>Upload Certificates</span>
+                <input
+                  type="file"
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                      updateProfileData({
+                        documents: {
+                          ...profileData.documents,
+                          additionalCertificates: file,
+                        },
+                      });
+                    }
+                  }}
+                />
+              </label>
+              {profileData.documents?.additionalCertificates && (
+                <div className="file-name success">
+                  ✓ {profileData.documents.additionalCertificates.name}
+                </div>
+              )}
+            </div>
+            <p className="help-text">Specialized training documents</p>
+          </div>
         </div>
       </div>
     </div>

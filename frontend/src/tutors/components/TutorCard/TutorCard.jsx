@@ -124,6 +124,9 @@ const TutorCard = ({ tutor, expanded = false }) => {
                 )}
               </>
             )}
+            {tutor.gender && (
+              <span className="tutor-tag gender">{tutor.gender}</span>
+            )}
             {parseFloat(tutor.rating) >= 4.5 && (
               <span className="tutor-tag top-rated">Top Rated</span>
             )}

@@ -223,16 +223,21 @@ const TutorProfileSetup = () => {
             (profileData.location.city && profileData.location.country))
         );
       case 3:
-        // Make qualification fields optional if they were already populated from signup
+        // Check qualification fields
         const hasQualifications =
           profileData.qualification &&
           profileData.university &&
           profileData.experience &&
           profileData.specialization;
 
-        // If we're loading data (which means we're getting it from the backend),
-        // or if the user has filled in all the required qualification fields, consider it valid
-        return isLoading || hasQualifications;
+        // Check required documents (ID proof and qualification certificate)
+        const hasRequiredDocuments =
+          profileData.documents.idDocument &&
+          profileData.documents.qualificationDocument;
+
+        // If we're loading data, consider it valid
+        // Otherwise, require both qualification fields AND required documents
+        return isLoading || (hasQualifications && hasRequiredDocuments);
       case 4:
         return profileData.availability.length > 0;
       default:

@@ -68,6 +68,7 @@ const TutorsPage = ({ teachingMode }) => {
         teachingMode: newFilters.teachingMode
           ? [newFilters.teachingMode]
           : undefined,
+        gender: newFilters.gender || undefined,
         subjects: newFilters.subjects
           ? newFilters.subjects.join(",")
           : undefined,
@@ -102,18 +103,39 @@ const TutorsPage = ({ teachingMode }) => {
         setTutors(response.tutors);
         setPagination(response.pagination || pagination);
 
-        // Collect subject count data for the filter options
+        // Collect count data for filter options
         const subjectCountMap = {};
+        const genderCountMap = {};
         const locationSet = new Set();
         const ratingCounts = { 2: 0, 3: 0, 4: 0 };
 
         response.tutors.forEach((tutor) => {
-          // For specialization (subject)
+          // For specialization (subject) - count specialization (case-insensitive)
           if (tutor.specialization) {
-            if (!subjectCountMap[tutor.specialization]) {
-              subjectCountMap[tutor.specialization] = 0;
+            const normalizedSpec = tutor.specialization.toLowerCase();
+            if (!subjectCountMap[normalizedSpec]) {
+              subjectCountMap[normalizedSpec] = 0;
             }
-            subjectCountMap[tutor.specialization]++;
+            subjectCountMap[normalizedSpec]++;
+          }
+
+          // For subjects array - count all subjects taught by the tutor (case-insensitive)
+          if (tutor.subjects && Array.isArray(tutor.subjects)) {
+            tutor.subjects.forEach((subject) => {
+              const normalizedSubject = subject.toLowerCase();
+              if (!subjectCountMap[normalizedSubject]) {
+                subjectCountMap[normalizedSubject] = 0;
+              }
+              subjectCountMap[normalizedSubject]++;
+            });
+          }
+
+          // For gender
+          if (tutor.gender) {
+            if (!genderCountMap[tutor.gender]) {
+              genderCountMap[tutor.gender] = 0;
+            }
+            genderCountMap[tutor.gender]++;
           }
 
           // For location
@@ -132,8 +154,31 @@ const TutorsPage = ({ teachingMode }) => {
         setFilterOptions((prev) => {
           const updatedSubjects = prev.subjects.map((subject) => ({
             ...subject,
-            count: subjectCountMap[subject.value] || 0,
+            count: subjectCountMap[subject.value.toLowerCase()] || 0,
           }));
+
+          const updatedGenders = [
+            {
+              value: "Male",
+              label: "Male",
+              count: genderCountMap["Male"] || 0,
+            },
+            {
+              value: "Female",
+              label: "Female",
+              count: genderCountMap["Female"] || 0,
+            },
+            {
+              value: "Other",
+              label: "Other",
+              count: genderCountMap["Other"] || 0,
+            },
+            {
+              value: "Prefer not to say",
+              label: "Prefer not to say",
+              count: genderCountMap["Prefer not to say"] || 0,
+            },
+          ];
 
           const locations = Array.from(locationSet).map((city) => ({
             value: city,
@@ -146,6 +191,7 @@ const TutorsPage = ({ teachingMode }) => {
           return {
             ...prev,
             subjects: updatedSubjects,
+            genders: updatedGenders,
             locations,
             ratingCounts,
           };

@@ -48,6 +48,27 @@ const TutorFilters = ({
         />
       </FilterGroup>
 
+      <FilterGroup title="Gender">
+        <CheckboxFilter
+          options={
+            filterOptions.genders || [
+              { value: "Male", label: "Male", count: 0 },
+              { value: "Female", label: "Female", count: 0 },
+              { value: "Other", label: "Other", count: 0 },
+              {
+                value: "Prefer not to say",
+                label: "Prefer not to say",
+                count: 0,
+              },
+            ]
+          }
+          selectedValues={filters.gender || []}
+          onChange={(values) => handleFilterChange("gender", values)}
+          name="gender"
+          showCount={true}
+        />
+      </FilterGroup>
+
       <FilterGroup title="Subjects">
         <CheckboxFilter
           options={filterOptions.subjects || []}

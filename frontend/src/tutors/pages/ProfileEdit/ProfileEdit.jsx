@@ -8,6 +8,7 @@ import { QualificationsEdit } from "./components";
 import { SubjectsEdit } from "./components";
 import { DocumentsEdit } from "./components";
 import { PhotoEdit } from "./components";
+import { PersonalInfoEdit } from "./components";
 
 // Import styles
 import "./styles/profile-edit-styles.css";
@@ -122,6 +123,15 @@ const ProfileEdit = () => {
         return (
           <AboutMeEdit
             bio={profile.bio}
+            location={profile.location}
+            onSave={handleSave}
+            onCancel={handleCancel}
+          />
+        );
+      case "personalInfo":
+        return (
+          <PersonalInfoEdit
+            profile={profile}
             onSave={handleSave}
             onCancel={handleCancel}
           />

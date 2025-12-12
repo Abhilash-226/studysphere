@@ -1,0 +1,294 @@
+/* Tutor Session Details Page Styles */
+.tutor-session-details-page {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.tutor-session-details-page h2 {
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+/* Session Detail Cards */
+.session-detail-card {
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.session-detail-card:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.session-detail-card .card-body {
+  padding: 1.5rem;
+}
+
+.session-detail-card .card-title {
+  color: #2c3e50;
+  font-weight: 600;
+  border-bottom: 2px solid #e9ecef;
+  padding-bottom: 0.5rem;
+}
+
+/* Status Badge */
+.status-badge {
+  font-size: 0.75rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 15px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Session Subject */
+.session-subject {
+  color: #2c3e50;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 0;
+}
+
+.session-description {
+  color: #6c757d;
+  line-height: 1.6;
+  margin-bottom: 0;
+}
+
+/* Student Avatar */
+.student-avatar-large {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #007bff;
+  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+}
+
+/* Student Info Details */
+.student-info-details .form-label {
+  color: #495057;
+  font-size: 0.9rem;
+  margin-bottom: 0.3rem;
+}
+
+.student-info-details p {
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+/* Session Timestamps */
+.session-timestamps {
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 8px;
+  padding: 0.75rem;
+  margin: -0.75rem;
+  margin-top: 1rem;
+}
+
+/* Action Buttons */
+.tutor-session-details-page .btn {
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.tutor-session-details-page .btn-success {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  border: none;
+  box-shadow: 0 2px 10px rgba(40, 167, 69, 0.3);
+}
+
+.tutor-session-details-page .btn-success:hover {
+  background: linear-gradient(135deg, #218838, #1e9a7d);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+}
+
+.tutor-session-details-page .btn-outline-secondary {
+  border: 2px solid #6c757d;
+  color: #6c757d;
+}
+
+.tutor-session-details-page .btn-outline-secondary:hover {
+  background: #6c757d;
+  border-color: #6c757d;
+  color: white;
+  transform: translateY(-1px);
+}
+
+/* Form Labels */
+.form-label {
+  color: #495057;
+  font-size: 0.9rem;
+  margin-bottom: 0.3rem;
+}
+
+/* Badge Styling */
+.badge {
+  font-size: 0.75rem;
+  padding: 0.4rem 0.8rem;
+}
+
+.bg-info {
+  background-color: #17a2b8 !important;
+}
+
+/* Price Display */
+.text-success {
+  color: #28a745 !important;
+}
+
+/* Star Ratings */
+.fa-star {
+  font-size: 1.1rem;
+  margin-right: 0.2rem;
+}
+
+.fa-star.text-warning {
+  color: #ffc107 !important;
+}
+
+.fa-star.text-muted {
+  color: #6c757d !important;
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+  border-radius: 10px;
+  border: none;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.dropdown-item {
+  padding: 0.5rem 1rem;
+  transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background: #f8f9fa;
+  transform: translateX(5px);
+}
+
+.dropdown-item.text-danger:hover {
+  background: #dc3545;
+  color: white !important;
+}
+
+/* Loading States */
+.tutor-session-details-page .spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+.spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Alert Styling */
+.tutor-session-details-page .alert {
+  border-radius: 12px;
+  border: none;
+  padding: 2rem;
+}
+
+.tutor-session-details-page .alert .fa {
+  opacity: 0.7;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .tutor-session-details-page {
+    padding: 1rem 0;
+  }
+  
+  .session-detail-card .card-body {
+    padding: 1rem;
+  }
+  
+  .tutor-session-details-page h2 {
+    font-size: 1.5rem;
+  }
+  
+  .student-avatar-large {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .d-flex.gap-2 {
+    flex-direction: column;
+    gap: 0.5rem !important;
+  }
+  
+  .d-flex.gap-2 .btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .tutor-session-details-page .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .session-detail-card .card-body {
+    padding: 0.75rem;
+  }
+  
+  .status-badge {
+    font-size: 0.65rem;
+    padding: 0.3rem 0.6rem;
+  }
+  
+  .btn {
+    font-size: 0.85rem;
+    padding: 0.5rem 1rem;
+  }
+}
+
+/* Animation for content load */
+.session-detail-card {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Back Button */
+.btn-outline-secondary {
+  transition: all 0.2s ease;
+}
+
+.btn-outline-secondary:hover {
+  transform: translateY(-1px);
+}
+
+/* Card Hover Effects */
+.session-detail-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.session-detail-card:hover {
+  transform: translateY(-2px);
+}
+
+/* Session Info Styling */
+.session-info p {
+  margin-bottom: 0.5rem;
+  color: #2c3e50;
+}
+
+.session-info .fa {
+  width: 16px;
+  color: #6c757d;
+}

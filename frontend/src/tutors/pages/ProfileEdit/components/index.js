@@ -4,6 +4,7 @@ import QualificationsEdit from "./QualificationsEdit";
 import SubjectsEdit from "./SubjectsEdit";
 import DocumentsEdit from "./DocumentsEdit";
 import PhotoEdit from "./PhotoEdit/PhotoEdit";
+import PersonalInfoEdit from "./PersonalInfoEdit";
 
 export {
   AboutMeEdit,
@@ -12,4 +13,5 @@ export {
   SubjectsEdit,
   DocumentsEdit,
   PhotoEdit,
+  PersonalInfoEdit,
 };

@@ -10,7 +10,7 @@ exports.getFeaturedTutors = async (req, res) => {
     const tutors = await Tutor.find({ verificationStatus: "approved" })
       .populate({
         path: "user",
-        select: "firstName lastName email profileImage",
+        select: "firstName lastName email profileImage gender",
       })
       .limit(limit)
       .lean();
@@ -21,7 +21,9 @@ exports.getFeaturedTutors = async (req, res) => {
       userId: tutor.user._id,
       name: `${tutor.user.firstName} ${tutor.user.lastName}`,
       email: tutor.user.email,
+      gender: tutor.user.gender,
       specialization: tutor.specialization,
+      subjects: tutor.subjects || [],
       qualification: tutor.qualification,
       experience: tutor.experience,
       university: tutor.universityName,
@@ -71,21 +73,84 @@ exports.getAllTutors = async (req, res) => {
       }
     }
 
-    // Subjects/Specialization filter (using partial text matching)
+    // Build OR conditions array for complex filters
+    const orConditions = [];
+
+    // Subjects/Specialization filter - search both specialization and subjects array
     if (req.query.subjects) {
-      filter.specialization = new RegExp(req.query.subjects, "i");
+      console.log("DEBUG: Raw req.query.subjects:", req.query.subjects);
+      console.log(
+        "DEBUG: Type of req.query.subjects:",
+        typeof req.query.subjects
+      );
+
+      // Handle both array and comma-separated string formats
+      let subjects;
+      if (Array.isArray(req.query.subjects)) {
+        subjects = req.query.subjects;
+      } else if (
+        typeof req.query.subjects === "string" &&
+        req.query.subjects.includes(",")
+      ) {
+        subjects = req.query.subjects.split(",").map((s) => s.trim());
+      } else {
+        subjects = [req.query.subjects];
+      }
+
+      console.log("DEBUG: Processed subjects array:", subjects);
+
+      const subjectConditions = [];
+      subjects.forEach((subject) => {
+        console.log("DEBUG: Creating regex for subject:", subject);
+        const regex = new RegExp(subject, "i");
+        console.log("DEBUG: Created regex:", regex);
+        subjectConditions.push(
+          { specialization: regex },
+          { subjects: { $in: [regex] } }
+        );
+      });
+
+      if (subjectConditions.length > 0) {
+        orConditions.push(...subjectConditions);
+      }
     }
 
     // Location filter for offline tutoring
     if (req.query.location) {
-      filter["location.city"] = new RegExp(req.query.location, "i");
+      const locations = Array.isArray(req.query.location)
+        ? req.query.location
+        : [req.query.location];
+
+      if (locations.length === 1) {
+        filter["location.city"] = new RegExp(locations[0], "i");
+      } else {
+        orConditions.push(
+          ...locations.map((loc) => ({
+            "location.city": new RegExp(loc, "i"),
+          }))
+        );
+      }
     }
 
-    // Experience filter (minimum years)
-    if (req.query.minExperience) {
-      // Note: This assumes experience is stored as a number in years
-      // If experience is stored as a string, you'd need to convert/parse it
-      filter.experience = { $gte: req.query.minExperience };
+    // Apply OR conditions if any exist
+    if (orConditions.length > 0) {
+      filter.$or = orConditions;
+    }
+
+    console.log(
+      "DEBUG: Final filter for multiple subjects:",
+      JSON.stringify(filter, null, 2)
+    );
+
+    // Experience filter (range)
+    if (req.query.minExperience || req.query.maxExperience) {
+      filter.experience = {};
+      if (req.query.minExperience) {
+        filter.experience.$gte = parseInt(req.query.minExperience);
+      }
+      if (req.query.maxExperience) {
+        filter.experience.$lte = parseInt(req.query.maxExperience);
+      }
     }
 
     // Price/Hourly rate range filter
@@ -111,26 +176,72 @@ exports.getAllTutors = async (req, res) => {
     const sortOption = {};
     sortOption[sort] = order;
 
+    // Build populate options for user with gender filter
+    const populateOptions = {
+      path: "user",
+      select: "firstName lastName email profileImage gender",
+    };
+
+    // Add gender filter to populate if provided
+    if (req.query.gender) {
+      const genders = Array.isArray(req.query.gender)
+        ? req.query.gender
+        : [req.query.gender];
+      populateOptions.match = { gender: { $in: genders } };
+    }
+
     // Execute the query with filters
     const tutors = await Tutor.find(filter)
-      .populate({
-        path: "user",
-        select: "firstName lastName email profileImage",
-      })
+      .populate(populateOptions)
       .sort(sortOption)
       .skip(skip)
       .limit(limit)
       .lean();
 
-    // Count total filtered tutors
-    const totalTutors = await Tutor.countDocuments(filter);
+    console.log(
+      "DEBUG: Query returned",
+      tutors.length,
+      "tutors for filter:",
+      JSON.stringify(filter, null, 2)
+    );
 
-    const formattedTutors = tutors.map((tutor) => ({
+    // Filter out tutors where user was filtered out by gender populate match
+    const filteredTutors = tutors.filter((tutor) => tutor.user !== null);
+
+    // Count total filtered tutors (need to recalculate with gender filter if applied)
+    let totalTutors;
+    if (req.query.gender) {
+      // For gender filtering, we need to count using aggregation since it involves User model
+      const genders = Array.isArray(req.query.gender)
+        ? req.query.gender
+        : [req.query.gender];
+
+      const countResult = await Tutor.aggregate([
+        { $match: filter },
+        {
+          $lookup: {
+            from: "users",
+            localField: "user",
+            foreignField: "_id",
+            as: "userInfo",
+          },
+        },
+        { $match: { "userInfo.gender": { $in: genders } } },
+        { $count: "total" },
+      ]);
+
+      totalTutors = countResult.length > 0 ? countResult[0].total : 0;
+    } else {
+      totalTutors = await Tutor.countDocuments(filter);
+    }
+
+    const formattedTutors = filteredTutors.map((tutor) => ({
       id: tutor._id,
       userId: tutor.user._id,
       name: `${tutor.user.firstName} ${tutor.user.lastName}`,
       email: tutor.user.email,
       specialization: tutor.specialization,
+      subjects: tutor.subjects || [],
       qualification: tutor.qualification,
       experience: tutor.experience,
       university: tutor.universityName,
@@ -140,6 +251,7 @@ exports.getAllTutors = async (req, res) => {
       availability: tutor.availability || [],
       rating: tutor.rating || null,
       reviews: tutor.totalReviews || 0,
+      gender: tutor.user.gender || null,
       image: tutor.user.profileImage || "/images/tutors/tutor-placeholder.svg",
     }));
 
@@ -170,7 +282,7 @@ exports.getTutorById = async (req, res) => {
     const tutor = await Tutor.findById(req.params.id)
       .populate({
         path: "user",
-        select: "firstName lastName email profileImage",
+        select: "firstName lastName email profileImage gender",
       })
       .lean();
 
@@ -194,6 +306,7 @@ exports.getTutorById = async (req, res) => {
       userId: tutor.user._id,
       name: `${tutor.user.firstName} ${tutor.user.lastName}`,
       email: tutor.user.email,
+      gender: tutor.user.gender,
       specialization: tutor.specialization,
       qualification: tutor.qualification,
       experience: tutor.experience,
@@ -232,7 +345,7 @@ exports.getProfile = async (req, res) => {
     const tutor = await Tutor.findOne({ user: userId })
       .populate({
         path: "user",
-        select: "firstName lastName email profileImage phoneNumber",
+        select: "firstName lastName email profileImage phoneNumber gender",
       })
       .lean();
 
@@ -252,6 +365,7 @@ exports.getProfile = async (req, res) => {
       lastName: tutor.user.lastName,
       email: tutor.user.email,
       phoneNumber: tutor.user.phoneNumber,
+      gender: tutor.user.gender,
       profileImage: tutor.user.profileImage,
       bio: tutor.bio,
       specialization: tutor.specialization,
@@ -279,6 +393,7 @@ exports.getProfile = async (req, res) => {
       email: tutor.user.email,
       phoneNumber: tutor.user.phoneNumber,
       profileImage: tutor.user.profileImage,
+      gender: tutor.user.gender,
     };
 
     res.status(200).json({
@@ -320,6 +435,7 @@ exports.updateProfile = async (req, res) => {
 
     // Extract fields from the request body
     const {
+      gender,
       bio,
       teachingMode,
       subjects,
@@ -334,6 +450,11 @@ exports.updateProfile = async (req, res) => {
       certifications,
       availability,
     } = req.body;
+
+    // Update gender in User model if provided
+    if (gender !== undefined) {
+      await User.findByIdAndUpdate(userId, { gender }, { runValidators: true });
+    }
 
     // Update tutor profile with proper type handling
     tutor.bio = bio || tutor.bio;
@@ -435,8 +556,28 @@ exports.updateProfile = async (req, res) => {
       tutor.verificationStatus = "pending";
     }
 
+    // Mark profile as complete if essential fields are filled
+    const hasEssentialFields =
+      tutor.bio &&
+      tutor.teachingMode &&
+      tutor.teachingMode.length > 0 &&
+      tutor.subjects &&
+      tutor.subjects.length > 0 &&
+      tutor.qualification &&
+      tutor.availability &&
+      tutor.availability.length > 0;
+
+    if (hasEssentialFields) {
+      tutor.isProfileComplete = true;
+    }
+
     // Save the tutor
     await tutor.save();
+
+    // Get updated user information to include gender
+    const updatedUser = await User.findById(userId).select(
+      "firstName lastName email profileImage phoneNumber gender"
+    );
 
     res.status(200).json({
       success: true,
@@ -453,6 +594,7 @@ exports.updateProfile = async (req, res) => {
         location: tutor.location,
         availability: tutor.availability,
         verificationStatus: tutor.verificationStatus,
+        user: updatedUser,
       },
     });
   } catch (error) {

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Container, Form, Button, Alert } from "react-bootstrap";
+import { GoogleLogin } from "@react-oauth/google";
 import {
   FaGoogle,
   FaEye,
@@ -24,6 +25,57 @@ const LoginForm = ({ userType = "student" }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+
+  // Handle Google Sign-In Success
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setError(null);
+    setIsGoogleLoading(true);
+
+    try {
+      const response = await authService.googleAuth(
+        credentialResponse.credential,
+        userType
+      );
+
+      if (response.token && response.user) {
+        // Redirect to profile setup for new users or if profile is incomplete
+        const needsProfileSetup =
+          response.isNewUser ||
+          (response.user.role === "tutor" && !response.user.isProfileComplete);
+
+        if (needsProfileSetup) {
+          if (response.user.role === "tutor") {
+            login(
+              response.user,
+              response.token,
+              response.user.role,
+              "/tutor/profile-setup"
+            );
+          } else {
+            login(
+              response.user,
+              response.token,
+              response.user.role,
+              "/student/profile"
+            );
+          }
+        } else {
+          // Existing user with complete profile - go to dashboard
+          login(response.user, response.token, response.user.role);
+        }
+      }
+    } catch (err) {
+      setError(err.message || "Google sign-in failed. Please try again.");
+    } finally {
+      setIsGoogleLoading(false);
+    }
+  };
+
+  // Handle Google Sign-In Error
+  const handleGoogleError = () => {
+    setError("Google sign-in failed. Please try again or use email login.");
+  };
 
   const handleChange = (e) => {
     const { name, value, checked } = e.target;
@@ -219,13 +271,23 @@ const LoginForm = ({ userType = "student" }) => {
               <span>Or continue with</span>
             </div>
 
-            <div className="social-login">
-              <button
-                type="button"
-                className="social-btn mx-auto d-block w-100"
-              >
-                <FaGoogle className="me-2" /> Google
-              </button>
+            <div className="social-login d-flex justify-content-center">
+              {isGoogleLoading ? (
+                <Button variant="outline-secondary" disabled className="w-100">
+                  <span className="spinner-border spinner-border-sm me-2" />
+                  Signing in with Google...
+                </Button>
+              ) : (
+                <GoogleLogin
+                  onSuccess={handleGoogleSuccess}
+                  onError={handleGoogleError}
+                  text="signin_with"
+                  shape="rectangular"
+                  size="large"
+                  width="100%"
+                  theme="outline"
+                />
+              )}
             </div>
           </Form>
         </div>

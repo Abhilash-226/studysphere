@@ -14,7 +14,7 @@ export const formatImageUrl = (imageUrl) => {
     imageUrl === "null" ||
     imageUrl === "undefined"
   ) {
-    return "/images/tutors/tutor-placeholder.svg";
+    return "/images/default-avatar.png";
   }
 
   // Normalize path separators (convert backslashes to forward slashes)

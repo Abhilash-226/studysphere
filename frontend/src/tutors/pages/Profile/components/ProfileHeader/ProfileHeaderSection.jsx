@@ -11,6 +11,7 @@ import "./ProfileHeaderSection.css";
  * @param {string} props.user.firstName - User's first name
  * @param {string} props.user.lastName - User's last name
  * @param {string} props.user.email - User's email
+ * @param {string} props.user.gender - User's gender
  * @param {string} props.profileImage - URL to profile image
  * @param {number} props.completionPercentage - Profile completion percentage
  * @param {string} props.qualification - Tutor qualification
@@ -26,6 +27,7 @@ const ProfileHeaderSection = ({
   qualification,
   specialization,
   experience,
+  location,
   onEdit,
 }) => {
   return (
@@ -38,7 +40,7 @@ const ProfileHeaderSection = ({
             className="profile-image"
             onError={(e) => {
               e.target.onerror = null;
-              e.target.src = "/images/tutors/tutor-placeholder.svg";
+              e.target.src = "/images/default-avatar.png";
             }}
           />
           <button
@@ -71,6 +73,17 @@ const ProfileHeaderSection = ({
           />
         </div>
 
+        <div className="d-flex justify-content-center mb-3">
+          <button
+            className="btn btn-outline-primary btn-sm"
+            onClick={() => onEdit("personalInfo")}
+            title="Edit personal information and location"
+          >
+            <FaPencilAlt className="me-1" />
+            Edit Personal Info
+          </button>
+        </div>
+
         <div className="d-flex flex-wrap justify-content-center mt-3 mb-3">
           <Badge bg="primary" className="me-2 mb-2 py-2 px-3">
             {qualification || "No Qualification"}
@@ -78,9 +91,14 @@ const ProfileHeaderSection = ({
           <Badge bg="info" className="me-2 mb-2 py-2 px-3">
             {specialization || "No Specialization"}
           </Badge>
-          <Badge bg="secondary" className="mb-2 py-2 px-3">
-            {experience || 0} Years Experience
+          <Badge bg="secondary" className="me-2 mb-2 py-2 px-3">
+            {experience || "null"} Years Experience
           </Badge>
+          {user?.gender && (
+            <Badge bg="success" className="mb-2 py-2 px-3">
+              {user.gender}
+            </Badge>
+          )}
         </div>
       </div>
     </Card>
