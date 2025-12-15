@@ -51,8 +51,8 @@ const tutorSchema = new mongoose.Schema(
     },
     verificationStatus: {
       type: String,
-      enum: ["pending", "approved", "rejected"],
-      default: "approved", // Changed from "pending" to "approved"
+      enum: ["pending", "approved", "rejected", "needs_info"],
+      default: "pending", // Tutors require admin approval before they can accept students
     },
     verificationNotes: {
       type: String,
@@ -65,6 +65,29 @@ const tutorSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
+    verificationHistory: [
+      {
+        action: {
+          type: String,
+          enum: [
+            "submitted",
+            "approved",
+            "rejected",
+            "info_requested",
+            "resubmitted",
+          ],
+        },
+        performedBy: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
+        notes: String,
+        timestamp: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
     isProfileComplete: {
       type: Boolean,
       default: false,

@@ -53,6 +53,8 @@ export const AuthProvider = ({ children }) => {
     // Redirect based on custom path or role
     if (customRedirect) {
       navigate(customRedirect);
+    } else if (role === "admin") {
+      navigate("/admin/dashboard");
     } else if (role === "student") {
       navigate("/student/dashboard");
     } else if (role === "tutor") {

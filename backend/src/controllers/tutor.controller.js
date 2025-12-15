@@ -381,7 +381,21 @@ exports.getProfile = async (req, res) => {
       availability: tutor.availability || [],
       certifications: tutor.certifications || [],
       verificationStatus: tutor.verificationStatus,
-      // Include document information to show if they were previously uploaded
+      // Include document paths for display
+      idDocument: tutor.idDocument,
+      qualificationDocument: tutor.qualificationDocument,
+      markSheet: tutor.markSheet,
+      experienceCertificate: tutor.experienceCertificate,
+      additionalCertificates: tutor.additionalCertificates,
+      // Include documents object for DocumentsSection component
+      documents: {
+        idDocument: tutor.idDocument || null,
+        qualificationDocument: tutor.qualificationDocument || null,
+        markSheet: tutor.markSheet || null,
+        experienceCertificate: tutor.experienceCertificate || null,
+        additionalCertificates: tutor.additionalCertificates || null,
+      },
+      // Legacy boolean fields for backward compatibility
       hasIdDocument: !!tutor.idDocument,
       hasQualificationDocument: !!tutor.qualificationDocument,
     };

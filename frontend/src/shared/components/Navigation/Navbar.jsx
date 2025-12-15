@@ -135,7 +135,9 @@ const Navbar = () => {
                 <NavDropdown.Item
                   as={Link}
                   to={
-                    userRole === "student"
+                    userRole === "admin"
+                      ? "/admin/dashboard"
+                      : userRole === "student"
                       ? "/student/dashboard"
                       : "/tutor/dashboard"
                   }
@@ -145,43 +147,53 @@ const Navbar = () => {
                   Dashboard
                 </NavDropdown.Item>
 
-                {/* Messages link */}
-                <NavDropdown.Item
-                  as={Link}
-                  to={userRole === "student" ? "/student/chat" : "/tutor/chat"}
-                  onClick={() => setExpanded(false)}
-                >
-                  <FaEnvelope className="me-2" />
-                  Messages
-                </NavDropdown.Item>
+                {/* Messages link - only for students and tutors */}
+                {userRole !== "admin" && (
+                  <NavDropdown.Item
+                    as={Link}
+                    to={
+                      userRole === "student" ? "/student/chat" : "/tutor/chat"
+                    }
+                    onClick={() => setExpanded(false)}
+                  >
+                    <FaEnvelope className="me-2" />
+                    Messages
+                  </NavDropdown.Item>
+                )}
 
-                {/* Sessions link - customized by role */}
-                <NavDropdown.Item
-                  as={Link}
-                  to={
-                    userRole === "student"
-                      ? "/student/sessions"
-                      : "/tutor/sessions"
-                  }
-                  onClick={() => setExpanded(false)}
-                >
-                  <FaCalendarAlt className="me-2" />
-                  {userRole === "student" ? "My Sessions" : "Teaching Schedule"}
-                </NavDropdown.Item>
+                {/* Sessions link - customized by role, not for admin */}
+                {userRole !== "admin" && (
+                  <NavDropdown.Item
+                    as={Link}
+                    to={
+                      userRole === "student"
+                        ? "/student/sessions"
+                        : "/tutor/sessions"
+                    }
+                    onClick={() => setExpanded(false)}
+                  >
+                    <FaCalendarAlt className="me-2" />
+                    {userRole === "student"
+                      ? "My Sessions"
+                      : "Teaching Schedule"}
+                  </NavDropdown.Item>
+                )}
 
-                {/* Profile link - customized by role */}
-                <NavDropdown.Item
-                  as={Link}
-                  to={
-                    userRole === "student"
-                      ? "/student/profile"
-                      : "/tutor/profile"
-                  }
-                  onClick={() => setExpanded(false)}
-                >
-                  <FaCog className="me-2" />
-                  My Profile
-                </NavDropdown.Item>
+                {/* Profile link - customized by role, not for admin */}
+                {userRole !== "admin" && (
+                  <NavDropdown.Item
+                    as={Link}
+                    to={
+                      userRole === "student"
+                        ? "/student/profile"
+                        : "/tutor/profile"
+                    }
+                    onClick={() => setExpanded(false)}
+                  >
+                    <FaCog className="me-2" />
+                    My Profile
+                  </NavDropdown.Item>
+                )}
 
                 <NavDropdown.Divider />
 

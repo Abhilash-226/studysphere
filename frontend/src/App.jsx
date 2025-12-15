@@ -33,6 +33,11 @@ import {
   TutorMessagesPage,
   StudentProfileViewer,
 } from "./tutors/pages";
+import {
+  AdminDashboard,
+  VerificationQueue,
+  TutorVerificationDetail,
+} from "./admin/pages";
 import TeachingSchedule from "./tutors/pages/Sessions/TeachingSchedule";
 import TutorSessionDetails from "./tutors/pages/Sessions/TutorSessionDetails";
 import ChatPage from "./shared/components/Chat/pages/ChatPage";
@@ -167,6 +172,26 @@ const App = () => {
                   <Route
                     path="/tutor/chat/:conversationId"
                     element={<ChatPage />}
+                  />
+                </Route>
+
+                {/* Protected Admin Routes */}
+                <Route
+                  element={
+                    <ProtectedRoute
+                      redirectPath="/login-student"
+                      requiredRole="admin"
+                    />
+                  }
+                >
+                  <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                  <Route
+                    path="/admin/verifications"
+                    element={<VerificationQueue />}
+                  />
+                  <Route
+                    path="/admin/verifications/:tutorId"
+                    element={<TutorVerificationDetail />}
                   />
                 </Route>
 

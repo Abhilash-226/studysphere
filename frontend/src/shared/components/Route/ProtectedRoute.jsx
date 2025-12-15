@@ -27,6 +27,8 @@ const ProtectedRoute = ({ redirectPath = "/", requiredRole = null }) => {
       return <Navigate to="/student/dashboard" replace />;
     } else if (actualRole === "tutor") {
       return <Navigate to="/tutor/dashboard" replace />;
+    } else if (actualRole === "admin") {
+      return <Navigate to="/admin/dashboard" replace />;
     } else {
       return <Navigate to="/" replace />;
     }

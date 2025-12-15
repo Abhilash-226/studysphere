@@ -253,3 +253,171 @@ exports.sendVerificationPendingEmail = async (email, name) => {
 
   return await this.sendEmail(email, subject, html);
 };
+
+/**
+ * Send verification approval email to tutors
+ * @param {string} email - Tutor email
+ * @param {string} name - Tutor's name
+ */
+exports.sendVerificationApprovalEmail = async (email, name) => {
+  const subject =
+    "🎉 Congratulations! Your StudySphere Tutor Account is Approved";
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+      <div style="text-align: center; margin-bottom: 30px;">
+        <h1 style="color: #4a6cf7; margin: 0;">StudySphere</h1>
+        <p style="color: #666; margin: 5px 0;">Your Teaching Journey Begins!</p>
+      </div>
+      
+      <div style="background: #d4edda; border: 1px solid #c3e6cb; padding: 30px; border-radius: 10px; margin-bottom: 20px;">
+        <h2 style="color: #155724; margin-top: 0; text-align: center;">🎉 Verification Approved!</h2>
+        <p style="color: #155724; line-height: 1.5;">Hello ${name},</p>
+        <p style="color: #155724; line-height: 1.5;">
+          Great news! Your tutor account has been verified and approved. You can now start accepting students and conducting sessions on StudySphere.
+        </p>
+      </div>
+      
+      <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+        <h3 style="color: #333; margin-top: 0;">What's Next?</h3>
+        <ul style="color: #666; line-height: 1.8;">
+          <li>Complete your profile to attract more students</li>
+          <li>Set your availability and hourly rate</li>
+          <li>Add your teaching subjects and specializations</li>
+          <li>Start receiving session requests from students</li>
+        </ul>
+      </div>
+      
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="${
+          process.env.FRONTEND_URL || "http://localhost:5173"
+        }/tutor/dashboard" 
+           style="background: #4a6cf7; color: white; padding: 15px 30px; text-decoration: none; 
+                  border-radius: 5px; font-weight: bold; display: inline-block;">
+          Go to Your Dashboard
+        </a>
+      </div>
+      
+      <div style="border-top: 1px solid #eee; padding-top: 20px; font-size: 14px; color: #666;">
+        <p>Thank you for joining our community of educators!</p>
+        <p style="margin-bottom: 0;">
+          Best regards,<br>
+          The StudySphere Team
+        </p>
+      </div>
+    </div>
+  `;
+
+  return await this.sendEmail(email, subject, html);
+};
+
+/**
+ * Send verification rejection email to tutors
+ * @param {string} email - Tutor email
+ * @param {string} name - Tutor's name
+ * @param {string} reason - Rejection reason
+ */
+exports.sendVerificationRejectionEmail = async (email, name, reason) => {
+  const subject = "StudySphere Tutor Verification Update";
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+      <div style="text-align: center; margin-bottom: 30px;">
+        <h1 style="color: #4a6cf7; margin: 0;">StudySphere</h1>
+        <p style="color: #666; margin: 5px 0;">Verification Update</p>
+      </div>
+      
+      <div style="background: #f8d7da; border: 1px solid #f5c6cb; padding: 30px; border-radius: 10px; margin-bottom: 20px;">
+        <h2 style="color: #721c24; margin-top: 0;">Verification Not Approved</h2>
+        <p style="color: #721c24; line-height: 1.5;">Hello ${name},</p>
+        <p style="color: #721c24; line-height: 1.5;">
+          We regret to inform you that your tutor verification could not be approved at this time.
+        </p>
+      </div>
+      
+      <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+        <h3 style="color: #333; margin-top: 0;">Reason:</h3>
+        <p style="color: #666; line-height: 1.5; white-space: pre-wrap;">${
+          reason || "No specific reason provided."
+        }</p>
+      </div>
+      
+      <div style="background: #e7f3ff; border: 1px solid #b6d4fe; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+        <h3 style="color: #0a58ca; margin-top: 0;">What Can You Do?</h3>
+        <p style="color: #0a58ca; line-height: 1.5;">
+          If you believe this decision was made in error or you can provide additional documentation, 
+          please contact our support team at support@studysphere.com.
+        </p>
+      </div>
+      
+      <div style="border-top: 1px solid #eee; padding-top: 20px; font-size: 14px; color: #666;">
+        <p>We appreciate your interest in becoming a tutor on StudySphere.</p>
+        <p style="margin-bottom: 0;">
+          Best regards,<br>
+          The StudySphere Team
+        </p>
+      </div>
+    </div>
+  `;
+
+  return await this.sendEmail(email, subject, html);
+};
+
+/**
+ * Send additional info request email to tutors
+ * @param {string} email - Tutor email
+ * @param {string} name - Tutor's name
+ * @param {string} requestedInfo - What additional info is needed
+ */
+exports.sendVerificationInfoRequestEmail = async (
+  email,
+  name,
+  requestedInfo
+) => {
+  const subject = "StudySphere: Additional Information Needed for Verification";
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+      <div style="text-align: center; margin-bottom: 30px;">
+        <h1 style="color: #4a6cf7; margin: 0;">StudySphere</h1>
+        <p style="color: #666; margin: 5px 0;">Verification Update</p>
+      </div>
+      
+      <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 30px; border-radius: 10px; margin-bottom: 20px;">
+        <h2 style="color: #856404; margin-top: 0;">📋 Additional Information Required</h2>
+        <p style="color: #856404; line-height: 1.5;">Hello ${name},</p>
+        <p style="color: #856404; line-height: 1.5;">
+          We are reviewing your tutor verification request. To complete the verification process, we need some additional information from you.
+        </p>
+      </div>
+      
+      <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+        <h3 style="color: #333; margin-top: 0;">What We Need:</h3>
+        <p style="color: #666; line-height: 1.5; white-space: pre-wrap;">${requestedInfo}</p>
+      </div>
+      
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="${
+          process.env.FRONTEND_URL || "http://localhost:5173"
+        }/tutor/profile-setup" 
+           style="background: #4a6cf7; color: white; padding: 15px 30px; text-decoration: none; 
+                  border-radius: 5px; font-weight: bold; display: inline-block;">
+          Update Your Profile
+        </a>
+      </div>
+      
+      <div style="background: #e7f3ff; border: 1px solid #b6d4fe; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+        <p style="color: #0a58ca; margin: 0; font-size: 14px;">
+          <strong>💡 Tip:</strong> Please respond within 7 days to avoid delays in your verification process.
+        </p>
+      </div>
+      
+      <div style="border-top: 1px solid #eee; padding-top: 20px; font-size: 14px; color: #666;">
+        <p>If you have questions, please contact our support team at support@studysphere.com</p>
+        <p style="margin-bottom: 0;">
+          Best regards,<br>
+          The StudySphere Team
+        </p>
+      </div>
+    </div>
+  `;
+
+  return await this.sendEmail(email, subject, html);
+};

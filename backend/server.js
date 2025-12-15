@@ -14,6 +14,7 @@ const studentRoutes = require("./src/routes/student.routes");
 const studentProfileRoutes = require("./src/routes/studentProfile.routes");
 const sessionRoutes = require("./src/routes/session.routes");
 const sessionRequestRoutes = require("./src/routes/sessionRequest.routes");
+const adminRoutes = require("./src/routes/admin.routes");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -58,6 +59,9 @@ app.use("/api/chat", chatRoutes);
 // Import tutor chat routes
 const tutorChatRoutes = require("./src/routes/tutor-chat.routes");
 app.use("/api/tutor-chat", tutorChatRoutes);
+
+// Admin routes
+app.use("/api/admin", adminRoutes);
 
 // Root route
 app.get("/", (req, res) => {

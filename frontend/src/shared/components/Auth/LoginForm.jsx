@@ -106,11 +106,14 @@ const LoginForm = ({ userType = "student" }) => {
 
       // Check if response has token and user data
       if (response.token && response.user) {
+        // Use the actual role from the backend response, not the userType from URL
+        const actualRole = response.user.role || userType;
+
         // Store in context and redirect
-        login(response.user, response.token, userType);
+        login(response.user, response.token, actualRole);
 
         // Redirect is handled by the login function in AuthContext
-        console.log(`${userType} logged in successfully`);
+        console.log(`${actualRole} logged in successfully`);
       } else {
         setError("Login failed. Please check your credentials.");
       }
