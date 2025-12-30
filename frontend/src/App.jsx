@@ -33,6 +33,11 @@ import {
   TutorMessagesPage,
   StudentProfileViewer,
 } from "./tutors/pages";
+import MyClassroomsPage from "./tutors/pages/MyClassroomsPage/MyClassroomsPage";
+import CreateClassroomPage from "./tutors/pages/CreateClassroomPage/CreateClassroomPage";
+import EditClassroomPage from "./tutors/pages/EditClassroomPage/EditClassroomPage";
+import ClassroomsPage from "./shared/pages/ClassroomsPage/ClassroomsPage";
+import ClassroomDetailsPage from "./shared/pages/ClassroomDetailsPage/ClassroomDetailsPage";
 import {
   AdminDashboard,
   VerificationQueue,
@@ -41,6 +46,7 @@ import {
 import TeachingSchedule from "./tutors/pages/Sessions/TeachingSchedule";
 import TutorSessionDetails from "./tutors/pages/Sessions/TutorSessionDetails";
 import ChatPage from "./shared/components/Chat/pages/ChatPage";
+import { ClassroomPage } from "./classrooms";
 import { AuthProvider } from "./shared/context/AuthContext";
 import { ProtectedRoute } from "./shared/components/Route";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -105,6 +111,14 @@ const App = () => {
                 />
                 <Route path="/tutors/:id" element={<TutorDetailsPage />} />
                 <Route path="/become-tutor" element={<BecomeTutor />} />
+
+                {/* Offline Classrooms Marketplace - Public */}
+                <Route path="/classrooms" element={<ClassroomsPage />} />
+                <Route
+                  path="/classrooms/:id"
+                  element={<ClassroomDetailsPage />}
+                />
+
                 <Route
                   path="/tutor-verification-pending"
                   element={<TutorVerificationPending />}
@@ -128,6 +142,10 @@ const App = () => {
                   <Route
                     path="/student/sessions/:sessionId"
                     element={<SessionDetails />}
+                  />
+                  <Route
+                    path="/student/classroom/:sessionId"
+                    element={<ClassroomPage />}
                   />
                   <Route path="/book/:tutorId" element={<BookSessionPage />} />
                   <Route path="/student/chat" element={<ChatPage />} />
@@ -168,10 +186,28 @@ const App = () => {
                     path="/tutor/sessions/:sessionId"
                     element={<TutorSessionDetails />}
                   />
+                  <Route
+                    path="/tutor/classroom/:sessionId"
+                    element={<ClassroomPage />}
+                  />
                   <Route path="/tutor/chat" element={<ChatPage />} />
                   <Route
                     path="/tutor/chat/:conversationId"
                     element={<ChatPage />}
+                  />
+
+                  {/* Offline Classrooms Management - Tutor */}
+                  <Route
+                    path="/tutor/my-classrooms"
+                    element={<MyClassroomsPage />}
+                  />
+                  <Route
+                    path="/tutor/classrooms/create"
+                    element={<CreateClassroomPage />}
+                  />
+                  <Route
+                    path="/tutor/classrooms/:id/edit"
+                    element={<EditClassroomPage />}
                   />
                 </Route>
 

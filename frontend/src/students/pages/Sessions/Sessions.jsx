@@ -9,6 +9,7 @@ import {
   Form,
   Alert,
   Spinner,
+  Modal,
 } from "react-bootstrap";
 import {
   FaCalendarAlt,
@@ -17,6 +18,9 @@ import {
   FaMapMarkerAlt,
   FaFilter,
   FaEye,
+  FaCheck,
+  FaTimes,
+  FaExclamationCircle,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import sessionService from "../../../shared/services/session.service";
@@ -36,10 +40,17 @@ const Sessions = () => {
   const statusOptions = [
     { value: "all", label: "All Sessions", variant: "secondary" },
     { value: "scheduled", label: "Scheduled", variant: "primary" },
+    { value: "pending_completion", label: "Pending Approval", variant: "info" },
     { value: "completed", label: "Completed", variant: "success" },
     { value: "cancelled", label: "Cancelled", variant: "danger" },
     { value: "rescheduled", label: "Rescheduled", variant: "warning" },
   ];
+
+  // State for rejection modal
+  const [showRejectModal, setShowRejectModal] = useState(false);
+  const [rejectingSessionId, setRejectingSessionId] = useState(null);
+  const [rejectionReason, setRejectionReason] = useState("");
+  const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
     fetchSessions();
@@ -53,25 +64,15 @@ const Sessions = () => {
     try {
       setLoading(true);
       setError(null);
-      console.log("Fetching sessions...");
-
-      // Debug: Check user info
-      const userStr = localStorage.getItem("user");
-      const currentUser = userStr ? JSON.parse(userStr) : null;
-      console.log("Current user role:", currentUser?.role);
-      console.log("Current user ID:", currentUser?.id);
 
       const response = await sessionService.getStudentSessions();
-      console.log("Sessions response:", response);
 
       if (response && response.success) {
         setSessions(response.sessions || []);
-        console.log("Sessions set:", response.sessions);
       } else {
         setError("Failed to load sessions");
       }
     } catch (err) {
-      console.error("Error fetching sessions:", err);
       if (err.message && err.message.includes("404")) {
         setError(
           "Student profile not found. Please complete your profile setup."
@@ -143,9 +144,7 @@ const Sessions = () => {
   };
 
   const handleViewDetails = (sessionId) => {
-    console.log("handleViewDetails called with sessionId:", sessionId);
     if (!sessionId || sessionId === "undefined") {
-      console.error("Invalid sessionId:", sessionId);
       setError("Invalid session ID. Cannot view details.");
       return;
     }
@@ -153,10 +152,64 @@ const Sessions = () => {
   };
 
   const handleJoinSession = (session) => {
-    if (session.meetingLink) {
+    // Navigate to classroom for online sessions
+    if (session.mode === "online") {
+      navigate(`/student/classroom/${session.id || session._id}`);
+    } else if (session.meetingLink) {
       window.open(session.meetingLink, "_blank");
     } else {
-      setError("Meeting link not available for this session");
+      setError("This is not an online session");
+    }
+  };
+
+  // Handle approving session completion
+  const handleApproveCompletion = async (sessionId) => {
+    try {
+      setActionLoading(true);
+      const result = await sessionService.approveSessionCompletion(sessionId);
+      if (result.success) {
+        setError(null);
+        fetchSessions(); // Refresh sessions
+      } else {
+        setError(result.message || "Failed to approve completion");
+      }
+    } catch (err) {
+      setError("Failed to approve session completion");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  // Open rejection modal
+  const handleOpenRejectModal = (sessionId) => {
+    setRejectingSessionId(sessionId);
+    setRejectionReason("");
+    setShowRejectModal(true);
+  };
+
+  // Handle rejecting session completion
+  const handleRejectCompletion = async () => {
+    if (!rejectingSessionId) return;
+
+    try {
+      setActionLoading(true);
+      const result = await sessionService.rejectSessionCompletion(
+        rejectingSessionId,
+        rejectionReason
+      );
+      if (result.success) {
+        setError(null);
+        setShowRejectModal(false);
+        setRejectingSessionId(null);
+        setRejectionReason("");
+        fetchSessions(); // Refresh sessions
+      } else {
+        setError(result.message || "Failed to reject completion");
+      }
+    } catch (err) {
+      setError("Failed to reject session completion");
+    } finally {
+      setActionLoading(false);
     }
   };
 
@@ -262,7 +315,6 @@ const Sessions = () => {
           ) : (
             <Row>
               {filteredSessions.map((session) => {
-                console.log("Rendering session:", session);
                 const { date, time } = formatDateTime(session.startTime);
                 const endTime = formatDateTime(session.endTime).time;
 
@@ -351,7 +403,7 @@ const Sessions = () => {
                           </div>
 
                           {session.status === "scheduled" &&
-                            session.meetingLink && (
+                            session.mode === "online" && (
                               <Button
                                 variant="success"
                                 size="sm"
@@ -361,6 +413,53 @@ const Sessions = () => {
                                 Join Session
                               </Button>
                             )}
+
+                          {/* Pending completion approval section */}
+                          {session.status === "pending_completion" && (
+                            <div className="pending-approval-section mt-3 p-3 bg-light rounded">
+                              <div className="d-flex align-items-center mb-2">
+                                <FaExclamationCircle className="text-info me-2" />
+                                <strong className="text-info">
+                                  Completion Approval Required
+                                </strong>
+                              </div>
+                              <p className="text-muted small mb-3">
+                                Your tutor has marked this session as complete.
+                                Please confirm if the session was completed
+                                satisfactorily.
+                              </p>
+                              {session.completionRequest?.notes && (
+                                <p className="text-muted small mb-3">
+                                  <strong>Tutor's notes:</strong>{" "}
+                                  {session.completionRequest.notes}
+                                </p>
+                              )}
+                              <div className="d-flex gap-2">
+                                <Button
+                                  variant="success"
+                                  size="sm"
+                                  onClick={() =>
+                                    handleApproveCompletion(session.id)
+                                  }
+                                  disabled={actionLoading}
+                                >
+                                  <FaCheck className="me-1" />
+                                  Approve
+                                </Button>
+                                <Button
+                                  variant="outline-danger"
+                                  size="sm"
+                                  onClick={() =>
+                                    handleOpenRejectModal(session.id)
+                                  }
+                                  disabled={actionLoading}
+                                >
+                                  <FaTimes className="me-1" />
+                                  Reject
+                                </Button>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </Card.Body>
                     </Card>
@@ -371,6 +470,48 @@ const Sessions = () => {
           )}
         </Col>
       </Row>
+
+      {/* Rejection Reason Modal */}
+      <Modal show={showRejectModal} onHide={() => setShowRejectModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Reject Session Completion</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>
+            Please provide a reason for rejecting this session completion. This
+            will help the tutor understand your concerns.
+          </p>
+          <Form.Group>
+            <Form.Label>Reason for Rejection</Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={3}
+              value={rejectionReason}
+              onChange={(e) => setRejectionReason(e.target.value)}
+              placeholder="e.g., Session was not completed as scheduled, content was not covered, etc."
+            />
+          </Form.Group>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowRejectModal(false)}>
+            Cancel
+          </Button>
+          <Button
+            variant="danger"
+            onClick={handleRejectCompletion}
+            disabled={actionLoading}
+          >
+            {actionLoading ? (
+              <>
+                <Spinner size="sm" animation="border" className="me-1" />
+                Rejecting...
+              </>
+            ) : (
+              "Reject Completion"
+            )}
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 };

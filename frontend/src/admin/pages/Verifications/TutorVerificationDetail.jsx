@@ -314,7 +314,11 @@ const TutorVerificationDetail = () => {
                 <div className="mode-list">
                   {tutor.teachingMode.map((mode, index) => (
                     <span key={index} className="mode-badge">
-                      {mode.replace(/_/g, " ")}
+                      {mode === "online"
+                        ? "Online Tutoring"
+                        : mode === "offline"
+                        ? "In-Person Tutoring"
+                        : mode.replace(/_/g, " ")}
                     </span>
                   ))}
                 </div>

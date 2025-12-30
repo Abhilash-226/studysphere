@@ -27,7 +27,6 @@ const TutorSessionDetails = () => {
         setError(response.message || "Failed to load session details");
       }
     } catch (error) {
-      console.error("Error fetching session:", error);
       setError("Failed to load session details");
     } finally {
       setLoading(false);
@@ -46,7 +45,6 @@ const TutorSessionDetails = () => {
         alert(response.message || "Failed to mark session as completed");
       }
     } catch (error) {
-      console.error("Error marking session completed:", error);
       alert("Failed to mark session as completed");
     } finally {
       setActionLoading(false);
@@ -70,7 +68,6 @@ const TutorSessionDetails = () => {
         alert(response.message || "Failed to cancel session");
       }
     } catch (error) {
-      console.error("Error cancelling session:", error);
       alert("Failed to cancel session");
     } finally {
       setActionLoading(false);
@@ -198,6 +195,16 @@ const TutorSessionDetails = () => {
               {/* Action Buttons */}
               {session.status === "scheduled" && (
                 <div className="d-flex gap-2">
+                  {session.mode === "online" && (
+                    <button
+                      className="btn btn-primary"
+                      onClick={() => navigate(`/tutor/classroom/${sessionId}`)}
+                      disabled={actionLoading}
+                    >
+                      <i className="fa fa-video me-2"></i>
+                      Start/Join Class
+                    </button>
+                  )}
                   <button
                     className="btn btn-success"
                     onClick={handleMarkCompleted}

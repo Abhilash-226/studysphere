@@ -15,6 +15,9 @@ const studentProfileRoutes = require("./src/routes/studentProfile.routes");
 const sessionRoutes = require("./src/routes/session.routes");
 const sessionRequestRoutes = require("./src/routes/sessionRequest.routes");
 const adminRoutes = require("./src/routes/admin.routes");
+const classroomRoutes = require("./src/routes/classroom.routes");
+const paymentRoutes = require("./src/routes/payment.routes");
+const offlineClassroomRoutes = require("./src/routes/offlineClassroom.routes");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -62,6 +65,15 @@ app.use("/api/tutor-chat", tutorChatRoutes);
 
 // Admin routes
 app.use("/api/admin", adminRoutes);
+
+// Classroom routes (online class functionality)
+app.use("/api/classroom", classroomRoutes);
+
+// Offline Classroom Marketplace routes
+app.use("/api/offline-classrooms", offlineClassroomRoutes);
+
+// Payment routes
+app.use("/api/payments", paymentRoutes);
 
 // Root route
 app.get("/", (req, res) => {

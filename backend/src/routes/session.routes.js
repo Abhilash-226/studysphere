@@ -58,18 +58,43 @@ router.get(
   sessionController.getAvailableTimeSlots
 );
 
+// GET pending completion requests (protected - student only)
+// Must be before /:id route to avoid conflict
+router.get(
+  "/pending-completions",
+  authenticateToken,
+  checkRole(["student"]),
+  sessionController.getPendingCompletionRequests
+);
+
 // GET single session (protected)
 router.get("/:id", authenticateToken, sessionController.getSessionById);
 
 // CANCEL session (protected)
 router.patch("/:id/cancel", authenticateToken, sessionController.cancelSession);
 
-// COMPLETE session (protected - tutor only)
+// REQUEST COMPLETE session (protected - tutor only) - sends request to student
 router.patch(
   "/:id/complete",
   authenticateToken,
   checkRole(["tutor"]),
   sessionController.completeSession
+);
+
+// APPROVE session completion (protected - student only)
+router.patch(
+  "/:id/approve-completion",
+  authenticateToken,
+  checkRole(["student"]),
+  sessionController.approveSessionCompletion
+);
+
+// REJECT session completion (protected - student only)
+router.patch(
+  "/:id/reject-completion",
+  authenticateToken,
+  checkRole(["student"]),
+  sessionController.rejectSessionCompletion
 );
 
 // RESCHEDULE session (protected)
@@ -87,7 +112,6 @@ router.patch(
   sessionController.addSessionReview
 );
 
-module.exports = router;
 router.post("/:id/attachments", authenticateToken, (req, res) => {
   res.status(501).json({ message: "Upload attachment - Not implemented yet" });
 });

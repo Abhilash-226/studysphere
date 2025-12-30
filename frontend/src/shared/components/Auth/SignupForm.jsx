@@ -207,19 +207,19 @@ const SignupForm = ({ userType = "student" }) => {
                   ? "Share your expertise and help students achieve their academic goals while earning on your own schedule."
                   : "Get personalized learning experiences tailored to your needs with our expert tutors."}
               </p>
-
-              {userType === "tutor" && (
-                <Alert variant="info" className="mt-3 text-start">
-                  <FaInfoCircle className="me-2" />
-                  <strong>Quick & Easy Signup!</strong>
-                  <p className="mb-0 mt-1 small">
-                    Just create your account now. You'll complete your full
-                    tutor profile (qualifications, subjects, availability) after
-                    email verification.
-                  </p>
-                </Alert>
-              )}
             </div>
+
+            {userType === "tutor" && (
+              <Alert variant="info" className="tutor-info-alert">
+                <FaInfoCircle className="me-2" />
+                <strong>Quick & Easy Signup!</strong>
+                <p className="mb-0 mt-1 small">
+                  Just create your account now. You'll complete your full tutor
+                  profile (qualifications, subjects, availability) after email
+                  verification.
+                </p>
+              </Alert>
+            )}
 
             <div className="auth-image">
               <img

@@ -114,6 +114,21 @@
 }
 
 /* Responsive Design */
+@media (max-width: 992px) {
+  .session-details-page .card-body {
+    padding: 1.25rem;
+  }
+
+  .tutor-info-card {
+    position: static;
+  }
+
+  .tutor-avatar-large {
+    width: 70px;
+    height: 70px;
+  }
+}
+
 @media (max-width: 768px) {
   .session-details-page {
     padding: 1rem 0;
@@ -126,31 +141,77 @@
   .tutor-info-card {
     position: static;
     margin-top: 1rem;
+    border-radius: 10px;
   }
   
   .session-detail-item {
     font-size: 0.9rem;
     margin-bottom: 0.75rem !important;
   }
+
+  .session-details-page .card {
+    border-radius: 10px;
+  }
+
+  .session-details-page .card-header {
+    padding: 0.875rem 1rem;
+  }
+
+  .session-details-page .btn {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+  }
 }
 
 @media (max-width: 576px) {
+  .session-details-page {
+    padding: 0.75rem 0;
+  }
+
   .session-details-page h2 {
     font-size: 1.5rem;
   }
   
   .session-details-page .card-header h4 {
-    font-size: 1.25rem;
+    font-size: 1.15rem;
+  }
+
+  .session-details-page .card-body {
+    padding: 0.875rem;
+  }
+
+  .session-details-page .card-header {
+    padding: 0.75rem;
   }
   
   .session-details-page .btn-lg {
-    padding: 0.75rem 1.5rem;
-    font-size: 1rem;
+    padding: 0.65rem 1.25rem;
+    font-size: 0.95rem;
   }
   
   .tutor-avatar-large {
-    width: 60px;
-    height: 60px;
+    width: 55px;
+    height: 55px;
+  }
+
+  .session-detail-item {
+    font-size: 0.85rem;
+  }
+
+  .session-details-page .card {
+    border-radius: 8px;
+    margin-bottom: 0.75rem;
+  }
+
+  .tutor-info-card .card-header {
+    padding: 0.75rem;
+    border-radius: 8px 8px 0 0 !important;
+  }
+
+  .badge {
+    font-size: 0.7rem;
+    padding: 0.4rem 0.75rem;
+    border-radius: 15px;
   }
 }
 

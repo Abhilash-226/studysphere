@@ -31,7 +31,6 @@ const TutorProfile = () => {
       try {
         setLoading(true);
         const response = await tutorService.getProfile();
-        console.log("Profile response:", response);
 
         if (response.success) {
           setProfile(response.tutor);
@@ -39,7 +38,6 @@ const TutorProfile = () => {
           setError(response.message || "Failed to load profile");
         }
       } catch (err) {
-        console.error("Error fetching profile:", err);
         let errorMessage = "Failed to load profile. Please try again later.";
         if (err.message) {
           errorMessage = err.message;
@@ -56,8 +54,6 @@ const TutorProfile = () => {
   // Handle edit functions for different sections
   const handleSectionEdit = (section) => {
     // Redirect to the profile edit page with a section parameter
-    console.log(`Editing section: ${section}`);
-
     // Using React Router navigation
     window.location.href = `/tutor/profile-edit?section=${section}`;
   };

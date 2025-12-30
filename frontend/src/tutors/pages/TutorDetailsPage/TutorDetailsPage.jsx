@@ -1,18 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  Button,
-  Badge,
-  Tab,
-  Tabs,
-  Spinner,
-  Alert,
-  Modal,
-} from "react-bootstrap";
+import { Container, Spinner, Alert, Button, Modal } from "react-bootstrap";
 import {
   FaStar,
   FaMapMarkerAlt,
@@ -20,6 +8,13 @@ import {
   FaBriefcase,
   FaClock,
   FaCalendarAlt,
+  FaVideo,
+  FaUsers,
+  FaCheckCircle,
+  FaChevronLeft,
+  FaBookOpen,
+  FaUserGraduate,
+  FaEnvelope,
 } from "react-icons/fa";
 import ContactTutorButton from "../../../shared/components/Chat/ContactTutorButton";
 import tutorService from "../../../shared/services/tutor.service";
@@ -35,16 +30,41 @@ const TutorDetailsPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showBookingModal, setShowBookingModal] = useState(false);
+  const [activeTab, setActiveTab] = useState("about");
 
   // Check if user is logged in and is a student
   const isStudent = isAuthenticated() && getUserRole() === "student";
 
+  // Helper functions for teaching mode checks
+  const hasOnlineMode = () => {
+    if (!tutor?.teachingMode) return false;
+    if (Array.isArray(tutor.teachingMode)) {
+      return tutor.teachingMode.some(
+        (mode) => mode === "online" || mode.startsWith("online_")
+      );
+    }
+    return (
+      tutor.teachingMode === "online" ||
+      tutor.teachingMode.startsWith("online_")
+    );
+  };
+
+  const hasOfflineMode = () => {
+    if (!tutor?.teachingMode) return false;
+    if (Array.isArray(tutor.teachingMode)) {
+      return tutor.teachingMode.some(
+        (mode) => mode === "offline" || mode.startsWith("offline_")
+      );
+    }
+    return (
+      tutor.teachingMode === "offline" ||
+      tutor.teachingMode.startsWith("offline_")
+    );
+  };
+
   // Handle profile image loading errors with fallback chain
   const handleImageError = (e) => {
-    console.warn(`Failed to load tutor profile image:`, e.target.src);
     e.target.onerror = null;
-
-    // Try different fallback images in order
     if (e.target.src.includes("tutor-placeholder.svg")) {
       e.target.src = "/images/tutor-placeholder.jpg";
     } else if (e.target.src.includes("tutor-placeholder.jpg")) {
@@ -65,7 +85,6 @@ const TutorDetailsPage = () => {
           setError(response.message || "Failed to load tutor details");
         }
       } catch (err) {
-        console.error("Error fetching tutor details:", err);
         setError("Failed to load tutor details. Please try again later.");
       } finally {
         setLoading(false);
@@ -80,13 +99,11 @@ const TutorDetailsPage = () => {
       if (getUserRole() === "student") {
         setShowBookingModal(true);
       } else {
-        // If tutor trying to book a session
         navigate(
           "/login-student?message=You need to login as a student to book a session"
         );
       }
     } else {
-      // Redirect to login if not authenticated
       navigate(
         "/login-student?message=Please login to book a session&redirect=/tutors/" +
           id
@@ -100,12 +117,10 @@ const TutorDetailsPage = () => {
 
   if (loading) {
     return (
-      <Container
-        className="d-flex justify-content-center align-items-center"
-        style={{ minHeight: "60vh" }}
-      >
+      <div className="tutor-details-loading">
         <Spinner animation="border" variant="primary" />
-      </Container>
+        <p>Loading tutor profile...</p>
+      </div>
     );
   }
 
@@ -132,228 +147,311 @@ const TutorDetailsPage = () => {
   }
 
   return (
-    <Container className="tutor-details-container py-5">
-      <Row className="mb-4">
-        <Col>
-          <Link to="/tutors" className="back-link">
-            ← Back to All Tutors
+    <div className="tutor-details-page">
+      {/* Hero Section */}
+      <div className="tutor-hero">
+        <Container>
+          <Link to="/tutors" className="tutor-hero__back">
+            <FaChevronLeft /> Back to Tutors
           </Link>
-        </Col>
-      </Row>
 
-      <Row>
-        <Col md={4} className="mb-4">
-          <Card className="tutor-sidebar">
-            <Card.Body className="text-center">
-              <div className="profile-image-wrapper mb-3">
+          <div className="tutor-hero__content">
+            <div className="tutor-hero__avatar-section">
+              <div className="tutor-hero__avatar-wrapper">
                 <img
                   src={formatImageUrl(tutor.image || tutor.profileImage)}
                   alt={`${tutor.name}'s profile`}
-                  className="profile-image"
+                  className="tutor-hero__avatar"
                   onError={handleImageError}
                   loading="lazy"
-                  key={tutor.id} // Force re-render when tutor changes
                 />
+                {tutor.rating && (
+                  <div className="tutor-hero__rating-badge">
+                    <FaStar /> {tutor.rating}
+                  </div>
+                )}
               </div>
-              <h2 className="tutor-name">{tutor.name}</h2>
-              <p className="tutor-specialization">{tutor.specialization}</p>
 
-              {tutor.gender && (
-                <div className="tutor-gender mb-2">
-                  <Badge bg="secondary" className="gender-badge">
-                    {tutor.gender}
-                  </Badge>
+              <div className="tutor-hero__modes">
+                {hasOnlineMode() && (
+                  <span className="tutor-hero__mode tutor-hero__mode--online">
+                    <FaVideo /> Online
+                  </span>
+                )}
+                {hasOfflineMode() && (
+                  <span className="tutor-hero__mode tutor-hero__mode--offline">
+                    <FaUsers /> In-Person
+                  </span>
+                )}
+              </div>
+            </div>
+
+            <div className="tutor-hero__info">
+              <div className="tutor-hero__title-row">
+                <h1 className="tutor-hero__name">{tutor.name}</h1>
+                {tutor.rating && (
+                  <span className="tutor-hero__verified">
+                    <FaCheckCircle /> Verified
+                  </span>
+                )}
+              </div>
+
+              <p className="tutor-hero__specialization">
+                {tutor.specialization}
+              </p>
+
+              <div className="tutor-hero__meta">
+                {tutor.experience && (
+                  <span className="tutor-hero__meta-item">
+                    <FaBriefcase /> {tutor.experience} years experience
+                  </span>
+                )}
+                {tutor.location && (
+                  <span className="tutor-hero__meta-item">
+                    <FaMapMarkerAlt /> {tutor.location.city}
+                    {tutor.location.state && `, ${tutor.location.state}`}
+                  </span>
+                )}
+                {tutor.reviews > 0 && (
+                  <span className="tutor-hero__meta-item">
+                    <FaStar /> {tutor.reviews} reviews
+                  </span>
+                )}
+              </div>
+
+              {hasOnlineMode() && (
+                <div className="tutor-hero__price">
+                  <span className="tutor-hero__price-amount">
+                    ₹{tutor.hourlyRate || 500}
+                  </span>
+                  <span className="tutor-hero__price-unit">/hour</span>
                 </div>
               )}
 
-              <div className="tutor-rating mb-3">
-                {tutor.rating ? (
-                  <>
-                    <span className="rating-value">{tutor.rating}</span>
-                    <FaStar className="rating-star" />
-                    <span className="rating-count">
-                      ({tutor.reviews || 0} reviews)
-                    </span>
-                  </>
-                ) : (
-                  <span className="no-reviews">No reviews yet</span>
+              <div className="tutor-hero__actions">
+                {hasOnlineMode() && (
+                  <button
+                    className="tutor-hero__btn tutor-hero__btn--primary"
+                    onClick={handleBookSession}
+                  >
+                    <FaCalendarAlt /> Book a Session
+                  </button>
                 )}
-              </div>
-
-              <div className="teaching-modes mb-3">
-                {Array.isArray(tutor.teachingMode) ? (
-                  tutor.teachingMode.map((mode) => (
-                    <Badge key={mode} bg="info" className="me-2">
-                      {mode === "online_individual"
-                        ? "Online (Individual)"
-                        : mode === "online_group"
-                        ? "Online (Group)"
-                        : mode === "offline_home"
-                        ? "In-Person (Home)"
-                        : mode === "offline_classroom"
-                        ? "In-Person (Classroom)"
-                        : mode}
-                    </Badge>
-                  ))
-                ) : (
-                  <Badge bg="info">{tutor.teachingMode}</Badge>
-                )}
-              </div>
-
-              <div className="hourly-rate mb-4">
-                <span className="rate-amount">${tutor.hourlyRate || 25}</span>
-                <span className="rate-unit"> / hour</span>
-              </div>
-
-              <div className="action-buttons">
-                <Button
-                  variant="primary"
-                  size="lg"
-                  className="book-button w-100 mb-3"
-                  onClick={handleBookSession}
-                >
-                  Book a Session
-                </Button>
                 <ContactTutorButton
                   tutorId={tutor.userId}
                   tutorName={tutor.name}
+                  className="tutor-hero__btn tutor-hero__btn--outline"
                 />
               </div>
-            </Card.Body>
-          </Card>
 
-          {tutor.location && (
-            <Card className="mt-4">
-              <Card.Body>
-                <h5 className="mb-3">
-                  <FaMapMarkerAlt className="me-2" /> Location
-                </h5>
-                <p className="mb-0">
-                  {tutor.location.city}
-                  {tutor.location.state && `, ${tutor.location.state}`}
-                  {tutor.location.country && `, ${tutor.location.country}`}
+              {!hasOnlineMode() && hasOfflineMode() && (
+                <p className="tutor-hero__offline-note">
+                  <FaEnvelope /> Contact the tutor directly to discuss in-person
+                  sessions and fees.
                 </p>
-              </Card.Body>
-            </Card>
-          )}
-        </Col>
+              )}
+            </div>
+          </div>
+        </Container>
+      </div>
 
-        <Col md={8}>
-          <Tabs
-            defaultActiveKey="about"
-            id="tutor-details-tabs"
-            className="mb-4"
-          >
-            <Tab eventKey="about" title="About">
-              <Card>
-                <Card.Body>
-                  <h4 className="mb-3">About {tutor.name}</h4>
-                  <p>{tutor.bio || "No bio provided."}</p>
+      {/* Content Section */}
+      <div className="tutor-content">
+        <Container>
+          {/* Tabs Navigation */}
+          <div className="tutor-tabs">
+            <button
+              className={`tutor-tabs__btn ${
+                activeTab === "about" ? "tutor-tabs__btn--active" : ""
+              }`}
+              onClick={() => setActiveTab("about")}
+            >
+              <FaUserGraduate /> About
+            </button>
+            <button
+              className={`tutor-tabs__btn ${
+                activeTab === "subjects" ? "tutor-tabs__btn--active" : ""
+              }`}
+              onClick={() => setActiveTab("subjects")}
+            >
+              <FaBookOpen /> Subjects
+            </button>
+            <button
+              className={`tutor-tabs__btn ${
+                activeTab === "schedule" ? "tutor-tabs__btn--active" : ""
+              }`}
+              onClick={() => setActiveTab("schedule")}
+            >
+              <FaClock /> Availability
+            </button>
+          </div>
 
-                  <Row className="qualifications mt-4">
-                    <Col sm={6} className="mb-3">
-                      <h5 className="mb-3">
-                        <FaGraduationCap className="me-2" /> Education
-                      </h5>
-                      <p>
-                        <strong>{tutor.qualification}</strong>
+          {/* Tab Content */}
+          <div className="tutor-tab-content">
+            {activeTab === "about" && (
+              <div className="tutor-section">
+                <div className="tutor-section__card">
+                  <h3 className="tutor-section__title">About {tutor.name}</h3>
+                  <p className="tutor-section__bio">
+                    {tutor.bio || "No bio provided."}
+                  </p>
+                </div>
+
+                <div className="tutor-section__grid">
+                  <div className="tutor-info-card">
+                    <div className="tutor-info-card__icon">
+                      <FaGraduationCap />
+                    </div>
+                    <div className="tutor-info-card__content">
+                      <h4>Education</h4>
+                      <p className="tutor-info-card__main">
+                        {tutor.qualification}
                       </p>
                       {tutor.university && <p>{tutor.university}</p>}
                       {tutor.graduationYear && (
                         <p>Class of {tutor.graduationYear}</p>
                       )}
-                    </Col>
+                    </div>
+                  </div>
 
-                    <Col sm={6} className="mb-3">
-                      <h5 className="mb-3">
-                        <FaBriefcase className="me-2" /> Experience
-                      </h5>
-                      <p>{tutor.experience} years of teaching experience</p>
-                    </Col>
-                  </Row>
-                </Card.Body>
-              </Card>
-            </Tab>
+                  <div className="tutor-info-card">
+                    <div className="tutor-info-card__icon">
+                      <FaBriefcase />
+                    </div>
+                    <div className="tutor-info-card__content">
+                      <h4>Experience</h4>
+                      <p className="tutor-info-card__main">
+                        {tutor.experience} years
+                      </p>
+                      <p>of teaching experience</p>
+                    </div>
+                  </div>
 
-            <Tab eventKey="subjects" title="Subjects">
-              <Card>
-                <Card.Body>
-                  <h4 className="mb-3">Subjects Taught</h4>
-                  <Row className="subjects-list">
-                    {tutor.subjects && tutor.subjects.length > 0 ? (
-                      tutor.subjects.map((subject, index) => (
-                        <Col key={index} md={4} className="mb-3">
-                          <Badge
-                            bg="light"
-                            text="dark"
-                            className="p-2 subject-badge"
-                          >
-                            {subject}
-                          </Badge>
-                        </Col>
-                      ))
-                    ) : (
-                      <Col>No subjects specified.</Col>
-                    )}
-                  </Row>
-                </Card.Body>
-              </Card>
-            </Tab>
+                  {tutor.location && (
+                    <div className="tutor-info-card">
+                      <div className="tutor-info-card__icon">
+                        <FaMapMarkerAlt />
+                      </div>
+                      <div className="tutor-info-card__content">
+                        <h4>Location</h4>
+                        <p className="tutor-info-card__main">
+                          {tutor.location.city}
+                        </p>
+                        <p>
+                          {tutor.location.state}
+                          {tutor.location.country &&
+                            `, ${tutor.location.country}`}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
 
-            <Tab eventKey="schedule" title="Availability">
-              <Card>
-                <Card.Body>
-                  <h4 className="mb-3">
-                    <FaClock className="me-2" /> Availability Schedule
-                  </h4>
+            {activeTab === "subjects" && (
+              <div className="tutor-section">
+                <div className="tutor-section__card">
+                  <h3 className="tutor-section__title">Subjects Taught</h3>
+                  {tutor.subjects && tutor.subjects.length > 0 ? (
+                    <div className="tutor-subjects-grid">
+                      {tutor.subjects.map((subject, index) => (
+                        <div key={index} className="tutor-subject-card">
+                          <FaBookOpen className="tutor-subject-card__icon" />
+                          <span>{subject}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="tutor-section__empty">
+                      No subjects specified.
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {activeTab === "schedule" && (
+              <div className="tutor-section">
+                <div className="tutor-section__card">
+                  <h3 className="tutor-section__title">
+                    Availability Schedule
+                  </h3>
                   {tutor.availability && tutor.availability.length > 0 ? (
-                    <div className="availability-schedule">
+                    <div className="tutor-schedule">
                       {tutor.availability.map((slot, index) => (
-                        <div key={index} className="availability-slot">
-                          <div className="day-label">
-                            <FaCalendarAlt className="me-2" />
-                            {slot.day}
+                        <div key={index} className="tutor-schedule__slot">
+                          <div className="tutor-schedule__day">
+                            <FaCalendarAlt />
+                            <span>{slot.day}</span>
                           </div>
-                          <div className="time-slot">
-                            {slot.startTime} - {slot.endTime}
+                          <div className="tutor-schedule__time">
+                            <FaClock />
+                            <span>
+                              {slot.startTime} - {slot.endTime}
+                            </span>
                           </div>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <p>No availability schedule provided.</p>
+                    <p className="tutor-section__empty">
+                      No availability schedule provided.
+                    </p>
                   )}
-                </Card.Body>
-              </Card>
-            </Tab>
-          </Tabs>
-        </Col>
-      </Row>
+                </div>
+              </div>
+            )}
+          </div>
+        </Container>
+      </div>
 
-      {/* Booking Confirmation Modal */}
-      <Modal show={showBookingModal} onHide={() => setShowBookingModal(false)}>
+      {/* Booking Modal */}
+      <Modal
+        show={showBookingModal}
+        onHide={() => setShowBookingModal(false)}
+        centered
+        className="booking-modal"
+      >
         <Modal.Header closeButton>
-          <Modal.Title>Book a Session with {tutor.name}</Modal.Title>
+          <Modal.Title>Book a Session</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>Would you like to proceed with booking a tutoring session?</p>
-          <p>
-            Hourly Rate: <strong>${tutor.hourlyRate}/hour</strong>
-          </p>
+          <div className="booking-modal__content">
+            <img
+              src={formatImageUrl(tutor.image || tutor.profileImage)}
+              alt={tutor.name}
+              className="booking-modal__avatar"
+              onError={handleImageError}
+            />
+            <h4>{tutor.name}</h4>
+            <p className="booking-modal__specialization">
+              {tutor.specialization}
+            </p>
+            <div className="booking-modal__price">
+              <span className="booking-modal__price-label">Hourly Rate:</span>
+              <span className="booking-modal__price-amount">
+                ₹{tutor.hourlyRate || 500}/hour
+              </span>
+            </div>
+          </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button
-            variant="secondary"
+          <button
+            className="booking-modal__btn booking-modal__btn--secondary"
             onClick={() => setShowBookingModal(false)}
           >
             Cancel
-          </Button>
-          <Button variant="primary" onClick={redirectToBooking}>
+          </button>
+          <button
+            className="booking-modal__btn booking-modal__btn--primary"
+            onClick={redirectToBooking}
+          >
             Proceed to Booking
-          </Button>
+          </button>
         </Modal.Footer>
       </Modal>
-    </Container>
+    </div>
   );
 };
 

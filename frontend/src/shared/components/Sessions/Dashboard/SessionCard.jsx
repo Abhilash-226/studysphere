@@ -19,7 +19,7 @@ import {
   FaStar,
   FaTimes,
   FaCheck,
-  FaDollarSign,
+  FaRupeeSign,
   FaCommentDots,
 } from "react-icons/fa";
 import PropTypes from "prop-types";
@@ -134,7 +134,7 @@ const SessionCard = ({ session, userRole, onAction }) => {
               {session.status.charAt(0).toUpperCase() + session.status.slice(1)}
             </Badge>
             <div className="session-price">
-              <FaDollarSign className="me-1" />${session.price}
+              <FaRupeeSign className="me-1" />₹{session.price}
             </div>
           </div>
 

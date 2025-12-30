@@ -201,7 +201,7 @@ const BecomeTutor = () => {
                 <h4>How much can I earn?</h4>
                 <p>
                   Earnings vary based on your subject, experience, and hours you
-                  dedicate. Most tutors earn between $15-$50 per hour.
+                  dedicate. Most tutors earn between ₹500-₹2000 per hour.
                 </p>
               </div>
             </Col>

@@ -13,12 +13,8 @@ const TutorsPage = ({ teachingMode }) => {
   const [filters, setFilters] = useState({});
   const [filterOptions, setFilterOptions] = useState({
     teachingModes: [
-      { value: "online", label: "All Online Options" },
-      { value: "offline", label: "All In-Person Options" },
-      { value: "online_individual", label: "Online (Individual)" },
-      { value: "online_group", label: "Online (Group)" },
-      { value: "offline_home", label: "In-Person (Student's Home)" },
-      { value: "offline_classroom", label: "In-Person (Tutor's Classroom)" },
+      { value: "online", label: "Online Tutoring" },
+      { value: "offline", label: "In-Person Tutoring" },
     ],
     subjects: [
       { value: "Mathematics", label: "Mathematics", count: 0 },
@@ -200,7 +196,6 @@ const TutorsPage = ({ teachingMode }) => {
         setError("Could not retrieve tutors at this time.");
       }
     } catch (err) {
-      console.error("Error fetching tutors:", err);
       setError("Failed to load tutors. Please try again later.");
     } finally {
       setLoading(false);
@@ -297,9 +292,7 @@ const TutorsPage = ({ teachingMode }) => {
       return "Online Tutors";
     } else if (
       location.pathname === "/offline-tuition" ||
-      (filters.teachingMode &&
-        (filters.teachingMode.includes("offline_home") ||
-          filters.teachingMode.includes("offline_classroom")))
+      (filters.teachingMode && filters.teachingMode.includes("offline"))
     ) {
       return "In-Person Tutors";
     }

@@ -84,22 +84,20 @@ const UpcomingSessionsSection = ({ sessions = [] }) => {
               </div>
               <div>
                 {session.mode === "online" && (
-                  <Button variant="outline-primary" size="sm" className="me-2">
-                    <FaVideo className="me-1" /> Join
+                  <Button
+                    as={Link}
+                    to={`/tutor/classroom/${session.id || session._id}`}
+                    variant={session.isClassActive ? "primary" : "success"}
+                    size="sm"
+                    className="me-2"
+                  >
+                    <FaVideo className="me-1" />{" "}
+                    {session.isClassActive ? "Join Class" : "Start Class"}
                   </Button>
                 )}
                 <Button
                   as={Link}
-                  to={`/tutor/student/${session.student.id}`}
-                  variant="outline-info"
-                  size="sm"
-                  className="me-2"
-                >
-                  <FaUser className="me-1" /> Profile
-                </Button>
-                <Button
-                  as={Link}
-                  to={`/tutor/sessions/${session.id}`}
+                  to={`/tutor/sessions/${session.id || session._id}`}
                   variant="outline-secondary"
                   size="sm"
                 >

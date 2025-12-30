@@ -46,20 +46,13 @@ class StudentService {
   // Get student's booked sessions
   async getBookedSessions(status = "all") {
     try {
-      console.log(
-        "[DEBUG] Frontend calling getBookedSessions with status:",
-        status
-      );
       const response = await api.get(`/students/sessions?status=${status}`);
-      console.log("[DEBUG] Frontend received response:", response.data);
 
       // Extract the data array from the response structure
       const sessions = response.data?.data || response.data || [];
-      console.log("[DEBUG] Frontend extracted sessions:", sessions);
 
       return sessions;
     } catch (error) {
-      console.error("Error in getBookedSessions:", error);
       throw this.handleError(error);
     }
   }
@@ -95,7 +88,6 @@ class StudentService {
       const response = await api.get("/students/recommended-tutors");
       return response.data?.data || response.data || [];
     } catch (error) {
-      console.error("Error fetching recommended tutors:", error);
       // Return empty array as fallback
       return [];
     }
@@ -107,7 +99,6 @@ class StudentService {
       const response = await api.get("/students/dashboard-stats");
       return response.data;
     } catch (error) {
-      console.error("Error fetching dashboard stats:", error);
       return {
         totalSessions: 0,
         upcomingSessions: 0,
@@ -124,7 +115,6 @@ class StudentService {
       const response = await api.get("/students/tutor-count");
       return response.data?.count || 0;
     } catch (error) {
-      console.error("Error fetching tutor count:", error);
       return 0;
     }
   }
@@ -135,7 +125,6 @@ class StudentService {
       const response = await api.get("/students/notifications/count");
       return response.data?.count || 0;
     } catch (error) {
-      console.error("Error fetching notification count:", error);
       return 0;
     }
   }

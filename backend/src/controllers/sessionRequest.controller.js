@@ -3,6 +3,7 @@ const Session = require("../models/session.model");
 const Student = require("../models/student.model");
 const Tutor = require("../models/tutor.model");
 const User = require("../models/user.model");
+const paymentService = require("../services/payment.service");
 
 /**
  * Create a new session request
@@ -195,7 +196,14 @@ exports.getSessionRequests = async (req, res) => {
 
     const [sessionRequests, total] = await Promise.all([
       SessionRequest.find(query)
-        .populate(populateFields, "name email profileImage subjects hourlyRate")
+        .populate({
+          path: populateFields,
+          select: "user subjects hourlyRate",
+          populate: {
+            path: "user",
+            select: "firstName lastName email profileImage",
+          },
+        })
         .populate("sessionId")
         .sort({ createdAt: -1 })
         .skip(skip)
@@ -203,11 +211,47 @@ exports.getSessionRequests = async (req, res) => {
       SessionRequest.countDocuments(query),
     ]);
 
+    // Format the response to flatten user data for easier frontend access
+    const formattedRequests = sessionRequests.map((request) => {
+      const requestObj = request.toObject();
+
+      // For tutor requests, flatten student data
+      if (
+        userRole === "tutor" &&
+        requestObj.student &&
+        requestObj.student.user
+      ) {
+        requestObj.student = {
+          _id: requestObj.student._id,
+          firstName: requestObj.student.user.firstName,
+          lastName: requestObj.student.user.lastName,
+          email: requestObj.student.user.email,
+          profileImage: requestObj.student.user.profileImage,
+          subjects: requestObj.student.subjects,
+        };
+      }
+
+      // For student requests, flatten tutor data
+      if (userRole === "student" && requestObj.tutor && requestObj.tutor.user) {
+        requestObj.tutor = {
+          _id: requestObj.tutor._id,
+          firstName: requestObj.tutor.user.firstName,
+          lastName: requestObj.tutor.user.lastName,
+          email: requestObj.tutor.user.email,
+          profileImage: requestObj.tutor.user.profileImage,
+          subjects: requestObj.tutor.subjects,
+          hourlyRate: requestObj.tutor.hourlyRate,
+        };
+      }
+
+      return requestObj;
+    });
+
     const totalPages = Math.ceil(total / limit);
 
     res.status(200).json({
       success: true,
-      sessionRequests,
+      sessionRequests: formattedRequests,
       pagination: {
         currentPage: parseInt(page),
         totalPages,
@@ -331,9 +375,40 @@ exports.acceptSessionRequest = async (req, res) => {
       location: sessionRequest.location,
       price: sessionRequest.proposedPrice,
       status: "scheduled",
+      paymentStatus: "pending",
     });
 
     await session.save();
+
+    // Create payment for the session (auto-authorized in development mode)
+    let paymentResult = null;
+    try {
+      // Get student's user ID
+      const studentUser = await User.findById(sessionRequest.student.user);
+      // Get tutor's user ID
+      const tutorUser = await User.findById(tutor.user);
+
+      if (studentUser && tutorUser) {
+        paymentResult = await paymentService.createPaymentOrder({
+          session,
+          payerId: studentUser._id.toString(),
+          payeeId: tutorUser._id.toString(),
+          amount: sessionRequest.proposedPrice,
+        });
+
+        // Update session payment status based on payment result
+        if (
+          paymentResult.success &&
+          paymentResult.payment.status === "authorized"
+        ) {
+          session.paymentStatus = "completed";
+          await session.save();
+        }
+      }
+    } catch (paymentError) {
+      console.error("Error creating payment for session:", paymentError);
+      // Continue without payment in case of error
+    }
 
     // Update session request status
     sessionRequest.status = "accepted";

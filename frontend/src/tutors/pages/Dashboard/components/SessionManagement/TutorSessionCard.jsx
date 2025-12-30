@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Card,
   Badge,
@@ -18,7 +19,7 @@ import {
   FaStar,
   FaTimes,
   FaCheck,
-  FaDollarSign,
+  FaRupeeSign,
   FaCommentDots,
 } from "react-icons/fa";
 import PropTypes from "prop-types";
@@ -32,6 +33,7 @@ import "./TutorSessionCard.css";
  * @returns {React.ReactElement} - Rendered component
  */
 const TutorSessionCard = ({ session, onAction }) => {
+  const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState("");
   const [actionData, setActionData] = useState({
@@ -129,7 +131,7 @@ const TutorSessionCard = ({ session, onAction }) => {
               {session.status.charAt(0).toUpperCase() + session.status.slice(1)}
             </Badge>
             <div className="session-earnings">
-              <FaDollarSign className="me-1" />${session.price}
+              <FaRupeeSign className="me-1" />₹{session.price}
             </div>
           </div>
 
@@ -253,21 +255,31 @@ const TutorSessionCard = ({ session, onAction }) => {
               </Button>
             )}
 
-            {session.status === "scheduled" && isUpcoming && (
-              <OverlayTrigger
-                placement="top"
-                overlay={<Tooltip>Start session when it begins</Tooltip>}
-              >
-                <Button
-                  variant="primary"
-                  size="sm"
-                  disabled={new Date(session.startTime) > new Date()}
+            {session.status === "scheduled" &&
+              isUpcoming &&
+              session.mode === "online" && (
+                <OverlayTrigger
+                  placement="top"
+                  overlay={
+                    <Tooltip>
+                      {session.isClassActive
+                        ? "Join the live class"
+                        : "Start the online class"}
+                    </Tooltip>
+                  }
                 >
-                  <FaVideo className="me-1" />
-                  Start Session
-                </Button>
-              </OverlayTrigger>
-            )}
+                  <Button
+                    variant={session.isClassActive ? "primary" : "success"}
+                    size="sm"
+                    onClick={() =>
+                      navigate(`/tutor/classroom/${session.id || session._id}`)
+                    }
+                  >
+                    <FaVideo className="me-1" />
+                    {session.isClassActive ? "Join Class" : "Start Class"}
+                  </Button>
+                </OverlayTrigger>
+              )}
           </div>
         </Card.Body>
       </Card>

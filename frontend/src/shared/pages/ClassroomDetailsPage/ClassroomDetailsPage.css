@@ -1,0 +1,807 @@
+/* ClassroomDetailsPage - Modern Balanced Layout */
+
+.classroom-details-page {
+  background: #f8fafc;
+  min-height: 100vh;
+  padding: 1.25rem 0 3rem;
+}
+
+.classroom-details-page .container {
+  max-width: 1140px;
+}
+
+.back-button {
+  color: #64748b;
+  text-decoration: none;
+  padding: 8px 16px;
+  margin-bottom: 1rem;
+  display: inline-flex;
+  align-items: center;
+  font-weight: 500;
+  font-size: 0.85rem;
+  background: white;
+  border-radius: 25px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s ease;
+}
+
+.back-button:hover {
+  color: #667eea;
+  border-color: #667eea;
+  background: #f8faff;
+}
+
+/* Hero Section */
+.hero-section {
+  margin-bottom: 1rem;
+  background: white;
+  border-radius: 16px;
+  padding: 0;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+}
+
+.hero-content {
+  display: flex;
+  flex-direction: row;
+  gap: 0;
+  width: 100%;
+  align-items: stretch;
+}
+
+.hero-gallery {
+  flex: 0 0 45%;
+  width: 45%;
+  overflow: hidden;
+}
+
+.hero-info {
+  flex: 1;
+  min-width: 0;
+  padding: 1rem;
+}
+
+.gallery-carousel {
+  height: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.gallery-carousel .carousel-inner,
+.gallery-carousel .carousel-item {
+  height: 100%;
+}
+
+/* Gallery Card */
+.gallery-card {
+  border: none !important;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: none !important;
+  height: 100%;
+  margin: 0 !important;
+}
+
+.gallery-image {
+  width: 100%;
+  height: 100%;
+  min-height: 220px;
+  object-fit: cover;
+}
+
+.no-image-placeholder {
+  width: 100%;
+  height: 100%;
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: rgba(255, 255, 255, 0.9);
+  border-radius: 0;
+}
+
+.no-image-placeholder svg {
+  opacity: 0.7;
+  margin-bottom: 0.75rem;
+  font-size: 48px;
+}
+
+.no-image-placeholder p {
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+/* Quick Info Card - Right of Image */
+.quick-info-card {
+  border: none;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: none;
+  background: #f8fafc;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.classroom-header-compact {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.classroom-header-compact .classroom-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+  line-height: 1.2;
+  flex: 1;
+}
+
+.verified-badge-inline {
+  font-size: 0.6rem;
+  font-weight: 600;
+  padding: 3px 6px;
+  border-radius: 12px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.classroom-header-compact .header-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.classroom-header-compact .header-actions .btn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  padding: 0;
+  background: white;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  transition: all 0.2s ease;
+  font-size: 0.75rem;
+}
+
+.classroom-header-compact .header-actions .btn:hover {
+  background: #667eea;
+  border-color: #667eea;
+  color: white;
+}
+
+.quick-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.meta-item svg {
+  color: #667eea;
+  font-size: 0.8rem;
+  min-width: 14px;
+}
+
+/* Fee Display in Quick Card */
+.quick-info-card .fee-display {
+  text-align: center;
+  padding: 0.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 10px;
+  margin-bottom: 0.5rem;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.25);
+}
+
+.quick-info-card .fee-amount {
+  display: block;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: white;
+}
+
+.quick-info-card .fee-period {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.65rem;
+  font-weight: 500;
+}
+
+/* Contact Buttons in Quick Card */
+.quick-info-card .contact-buttons {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.quick-info-card .contact-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 8px;
+  font-weight: 600;
+  font-size: 0.7rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.quick-info-card .contact-btn.whatsapp {
+  background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+  border-color: transparent;
+}
+
+.quick-info-card .contact-btn.phone {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: transparent;
+}
+
+.quick-info-card .contact-btn.email {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  margin-top: 0;
+}
+
+.quick-info-card .contact-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Info Cards */
+.info-card {
+  border: none;
+  border-radius: 14px;
+  padding: 1.25rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  background: white;
+}
+
+.info-card h5 {
+  color: #1e293b;
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.info-card h5 svg {
+  color: #667eea;
+  font-size: 0.95rem;
+}
+
+/* Classroom Header */
+.classroom-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.25rem;
+  gap: 1rem;
+}
+
+.classroom-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  line-height: 1.3;
+}
+
+.classroom-title .badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 20px;
+}
+
+.classroom-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.classroom-meta span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.classroom-meta svg {
+  color: #667eea;
+  font-size: 0.85rem;
+}
+
+.header-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.header-actions .btn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  padding: 0;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  transition: all 0.2s ease;
+}
+
+.header-actions .btn:hover {
+  background: #667eea;
+  border-color: #667eea;
+  color: white;
+}
+
+/* Subjects Section */
+.subjects-section {
+  margin-bottom: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+.grades-section,
+.grades-section-inline {
+  margin-bottom: 0;
+  padding-top: 0;
+  border-top: none;
+  padding-left: 1rem;
+  border-left: 1px solid #f1f5f9;
+}
+
+.subjects-section h6,
+.grades-section h6,
+.grades-section-inline h6 {
+  color: #64748b;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.65rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.subjects-list,
+.grades-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.subject-badge {
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 5px 12px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #f0f4ff 0%, #e8eeff 100%) !important;
+  color: #5469d4 !important;
+  border: 1px solid rgba(84, 105, 212, 0.1);
+}
+
+.grade-badge {
+  font-size: 0.7rem;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 15px;
+  background: #f1f5f9 !important;
+  color: #64748b !important;
+}
+
+/* Description */
+.description-text {
+  color: #475569;
+  line-height: 1.65;
+  white-space: pre-wrap;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* Schedule Section */
+.schedule-section {
+  background: #f8fafc;
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+}
+
+.schedule-days {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.day-badge {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  color: #94a3b8;
+  font-size: 0.7rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.day-badge.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: transparent;
+  color: white;
+  box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
+}
+
+.schedule-time {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #475569;
+  font-weight: 500;
+  font-size: 0.85rem;
+}
+
+.schedule-time svg {
+  color: #667eea;
+  font-size: 0.85rem;
+}
+
+/* Location Details */
+.location-details p {
+  margin-bottom: 0.4rem;
+  color: #475569;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.location-details p:last-child {
+  margin-bottom: 0;
+}
+
+.location-details strong {
+  color: #1e293b;
+  font-weight: 600;
+}
+
+/* Facilities */
+.facilities-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.facility-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #f1f5f9;
+  transition: all 0.2s ease;
+}
+
+.facility-item:hover {
+  border-color: #e0e7ff;
+  background: #fafaff;
+}
+
+.facility-icon {
+  color: #667eea;
+  font-size: 0.9rem;
+}
+
+.facility-item span {
+  font-size: 0.8rem;
+  color: #475569;
+  font-weight: 500;
+}
+
+/* Batch Info Card */
+.batch-info {
+  margin: 0;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.info-row:first-child {
+  padding-top: 0;
+}
+
+.info-label {
+  color: #64748b;
+  font-size: 0.8rem;
+}
+
+.info-value {
+  color: #1e293b;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+/* Tutor Card */
+.tutor-card {
+  border: none;
+  border-radius: 14px;
+  padding: 1.25rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  background: white;
+}
+
+.tutor-card h5 {
+  color: #1e293b;
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tutor-card h5 svg {
+  color: #667eea;
+}
+
+.tutor-info {
+  display: flex;
+  gap: 0.85rem;
+  align-items: center;
+}
+
+.tutor-image {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #667eea;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
+.tutor-details h6 {
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.2rem;
+  font-size: 0.95rem;
+}
+
+.tutor-qualifications {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-bottom: 0.2rem;
+}
+
+.tutor-experience {
+  font-size: 0.7rem;
+  color: #667eea;
+  font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 991px) {
+  .classroom-details-page {
+    padding: 0.875rem 0 2rem;
+  }
+
+  .hero-section {
+    padding: 0.875rem;
+  }
+
+  .info-card {
+    padding: 1.15rem;
+  }
+
+  .classroom-header-compact .classroom-title {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .classroom-details-page {
+    padding: 1rem 0 2.5rem;
+  }
+  
+  .hero-section {
+    padding: 0.75rem;
+  }
+  
+  .hero-content {
+    flex-direction: column;
+  }
+  
+  .hero-gallery,
+  .hero-info {
+    flex: 0 0 100%;
+    width: 100%;
+  }
+  
+  .gallery-carousel,
+  .gallery-card,
+  .gallery-image,
+  .no-image-placeholder {
+    height: 180px;
+    min-height: 180px;
+  }
+  
+  .quick-info-card {
+    height: auto;
+  }
+  
+  .classroom-header-compact {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .classroom-header-compact .classroom-title {
+    font-size: 1rem;
+  }
+  
+  .info-card {
+    padding: 1rem;
+  }
+  
+  .day-badge {
+    width: 34px;
+    height: 34px;
+    font-size: 0.65rem;
+  }
+  
+  .facilities-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .quick-info-card .fee-amount {
+    font-size: 1.2rem;
+  }
+  
+  .quick-info-card .contact-buttons {
+    flex-direction: column;
+  }
+  
+  .grades-section-inline {
+    padding-left: 0;
+    border-left: none;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #f1f5f9;
+  }
+}
+
+@media (max-width: 576px) {
+  .classroom-details-page {
+    padding: 0.5rem 0 2rem;
+  }
+
+  .hero-section {
+    padding: 0.5rem;
+    border-radius: 10px;
+  }
+
+  .gallery-carousel,
+  .gallery-card,
+  .gallery-image,
+  .no-image-placeholder {
+    height: 150px;
+    min-height: 150px;
+    border-radius: 8px;
+  }
+
+  .classroom-header-compact {
+    gap: 0.5rem;
+  }
+
+  .classroom-header-compact .classroom-title {
+    font-size: 0.95rem;
+  }
+
+  .info-card {
+    padding: 0.75rem;
+    border-radius: 10px;
+  }
+
+  .info-card h6 {
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .day-badge {
+    width: 30px;
+    height: 30px;
+    font-size: 0.6rem;
+  }
+
+  .facilities-list {
+    gap: 0.35rem;
+  }
+
+  .facility-item {
+    padding: 0.35rem 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .quick-info-card .fee-amount {
+    font-size: 1.1rem;
+  }
+
+  .quick-info-card .contact-btn {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+    border-radius: 6px;
+  }
+
+  .tutor-mini-card {
+    padding: 0.75rem;
+    border-radius: 10px;
+  }
+
+  .tutor-avatar-small {
+    width: 40px;
+    height: 40px;
+  }
+
+  .tutor-details h6 {
+    font-size: 0.85rem;
+  }
+
+  .tutor-qualifications {
+    font-size: 0.7rem;
+  }
+
+  .tutor-experience {
+    font-size: 0.65rem;
+  }
+
+  .grades-section-inline {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+  }
+
+  .grade-badge {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.7rem;
+  }
+}

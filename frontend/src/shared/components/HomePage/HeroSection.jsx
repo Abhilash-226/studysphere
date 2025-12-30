@@ -11,22 +11,31 @@ const HeroSection = () => {
             <h1 className="hero-title">
               Join Live Online or Offline Classes with the best Tutors
             </h1>
+            <div className="tagline-container">
+              <h2 className="tagline">
+                Where Learning, Earning, and Growing Happen Together!
+              </h2>
+            </div>
             <div className="search-container">
-              <InputGroup className="mb-3">
+              <InputGroup className="mb-0">
                 <Form.Control
                   placeholder="What do you want to learn?"
                   aria-label="Search courses"
                   className="search-input"
                 />
-                <Button variant="primary" className="search-button">
+                <Button
+                  variant="primary"
+                  className="search-button search-button-desktop"
+                >
                   Book a Demo Class <i className="fas fa-arrow-right"></i>
                 </Button>
+                <Button
+                  variant="primary"
+                  className="search-button search-button-mobile"
+                >
+                  <i className="fas fa-search"></i>
+                </Button>
               </InputGroup>
-            </div>
-            <div className="tagline-container">
-              <h2 className="tagline">
-                Where Learning, Earning, and Growing Happen Together!
-              </h2>
             </div>
           </Col>
           <Col

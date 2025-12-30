@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Form, Button, Row, Col, Alert, Badge } from "react-bootstrap";
-import { FaCalendarAlt, FaClock, FaMapMarkerAlt, FaVideo, FaDollarSign } from "react-icons/fa";
+import {
+  FaCalendarAlt,
+  FaClock,
+  FaMapMarkerAlt,
+  FaVideo,
+  FaRupeeSign,
+} from "react-icons/fa";
 import PropTypes from "prop-types";
 import sessionService from "../../../services/session.service";
 import { useAuth } from "../../../context/AuthContext";
@@ -29,9 +35,9 @@ const SessionBookingModal = ({ show, onHide, tutor, onBookingSuccess }) => {
       address: "",
       city: "",
       state: "",
-      zipCode: ""
+      zipCode: "",
     },
-    notes: ""
+    notes: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -61,9 +67,9 @@ const SessionBookingModal = ({ show, onHide, tutor, onBookingSuccess }) => {
           address: "",
           city: "",
           state: "",
-          zipCode: ""
+          zipCode: "",
         },
-        notes: ""
+        notes: "",
       });
       setError("");
       setSuccess("");
@@ -72,20 +78,20 @@ const SessionBookingModal = ({ show, onHide, tutor, onBookingSuccess }) => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    
+
     if (name.startsWith("location.")) {
       const locationField = name.split(".")[1];
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         location: {
           ...prev.location,
-          [locationField]: value
-        }
+          [locationField]: value,
+        },
       }));
     } else {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        [name]: value
+        [name]: value,
       }));
     }
   };
@@ -98,13 +104,22 @@ const SessionBookingModal = ({ show, onHide, tutor, onBookingSuccess }) => {
 
     try {
       // Validate required fields
-      if (!formData.title || !formData.subject || !formData.startDate || !formData.startTime) {
+      if (
+        !formData.title ||
+        !formData.subject ||
+        !formData.startDate ||
+        !formData.startTime
+      ) {
         throw new Error("Please fill in all required fields");
       }
 
       // Create start and end times
-      const startDateTime = new Date(`${formData.startDate}T${formData.startTime}`);
-      const endDateTime = new Date(startDateTime.getTime() + (parseFloat(formData.duration) * 60 * 60 * 1000));
+      const startDateTime = new Date(
+        `${formData.startDate}T${formData.startTime}`
+      );
+      const endDateTime = new Date(
+        startDateTime.getTime() + parseFloat(formData.duration) * 60 * 60 * 1000
+      );
 
       // Validate start time is in the future
       if (startDateTime <= new Date()) {
@@ -120,7 +135,7 @@ const SessionBookingModal = ({ show, onHide, tutor, onBookingSuccess }) => {
         startTime: startDateTime.toISOString(),
         endTime: endDateTime.toISOString(),
         mode: formData.mode,
-        notes: formData.notes
+        notes: formData.notes,
       };
 
       // Add location for offline sessions
@@ -142,7 +157,6 @@ const SessionBookingModal = ({ show, onHide, tutor, onBookingSuccess }) => {
       } else {
         throw new Error(response.message || "Failed to book session");
       }
-
     } catch (error) {
       console.error("Error booking session:", error);
       setError(error.message || "Failed to book session. Please try again.");
@@ -157,7 +171,7 @@ const SessionBookingModal = ({ show, onHide, tutor, onBookingSuccess }) => {
     { value: "1.5", label: "1.5 hours" },
     { value: "2", label: "2 hours" },
     { value: "2.5", label: "2.5 hours" },
-    { value: "3", label: "3 hours" }
+    { value: "3", label: "3 hours" },
   ];
 
   const getMinDateTime = () => {
@@ -196,8 +210,8 @@ const SessionBookingModal = ({ show, onHide, tutor, onBookingSuccess }) => {
                 <h5>{tutor.name}</h5>
                 <p className="text-muted mb-1">{tutor.specialization}</p>
                 <div className="d-flex align-items-center mb-2">
-                  <FaDollarSign className="me-1" />
-                  <span className="fw-bold">${tutor.hourlyRate}/hour</span>
+                  <FaRupeeSign className="me-1" />
+                  <span className="fw-bold">₹{tutor.hourlyRate}/hour</span>
                 </div>
                 <div className="subjects">
                   {tutor.subjects?.map((subject, index) => (
@@ -265,7 +279,7 @@ const SessionBookingModal = ({ show, onHide, tutor, onBookingSuccess }) => {
                   name="startDate"
                   value={formData.startDate}
                   onChange={handleInputChange}
-                  min={new Date().toISOString().split('T')[0]}
+                  min={new Date().toISOString().split("T")[0]}
                   required
                 />
               </Form.Group>
@@ -291,7 +305,7 @@ const SessionBookingModal = ({ show, onHide, tutor, onBookingSuccess }) => {
                   onChange={handleInputChange}
                   required
                 >
-                  {durationOptions.map(option => (
+                  {durationOptions.map((option) => (
                     <option key={option.value} value={option.value}>
                       {option.label}
                     </option>
@@ -309,7 +323,12 @@ const SessionBookingModal = ({ show, onHide, tutor, onBookingSuccess }) => {
                 type="radio"
                 name="mode"
                 value="online"
-                label={<><FaVideo className="me-1" />Online</>}
+                label={
+                  <>
+                    <FaVideo className="me-1" />
+                    Online
+                  </>
+                }
                 checked={formData.mode === "online"}
                 onChange={handleInputChange}
               />
@@ -318,7 +337,12 @@ const SessionBookingModal = ({ show, onHide, tutor, onBookingSuccess }) => {
                 type="radio"
                 name="mode"
                 value="offline"
-                label={<><FaMapMarkerAlt className="me-1" />In Person</>}
+                label={
+                  <>
+                    <FaMapMarkerAlt className="me-1" />
+                    In Person
+                  </>
+                }
                 checked={formData.mode === "offline"}
                 onChange={handleInputChange}
               />
@@ -409,12 +433,20 @@ const SessionBookingModal = ({ show, onHide, tutor, onBookingSuccess }) => {
           <Button variant="secondary" onClick={onHide} disabled={loading}>
             Cancel
           </Button>
-          <Button 
-            variant="primary" 
-            type="submit" 
-            disabled={loading || !formData.title || !formData.subject || !formData.startDate || !formData.startTime}
+          <Button
+            variant="primary"
+            type="submit"
+            disabled={
+              loading ||
+              !formData.title ||
+              !formData.subject ||
+              !formData.startDate ||
+              !formData.startTime
+            }
           >
-            {loading ? "Booking..." : `Book Session - $${totalPrice.toFixed(2)}`}
+            {loading
+              ? "Booking..."
+              : `Book Session - $${totalPrice.toFixed(2)}`}
           </Button>
         </Modal.Footer>
       </Form>
@@ -426,7 +458,7 @@ SessionBookingModal.propTypes = {
   show: PropTypes.bool.isRequired,
   onHide: PropTypes.func.isRequired,
   tutor: PropTypes.object,
-  onBookingSuccess: PropTypes.func
+  onBookingSuccess: PropTypes.func,
 };
 
 export default SessionBookingModal;

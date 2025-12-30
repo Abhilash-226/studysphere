@@ -34,7 +34,6 @@ export const useRealtimeDashboard = (userRole, initialData = {}) => {
 
   // Handle dashboard data updates
   const handleDashboardUpdate = useCallback((data) => {
-    console.log("Received dashboard update:", data);
     setDashboardData((prev) => ({
       ...prev,
       ...data,
@@ -44,7 +43,6 @@ export const useRealtimeDashboard = (userRole, initialData = {}) => {
 
   // Handle session updates
   const handleSessionUpdate = useCallback((data) => {
-    console.log("Received session update:", data);
     setDashboardData((prev) => {
       const updatedSessions = [...prev.upcomingSessions];
 
@@ -76,7 +74,6 @@ export const useRealtimeDashboard = (userRole, initialData = {}) => {
 
   // Handle session request updates
   const handleSessionRequestUpdate = useCallback((data) => {
-    console.log("Received session request update:", data);
     setDashboardData((prev) => {
       const updatedRequests = [...(prev.sessionRequests || [])];
 
@@ -113,7 +110,6 @@ export const useRealtimeDashboard = (userRole, initialData = {}) => {
 
   // Handle message stats updates
   const handleMessageStatsUpdate = useCallback((data) => {
-    console.log("Received message stats update:", data);
     setDashboardData((prev) => ({
       ...prev,
       messageStats: {
@@ -126,7 +122,6 @@ export const useRealtimeDashboard = (userRole, initialData = {}) => {
 
   // Handle verification status updates (tutor only)
   const handleVerificationStatusUpdate = useCallback((data) => {
-    console.log("Received verification status update:", data);
     setDashboardData((prev) => ({
       ...prev,
       verificationStatus: data,

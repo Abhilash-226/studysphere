@@ -59,20 +59,6 @@ const ProfileHeaderSection = ({
         </h3>
         <p className="text-muted mb-3">{user?.email}</p>
 
-        <div className="profile-completion">
-          <div className="profile-completion-row">
-            <div className="profile-completion-label">Profile Completion</div>
-            <div className="profile-completion-value">
-              {completionPercentage}%
-            </div>
-          </div>
-          <ProgressBar
-            now={completionPercentage}
-            variant={completionPercentage < 70 ? "warning" : "success"}
-            className="mb-3"
-          />
-        </div>
-
         <div className="d-flex justify-content-center mb-3">
           <button
             className="btn btn-outline-primary btn-sm"

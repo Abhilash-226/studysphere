@@ -80,8 +80,7 @@ const TutorFilters = ({
       </FilterGroup>
 
       {Array.isArray(filters.teachingMode) &&
-        (filters.teachingMode.includes("offline_home") ||
-          filters.teachingMode.includes("offline_classroom")) && (
+        filters.teachingMode.includes("offline") && (
           <FilterGroup title="Location">
             <CheckboxFilter
               options={filterOptions.locations || []}
@@ -104,14 +103,14 @@ const TutorFilters = ({
         />
       </FilterGroup>
 
-      <FilterGroup title="Price Range">
+      <FilterGroup title="Price Range (per hour)">
         <RangeFilter
           min={0}
-          max={200}
-          value={filters.price || [0, 200]}
+          max={5000}
+          value={filters.price || [0, 5000]}
           onChange={(value) => handleFilterChange("price", value)}
-          unit="$"
-          step={5}
+          unit="₹"
+          step={100}
         />
       </FilterGroup>
 

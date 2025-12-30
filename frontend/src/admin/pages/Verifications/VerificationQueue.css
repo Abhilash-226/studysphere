@@ -279,6 +279,17 @@
 }
 
 /* Responsive */
+@media (max-width: 992px) {
+  .verification-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .page-header h2 {
+    font-size: 1.5rem;
+  }
+}
+
 @media (max-width: 768px) {
   .filters-section {
     flex-direction: column;
@@ -287,18 +298,118 @@
   
   .search-form {
     max-width: none;
+    min-width: 100%;
   }
   
   .filter-tabs {
     justify-content: center;
     flex-wrap: wrap;
   }
+
+  .filter-tab {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+  }
   
   .verification-grid {
     grid-template-columns: 1fr;
+    gap: 1rem;
   }
   
   .info-grid {
     grid-template-columns: 1fr;
+  }
+
+  .page-header h2 {
+    font-size: 1.35rem;
+  }
+
+  .loading-state,
+  .error-state,
+  .empty-state {
+    min-height: 300px;
+    padding: 2rem;
+  }
+
+  .tutor-avatar {
+    width: 45px;
+    height: 45px;
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .verification-queue {
+    padding: 0 0.5rem;
+  }
+
+  .page-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .page-header h2 {
+    font-size: 1.25rem;
+  }
+
+  .filters-section {
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .filter-tabs {
+    padding: 0.35rem;
+    gap: 0.35rem;
+  }
+
+  .filter-tab {
+    padding: 0.35rem 0.6rem;
+    font-size: 0.8rem;
+    border-radius: 6px;
+  }
+
+  .verification-card .card-header {
+    padding: 1rem;
+  }
+
+  .verification-card .card-body {
+    padding: 1rem;
+  }
+
+  .verification-card .card-footer {
+    padding: 0.875rem 1rem;
+  }
+
+  .tutor-avatar {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+
+  .tutor-details h4 {
+    font-size: 0.95rem;
+  }
+
+  .tutor-details p {
+    font-size: 0.8rem;
+  }
+
+  .status-badge {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.75rem;
+  }
+
+  .info-item {
+    font-size: 0.8rem;
+  }
+
+  .doc-badge {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.7rem;
+  }
+
+  .pagination-wrapper {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
   }
 }

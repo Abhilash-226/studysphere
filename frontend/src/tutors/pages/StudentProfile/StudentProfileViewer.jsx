@@ -53,7 +53,6 @@ const StudentProfileViewer = () => {
         setError(response.message || "Failed to load student profile");
       }
     } catch (error) {
-      console.error("Error loading student profile:", error);
       setError("Failed to load student profile");
     } finally {
       setLoading(false);
@@ -177,17 +176,6 @@ const StudentProfileViewer = () => {
               </Col>
               <Col md={4} className="text-end">
                 <div className="profile-stats">
-                  <div className="mb-3">
-                    <small>Profile Completion</small>
-                    <ProgressBar
-                      variant={getCompletionColor(
-                        student.metadata.profileCompleteness
-                      )}
-                      now={student.metadata.profileCompleteness}
-                      label={`${student.metadata.profileCompleteness}%`}
-                      className="mb-2"
-                    />
-                  </div>
                   <div>
                     <small>
                       Member since: {formatDate(student.metadata.memberSince)}

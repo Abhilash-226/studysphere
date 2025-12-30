@@ -1,20 +1,46 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
+import {
+  FaStar,
+  FaMapMarkerAlt,
+  FaGraduationCap,
+  FaClock,
+  FaVideo,
+  FaUsers,
+  FaCheckCircle,
+} from "react-icons/fa";
 import { formatImageUrl } from "../../../shared/utils/imageUtils";
 import "./TutorCard.css";
 
 /**
  * A reusable tutor card component for displaying tutor information
- *
- * @param {Object} props
- * @param {Object} props.tutor - Tutor data to display
- * @param {Boolean} props.expanded - Whether to show the expanded view with more details
  */
 const TutorCard = ({ tutor, expanded = false }) => {
   const navigate = useNavigate();
 
-  const handleBookSession = () => {
-    // Prepare subjects array - prioritize subjects field, fallback to specialization
+  // Check teaching modes
+  const hasOnlineMode =
+    tutor.teachingMode &&
+    (Array.isArray(tutor.teachingMode)
+      ? tutor.teachingMode.some(
+          (mode) => mode === "online" || mode.startsWith("online_")
+        )
+      : tutor.teachingMode === "online" ||
+        tutor.teachingMode.startsWith("online_"));
+
+  const hasOfflineMode =
+    tutor.teachingMode &&
+    (Array.isArray(tutor.teachingMode)
+      ? tutor.teachingMode.some(
+          (mode) => mode === "offline" || mode.startsWith("offline_")
+        )
+      : tutor.teachingMode === "offline" ||
+        tutor.teachingMode.startsWith("offline_"));
+
+  const handleBookSession = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
     let subjects = [];
     if (tutor.subjects && Array.isArray(tutor.subjects)) {
       subjects = tutor.subjects;
@@ -28,7 +54,7 @@ const TutorCard = ({ tutor, expanded = false }) => {
           id: tutor.id,
           name: tutor.name,
           profileImage: tutor.image || tutor.profileImage,
-          hourlyRate: tutor.hourlyRate || 25,
+          hourlyRate: tutor.hourlyRate || 500,
           subjects: subjects,
           bio: tutor.bio,
           rating: tutor.rating,
@@ -42,158 +68,156 @@ const TutorCard = ({ tutor, expanded = false }) => {
   };
 
   const handleImageError = (e) => {
-    console.warn(`Failed to load image for tutor ${tutor.name}:`, e.target.src);
     e.target.onerror = null;
-
-    // Try different fallback images in order
-    if (e.target.src.includes("tutor-placeholder.svg")) {
-      e.target.src = "/images/tutor-placeholder.jpg";
-    } else if (e.target.src.includes("tutor-placeholder.jpg")) {
-      e.target.src = "/images/avatar-placeholder.jpg";
-    } else {
-      e.target.src = "/images/tutors/tutor-placeholder.svg";
-    }
+    e.target.src = "/images/tutors/tutor-placeholder.svg";
   };
 
+  // Get subjects to display
+  const getSubjects = () => {
+    if (tutor.subjects && Array.isArray(tutor.subjects)) {
+      return tutor.subjects.slice(0, 3);
+    }
+    if (tutor.specialization) {
+      return [tutor.specialization];
+    }
+    return [];
+  };
+
+  const subjects = getSubjects();
+
   return (
-    <div className={`tutor-card-detailed ${expanded ? "expanded" : ""}`}>
-      <div className="tutor-card-left">
-        <div className="tutor-avatar">
+    <div className={`tutor-card ${expanded ? "tutor-card--expanded" : ""}`}>
+      {/* Left Section - Avatar & Quick Info */}
+      <div className="tutor-card__left">
+        <div className="tutor-card__avatar-wrapper">
           <img
             src={formatImageUrl(tutor.image || tutor.profileImage)}
-            alt={`${tutor.name}'s profile`}
+            alt={tutor.name}
+            className="tutor-card__avatar"
             onError={handleImageError}
             loading="lazy"
           />
-          {tutor.rating ? (
-            <div className="tutor-rating-badge">
-              <span>{tutor.rating}</span>
-              <i className="star-icon">★</i>
+          {tutor.rating && parseFloat(tutor.rating) > 0 && (
+            <div className="tutor-card__rating">
+              <FaStar /> {parseFloat(tutor.rating).toFixed(1)}
             </div>
-          ) : null}
+          )}
         </div>
 
-        {expanded && (
-          <div className="tutor-reviews">
-            {tutor.rating ? (
-              <span className="reviews-count">
-                {tutor.reviews || 0} reviews
-              </span>
-            ) : (
-              <span className="no-reviews">No reviews yet</span>
-            )}
-          </div>
-        )}
+        {/* Teaching Mode Badges */}
+        <div className="tutor-card__modes">
+          {hasOnlineMode && (
+            <span className="tutor-card__mode tutor-card__mode--online">
+              <FaVideo /> Online
+            </span>
+          )}
+          {hasOfflineMode && (
+            <span className="tutor-card__mode tutor-card__mode--offline">
+              <FaUsers /> In-Person
+            </span>
+          )}
+        </div>
+
+        {/* Reviews */}
+        <div className="tutor-card__reviews">
+          {tutor.rating ? (
+            <span>{tutor.reviews || 0} reviews</span>
+          ) : (
+            <span className="tutor-card__no-reviews">New Tutor</span>
+          )}
+        </div>
       </div>
 
-      <div className="tutor-card-content">
-        <div className="tutor-card-header">
-          <h3 className="tutor-name">{tutor.name}</h3>
-          <div className="tutor-tags">
-            {tutor.teachingMode && (
-              <>
-                {Array.isArray(tutor.teachingMode) ? (
-                  tutor.teachingMode.map((mode) => (
-                    <span
-                      key={mode}
-                      className={`tutor-tag teaching-mode ${mode}`}
-                    >
-                      {mode === "online_individual"
-                        ? "Online (Individual)"
-                        : mode === "online_group"
-                        ? "Online (Group)"
-                        : mode === "offline_home"
-                        ? "In-Person (Home)"
-                        : "In-Person (Classroom)"}
-                    </span>
-                  ))
-                ) : (
-                  <span
-                    className={`tutor-tag teaching-mode ${tutor.teachingMode}`}
-                  >
-                    {tutor.teachingMode === "online_individual"
-                      ? "Online (Individual)"
-                      : tutor.teachingMode === "online_group"
-                      ? "Online (Group)"
-                      : tutor.teachingMode === "offline_home"
-                      ? "In-Person (Home)"
-                      : tutor.teachingMode === "offline_classroom"
-                      ? "In-Person (Classroom)"
-                      : "Mixed"}
-                  </span>
-                )}
-              </>
-            )}
-            {tutor.gender && (
-              <span className="tutor-tag gender">{tutor.gender}</span>
-            )}
+      {/* Right Section - Details */}
+      <div className="tutor-card__content">
+        <div className="tutor-card__header">
+          <div className="tutor-card__title-row">
+            <h3 className="tutor-card__name">{tutor.name}</h3>
             {parseFloat(tutor.rating) >= 4.5 && (
-              <span className="tutor-tag top-rated">Top Rated</span>
+              <span className="tutor-card__verified">
+                <FaCheckCircle /> Top Rated
+              </span>
             )}
           </div>
+          <p className="tutor-card__specialization">{tutor.specialization}</p>
         </div>
 
-        <p className="tutor-specialization">{tutor.specialization}</p>
-
-        {expanded && (
-          <>
-            <p className="tutor-qualification">
-              {tutor.qualification}
-              {tutor.experience && ` • ${tutor.experience} years experience`}
-            </p>
-
-            {tutor.university && (
-              <p className="tutor-university">
-                <span className="university-label">University:</span>{" "}
-                {tutor.university}
-              </p>
-            )}
-
-            {tutor.location && tutor.location.city && (
-              <p className="tutor-location">
-                <span className="location-label">Location:</span>{" "}
+        {/* Quick Stats */}
+        <div className="tutor-card__stats">
+          {tutor.qualification && (
+            <div className="tutor-card__stat">
+              <FaGraduationCap />
+              <span>{tutor.qualification}</span>
+            </div>
+          )}
+          {tutor.experience && (
+            <div className="tutor-card__stat">
+              <FaClock />
+              <span>{tutor.experience} years experience</span>
+            </div>
+          )}
+          {tutor.location?.city && (
+            <div className="tutor-card__stat">
+              <FaMapMarkerAlt />
+              <span>
                 {tutor.location.city}
-                {tutor.location.state && `, ${tutor.location.state}`}
-                {tutor.location.country && `, ${tutor.location.country}`}
-              </p>
-            )}
+                {tutor.location.state ? `, ${tutor.location.state}` : ""}
+              </span>
+            </div>
+          )}
+        </div>
 
-            {tutor.availability && tutor.availability.length > 0 && (
-              <div className="tutor-availability">
-                <span className="availability-label">Available:</span>
-                <div className="availability-days">
-                  {tutor.availability.map((slot, index) => (
-                    <span key={index} className="availability-slot">
-                      {slot.day} ({slot.startTime} - {slot.endTime})
-                    </span>
-                  ))}
-                </div>
-              </div>
+        {/* Subjects */}
+        {subjects.length > 0 && (
+          <div className="tutor-card__subjects">
+            {subjects.map((subject, idx) => (
+              <span key={idx} className="tutor-card__subject">
+                {subject}
+              </span>
+            ))}
+            {tutor.subjects && tutor.subjects.length > 3 && (
+              <span className="tutor-card__subject tutor-card__subject--more">
+                +{tutor.subjects.length - 3} more
+              </span>
             )}
-
-            {tutor.bio && (
-              <p className="tutor-bio">
-                {tutor.bio.length > 150
-                  ? `${tutor.bio.substring(0, 150)}...`
-                  : tutor.bio}
-              </p>
-            )}
-          </>
+          </div>
         )}
 
-        <div className="tutor-card-footer">
-          <div className="tutor-price">
-            <span className="price-amount">${tutor.hourlyRate || 25}</span>
-            <span className="price-unit">/hour</span>
-          </div>
+        {/* Bio - shown in expanded view */}
+        {expanded && tutor.bio && (
+          <p className="tutor-card__bio">
+            {tutor.bio.length > 150
+              ? `${tutor.bio.substring(0, 150)}...`
+              : tutor.bio}
+          </p>
+        )}
 
-          <div className="tutor-actions">
-            <Link to={`/tutors/${tutor.id}`} className="btn btn-primary">
+        {/* Footer - Price & Actions */}
+        <div className="tutor-card__footer">
+          {hasOnlineMode && (
+            <div className="tutor-card__price">
+              <span className="tutor-card__price-amount">
+                ₹{tutor.hourlyRate || 500}
+              </span>
+              <span className="tutor-card__price-unit">/hour</span>
+            </div>
+          )}
+
+          <div className="tutor-card__actions">
+            <Link
+              to={`/tutors/${tutor.id}`}
+              className="tutor-card__btn tutor-card__btn--outline"
+            >
               View Profile
             </Link>
-            <button onClick={handleBookSession} className="btn btn-secondary">
-              Book Session
-            </button>
+            {hasOnlineMode && (
+              <button
+                onClick={handleBookSession}
+                className="tutor-card__btn tutor-card__btn--primary"
+              >
+                Book Session
+              </button>
+            )}
           </div>
         </div>
       </div>

@@ -113,3 +113,127 @@
   background-color: #f0fff4;
   color: #38a169;
 }
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  .tutor-info-card {
+    padding: 1rem;
+    border-radius: 10px;
+  }
+
+  .tutor-avatar {
+    width: 70px;
+    height: 70px;
+  }
+
+  .subjects .badge {
+    font-size: 0.7rem;
+  }
+
+  .location-fields {
+    padding: 0.875rem;
+  }
+
+  .price-summary {
+    padding: 1.25rem;
+    border-radius: 10px;
+  }
+
+  .price-summary .text-primary {
+    font-size: 1.15rem;
+  }
+
+  .modal-header {
+    padding: 0.875rem 1rem;
+  }
+
+  .modal-title {
+    font-size: 1rem;
+  }
+
+  .btn-primary {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .tutor-info-card {
+    padding: 0.875rem;
+    border-radius: 8px;
+  }
+
+  .tutor-avatar {
+    width: 60px;
+    height: 60px;
+    border-width: 2px;
+  }
+
+  .subjects .badge {
+    font-size: 0.65rem;
+    padding: 0.3rem 0.5rem;
+  }
+
+  .location-fields {
+    padding: 0.75rem;
+    border-radius: 6px;
+  }
+
+  .price-summary {
+    padding: 1rem;
+    margin-top: 0.875rem;
+    border-radius: 8px;
+  }
+
+  .price-summary hr {
+    margin: 0.5rem 0;
+  }
+
+  .price-summary .text-primary {
+    font-size: 1.1rem;
+  }
+
+  .modal-header {
+    padding: 0.75rem;
+  }
+
+  .modal-title {
+    font-size: 0.95rem;
+  }
+
+  .modal-title svg,
+  .modal-title i {
+    font-size: 1rem;
+    margin-right: 0.5rem;
+  }
+
+  .modal-body {
+    padding: 0.875rem;
+  }
+
+  .modal-footer {
+    padding: 0.75rem;
+  }
+
+  .btn-primary {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    border-radius: 6px;
+  }
+
+  .form-control,
+  .form-select {
+    font-size: 0.9rem;
+    padding: 0.5rem 0.75rem;
+  }
+
+  .form-label {
+    font-size: 0.85rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .alert {
+    padding: 0.625rem 0.875rem;
+    font-size: 0.85rem;
+  }
+}

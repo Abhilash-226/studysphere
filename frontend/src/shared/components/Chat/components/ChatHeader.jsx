@@ -38,14 +38,15 @@ const ChatHeader = ({
   const userName = formatUserName(otherUser);
 
   return (
-    <div className={`chat-header border-bottom bg-white p-3 ${className}`}>
+    <div className={`chat-header border-bottom p-3 ${className}`}>
       <div className="d-flex align-items-center justify-content-between">
         <div className="d-flex align-items-center flex-grow-1">
           {showBackButton && (
             <Button
               variant="link"
-              className="p-0 me-3 text-decoration-none"
+              className="p-0 me-3 text-decoration-none back-btn"
               onClick={onBack}
+              aria-label="Go back"
             >
               <i className="bi bi-arrow-left fs-5"></i>
             </Button>
@@ -60,35 +61,30 @@ const ChatHeader = ({
             className="me-3"
           />
 
-          <div className="flex-grow-1">
-            <h6 className="mb-0 fw-semibold">{userName}</h6>
-            {otherUser.email && (
-              <small className="text-muted">{otherUser.email}</small>
-            )}
-            {otherUser.role && (
-              <div className="small text-muted text-capitalize">
-                {otherUser.role}
-              </div>
-            )}
-            {otherUser.isOnline && (
-              <small className="text-success">
+          <div className="flex-grow-1 min-width-0">
+            <h6 className="mb-0 fw-semibold text-truncate">{userName}</h6>
+            {otherUser.isOnline ? (
+              <small className="online-status">
                 <i
                   className="bi bi-circle-fill me-1"
-                  style={{ fontSize: "0.5rem" }}
+                  style={{ fontSize: "0.45rem" }}
                 ></i>
                 Online
+              </small>
+            ) : (
+              <small className="text-muted text-capitalize">
+                {otherUser.role || "Offline"}
               </small>
             )}
           </div>
         </div>
 
         <div className="d-flex align-items-center">
-          {/* Menu dropdown */}
           <Dropdown align="end">
             <Dropdown.Toggle
-              variant="outline-secondary"
+              variant="light"
               size="sm"
-              className="rounded-circle border-0"
+              className="rounded-circle border-0 menu-btn"
               style={{ width: "36px", height: "36px" }}
             >
               <i className="bi bi-three-dots-vertical"></i>

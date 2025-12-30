@@ -21,7 +21,7 @@ import {
   FaPhone,
   FaEnvelope,
   FaGraduationCap,
-  FaDollarSign,
+  FaRupeeSign,
 } from "react-icons/fa";
 import sessionService from "../../../shared/services/session.service";
 import { formatImageUrl } from "../../../shared/utils/imageUtils";
@@ -130,6 +130,11 @@ const SessionDetails = () => {
       default:
         return "secondary";
     }
+  };
+
+  const handleJoinClass = () => {
+    // Navigate to the classroom page for online sessions
+    navigate(`/student/classroom/${sessionId}`);
   };
 
   const handleJoinSession = () => {
@@ -247,8 +252,8 @@ const SessionDetails = () => {
                     <Col md={6}>
                       {session.price && (
                         <div className="session-detail-item mb-3">
-                          <FaDollarSign className="me-2 text-muted" />
-                          <strong>Price:</strong> ${session.price}
+                          <FaRupeeSign className="me-2 text-muted" />
+                          <strong>Price:</strong> ₹{session.price}
                         </div>
                       )}
                     </Col>
@@ -263,16 +268,29 @@ const SessionDetails = () => {
 
                   {/* Action Buttons */}
                   <div className="mt-4 d-flex gap-2 flex-wrap">
-                    {session.status === "scheduled" && session.meetingLink && (
-                      <Button
-                        variant="success"
-                        onClick={handleJoinSession}
-                        size="lg"
-                      >
-                        <FaVideo className="me-2" />
-                        Join Session
-                      </Button>
-                    )}
+                    {/* Only show Join Class button when tutor has started the class */}
+                    {session.status === "scheduled" &&
+                      session.mode === "online" &&
+                      session.isClassActive && (
+                        <Button
+                          variant="success"
+                          onClick={handleJoinClass}
+                          size="lg"
+                        >
+                          <FaVideo className="me-2" />
+                          Join Class
+                        </Button>
+                      )}
+
+                    {/* Show waiting message when class not yet started */}
+                    {session.status === "scheduled" &&
+                      session.mode === "online" &&
+                      !session.isClassActive && (
+                        <Button variant="outline-secondary" disabled size="lg">
+                          <FaClock className="me-2" />
+                          Waiting for Tutor to Start
+                        </Button>
+                      )}
 
                     <Button
                       variant="outline-primary"

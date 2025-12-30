@@ -183,9 +183,28 @@
   transform: translateX(5px);
 }
 
+@media (max-width: 991px) {
+  .student-profile-header {
+    padding: 1.75rem;
+  }
+
+  .card-body {
+    padding: 1.25rem;
+  }
+
+  .nav-tabs .nav-link {
+    padding: 0.875rem 1.25rem;
+  }
+
+  .academic-info-grid {
+    gap: 1.5rem;
+  }
+}
+
 @media (max-width: 768px) {
   .student-profile-header {
     padding: 1.5rem;
+    border-radius: 10px;
   }
   
   .student-profile-header .row {
@@ -208,18 +227,126 @@
     padding: 0.75rem 1rem;
     font-size: 0.9rem;
   }
-}
 
-.academic-info-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-}
+  .card h5 {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
 
-@media (max-width: 768px) {
+  .card h6 {
+    font-size: 0.9rem;
+  }
+
+  .badge {
+    font-size: 0.7rem;
+    padding: 0.4em 0.65em;
+  }
+
+  .preference-item {
+    padding: 0.625rem;
+  }
+
+  .contact-info {
+    padding: 0.875rem;
+  }
+
   .academic-info-grid {
     grid-template-columns: 1fr;
     gap: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .student-profile-header {
+    padding: 1rem;
+    border-radius: 8px;
+  }
+
+  .student-profile-header h3 {
+    font-size: 1.25rem;
+  }
+
+  .student-profile-header p {
+    font-size: 0.85rem;
+  }
+
+  .profile-image {
+    width: 80px;
+    height: 80px;
+  }
+
+  .profile-stats span {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-size: 0.85rem;
+  }
+
+  .nav-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .nav-tabs .nav-link {
+    padding: 0.625rem 0.875rem;
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+
+  .card {
+    border-radius: 10px;
+  }
+
+  .card-body {
+    padding: 0.875rem;
+  }
+
+  .card h5 {
+    font-size: 0.95rem;
+    margin-bottom: 0.875rem;
+    padding-bottom: 0.4rem;
+  }
+
+  .card h6 {
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .list-group-item {
+    padding: 0.75rem 0;
+    font-size: 0.9rem;
+  }
+
+  .preference-item {
+    padding: 0.5rem;
+    font-size: 0.85rem;
+  }
+
+  .contact-info {
+    padding: 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  .tag-container {
+    gap: 0.35rem;
+  }
+
+  .tag-container .badge {
+    font-size: 0.65rem;
+    padding: 0.35em 0.55em;
+  }
+
+  .info-section {
+    margin-bottom: 1rem;
+  }
+
+  .btn-outline-primary {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .session-history-item {
+    padding: 0.75rem;
   }
 }
 

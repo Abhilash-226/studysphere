@@ -139,13 +139,8 @@ const studentSchema = new mongoose.Schema(
     },
     preferredTeachingMode: {
       type: [String],
-      enum: [
-        "online_individual",
-        "online_group",
-        "offline_home",
-        "offline_classroom",
-      ],
-      default: ["online_individual"],
+      enum: ["online", "offline"],
+      default: ["online"],
     },
 
     // Profile Metadata

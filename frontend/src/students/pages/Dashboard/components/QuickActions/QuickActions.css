@@ -105,3 +105,70 @@
   justify-content: center;
   min-width: 20px;
 }
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  .quick-actions-card .card-header h5 {
+    font-size: 1rem;
+  }
+
+  .quick-actions-list {
+    gap: 6px;
+  }
+
+  .quick-action-row {
+    padding: 12px 14px;
+  }
+
+  .quick-action-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 1.1rem;
+    margin-right: 12px;
+  }
+
+  .quick-action-title {
+    font-size: 0.9rem;
+  }
+
+  .quick-action-description {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .quick-actions-card .card-header h5 {
+    font-size: 0.95rem;
+  }
+
+  .quick-action-row {
+    padding: 10px 12px;
+    border-radius: 6px;
+  }
+
+  .quick-action-icon {
+    width: 30px;
+    height: 30px;
+    font-size: 1rem;
+    margin-right: 10px;
+  }
+
+  .quick-action-title {
+    font-size: 0.85rem;
+  }
+
+  .quick-action-description {
+    font-size: 0.7rem;
+  }
+
+  .quick-action-badge {
+    font-size: 0.65rem;
+    padding: 0.2rem 0.4rem;
+    min-width: 18px;
+  }
+
+  .quick-action-arrow {
+    font-size: 0.8rem;
+    margin-left: 6px;
+  }
+}

@@ -279,17 +279,92 @@
 }
 
 /* Responsive styles */
-@media (max-width: 768px) {
-  .profile-setup-container {
-    padding: 20px 15px;
+@media (max-width: 991px) {
+  .tutor-profile-setup {
+    padding: 30px 15px;
   }
-  
+
+  .profile-setup-container {
+    padding: 25px 20px;
+    border-radius: 10px;
+  }
+
   .profile-setup-header h1 {
     font-size: 1.8rem;
+  }
+
+  .progress-step {
+    width: 60px;
+    font-size: 0.8rem;
+  }
+
+  .step-number {
+    width: 26px;
+    height: 26px;
+  }
+
+  .setup-navigation {
+    margin-top: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .tutor-profile-setup {
+    padding: 20px 10px;
+  }
+
+  .profile-setup-container {
+    padding: 20px 15px;
+    border-radius: 8px;
+  }
+  
+  .profile-setup-header {
+    margin-bottom: 20px;
+  }
+
+  .profile-setup-header h1 {
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+  }
+
+  .profile-setup-header p {
+    font-size: 0.9rem;
+  }
+
+  .setup-progress {
+    margin-bottom: 25px;
   }
   
   .progress-steps {
     display: none;
+  }
+
+  .progress-bar {
+    height: 6px;
+    margin-bottom: 10px;
+  }
+
+  .profile-setup-form {
+    margin-top: 20px;
+  }
+
+  .form-group {
+    margin-bottom: 15px;
+  }
+
+  .form-group label {
+    font-size: 0.95rem;
+    margin-bottom: 6px;
+  }
+
+  .form-group input[type="text"],
+  .form-group input[type="number"],
+  .form-group input[type="email"],
+  .form-group input[type="tel"],
+  .form-group select,
+  .form-group textarea {
+    padding: 10px;
+    font-size: 0.95rem;
   }
   
   .checkbox-group,
@@ -297,6 +372,118 @@
   .tag-selection {
     gap: 8px;
   }
+
+  .location-fields {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .document-uploads {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .time-slots {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .day-schedule {
+    padding: 12px;
+  }
+
+  .setup-navigation {
+    flex-direction: column-reverse;
+    gap: 10px;
+    margin-top: 25px;
+  }
+
+  .setup-navigation .btn {
+    width: 100%;
+  }
+
+  .btn {
+    padding: 12px 20px;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .tutor-profile-setup {
+    padding: 15px 8px;
+  }
+
+  .profile-setup-container {
+    padding: 15px 12px;
+    border-radius: 8px;
+  }
+
+  .profile-setup-header h1 {
+    font-size: 1.35rem;
+  }
+
+  .profile-setup-header p {
+    font-size: 0.85rem;
+  }
+
+  .form-group label {
+    font-size: 0.9rem;
+  }
+
+  .form-group input[type="text"],
+  .form-group input[type="number"],
+  .form-group input[type="email"],
+  .form-group input[type="tel"],
+  .form-group select,
+  .form-group textarea {
+    padding: 10px;
+    font-size: 0.9rem;
+    border-radius: 6px;
+  }
+
+  .form-group .help-text {
+    font-size: 0.8rem;
+  }
+
+  .checkbox-item,
+  .radio-item {
+    font-size: 0.9rem;
+  }
+
+  .tag {
+    padding: 5px 10px;
+    font-size: 0.85rem;
+  }
+
+  .avatar-preview {
+    width: 100px;
+    height: 100px;
+  }
+
+  .day-schedule {
+    padding: 10px;
+  }
+
+  .day-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .setup-navigation {
+    margin-top: 20px;
+  }
+
+  .btn {
+    padding: 10px 16px;
+    font-size: 0.9rem;
+  }
+
+  .error-message {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+  }
+}
 }
 
 /* Specific step styles */

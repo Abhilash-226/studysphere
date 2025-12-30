@@ -32,3 +32,50 @@
   font-style: italic;
   padding: 5px 0;
 }
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  .radio-filter {
+    gap: 8px;
+  }
+
+  .radio-option {
+    margin-bottom: 4px;
+  }
+
+  .radio-label {
+    font-size: 0.875rem;
+    padding: 4px 0;
+  }
+
+  .radio-label input[type="radio"] {
+    width: 15px;
+    height: 15px;
+  }
+}
+
+@media (max-width: 576px) {
+  .radio-filter {
+    gap: 6px;
+  }
+
+  .radio-option {
+    margin-bottom: 3px;
+  }
+
+  .radio-label {
+    font-size: 0.85rem;
+    padding: 3px 0;
+  }
+
+  .radio-label input[type="radio"] {
+    width: 14px;
+    height: 14px;
+    margin-right: 6px;
+  }
+
+  .no-options {
+    font-size: 0.85rem;
+    padding: 4px 0;
+  }
+}

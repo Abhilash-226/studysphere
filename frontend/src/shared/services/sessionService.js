@@ -102,7 +102,7 @@ class SessionService {
   }
 
   /**
-   * Complete a session (tutor only)
+   * Complete a session (tutor only) - Sends request to student for approval
    * @param {string} sessionId - Session ID
    * @param {string} notes - Session notes
    * @returns {Promise<Object>} Updated session
@@ -112,6 +112,59 @@ class SessionService {
       const response = await axios.patch(
         `${API_BASE_URL}/sessions/${sessionId}/complete`,
         { notes },
+        { headers: this.getAuthHeaders() }
+      );
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error);
+    }
+  }
+
+  /**
+   * Approve session completion (student only)
+   * @param {string} sessionId - Session ID
+   * @returns {Promise<Object>} Updated session
+   */
+  async approveSessionCompletion(sessionId) {
+    try {
+      const response = await axios.patch(
+        `${API_BASE_URL}/sessions/${sessionId}/approve-completion`,
+        {},
+        { headers: this.getAuthHeaders() }
+      );
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error);
+    }
+  }
+
+  /**
+   * Reject session completion (student only)
+   * @param {string} sessionId - Session ID
+   * @param {string} reason - Rejection reason
+   * @returns {Promise<Object>} Updated session
+   */
+  async rejectSessionCompletion(sessionId, reason = "") {
+    try {
+      const response = await axios.patch(
+        `${API_BASE_URL}/sessions/${sessionId}/reject-completion`,
+        { reason },
+        { headers: this.getAuthHeaders() }
+      );
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error);
+    }
+  }
+
+  /**
+   * Get pending completion requests (student only)
+   * @returns {Promise<Object>} Pending completion sessions
+   */
+  async getPendingCompletionRequests() {
+    try {
+      const response = await axios.get(
+        `${API_BASE_URL}/sessions/pending-completions`,
         { headers: this.getAuthHeaders() }
       );
       return response.data;

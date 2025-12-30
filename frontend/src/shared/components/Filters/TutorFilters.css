@@ -56,6 +56,47 @@
     max-width: none;
     position: relative;
     top: 0;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
+    padding: 15px;
+    border-radius: 10px;
+  }
+
+  .filter-header {
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+  }
+
+  .filter-header h2 {
+    font-size: 1.1rem;
+  }
+
+  .clear-filters {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .tutor-filters {
+    padding: 12px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+  }
+
+  .tutor-filters.mobile {
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+
+  .filter-header {
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+  }
+
+  .filter-header h2 {
+    font-size: 1rem;
+  }
+
+  .clear-filters {
+    font-size: 0.8rem;
   }
 }

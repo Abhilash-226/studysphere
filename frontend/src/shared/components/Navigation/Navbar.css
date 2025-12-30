@@ -87,6 +87,47 @@
 }
 
 /* Mobile view enhancements */
+@media (max-width: 991.98px) {
+  .navbar {
+    padding: 0.5rem 1rem;
+  }
+
+  .navbar-collapse {
+    padding: 1rem 0;
+    background: #fff;
+    margin-top: 0.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .nav-link {
+    padding: 0.75rem 1rem !important;
+    border-radius: 4px;
+    margin: 0.25rem 0;
+  }
+
+  .nav-link:hover {
+    background-color: rgba(13, 110, 253, 0.08);
+  }
+
+  .signup-btn {
+    margin-top: 0.75rem;
+    width: 100%;
+    text-align: center;
+  }
+
+  .dropdown-menu {
+    border: none;
+    box-shadow: none;
+    padding-left: 1rem;
+    background: transparent;
+  }
+
+  .dropdown-item {
+    padding: 0.5rem 1rem;
+  }
+}
+
 @media (max-width: 767.98px) {
   .navbar-collapse {
     padding: 1rem 0;
@@ -100,6 +141,38 @@
   .signup-btn {
     margin-top: 0.5rem;
     width: 100%;
+  }
+
+  .navbar-brand span {
+    font-size: 1.25rem;
+  }
+
+  .navbar-brand img {
+    height: 35px;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .navbar {
+    padding: 0.4rem 0.75rem;
+  }
+
+  .navbar-brand span {
+    font-size: 1.1rem;
+  }
+
+  .navbar-brand img {
+    height: 30px;
+  }
+
+  .nav-link {
+    padding: 0.6rem 0.875rem !important;
+    font-size: 0.9rem;
+  }
+
+  .signup-btn {
+    padding: 0.5rem 0.875rem !important;
+    font-size: 0.9rem;
   }
 }
 

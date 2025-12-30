@@ -53,20 +53,20 @@ const TeachingInfoEdit = ({
       <Row>
         <Col md={6}>
           <Form.Group className="mb-4">
-            <Form.Label>Hourly Rate ($)</Form.Label>
+            <Form.Label>Hourly Rate (₹)</Form.Label>
             <InputGroup>
-              <InputGroup.Text>$</InputGroup.Text>
+              <InputGroup.Text>₹</InputGroup.Text>
               <Form.Control
                 type="number"
                 name="hourlyRate"
                 min="0"
-                step="0.01"
+                step="1"
                 value={formData.hourlyRate}
                 onChange={handleChange}
               />
             </InputGroup>
             <Form.Text className="text-muted">
-              Your hourly rate for tutoring sessions
+              Your hourly rate for tutoring sessions in Indian Rupees
             </Form.Text>
           </Form.Group>
         </Col>

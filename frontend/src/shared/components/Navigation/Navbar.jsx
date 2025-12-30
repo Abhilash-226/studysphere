@@ -100,13 +100,13 @@ const Navbar = () => {
 
             <Nav.Link
               as={Link}
-              to="/categories"
+              to="/classrooms"
               className={`text-secondary ${
-                isActive("/categories") ? "active" : ""
+                isActive("/classrooms") ? "active" : ""
               }`}
               onClick={() => setExpanded(false)}
             >
-              All Categories
+              Classrooms
             </Nav.Link>
 
             {/* Authenticated User Menu */}
@@ -192,6 +192,18 @@ const Navbar = () => {
                   >
                     <FaCog className="me-2" />
                     My Profile
+                  </NavDropdown.Item>
+                )}
+
+                {/* My Classrooms - only for tutors */}
+                {userRole === "tutor" && (
+                  <NavDropdown.Item
+                    as={Link}
+                    to="/tutor/my-classrooms"
+                    onClick={() => setExpanded(false)}
+                  >
+                    <FaChalkboardTeacher className="me-2" />
+                    My Classrooms
                   </NavDropdown.Item>
                 )}
 

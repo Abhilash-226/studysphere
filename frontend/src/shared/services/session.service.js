@@ -107,10 +107,47 @@ class SessionService {
     }
   }
 
-  // Mark session as completed (tutor action)
-  async markSessionCompleted(sessionId) {
+  // Mark session as completed (tutor action - sends request to student)
+  async markSessionCompleted(sessionId, notes = "") {
     try {
-      const response = await api.patch(`/sessions/${sessionId}/complete`);
+      const response = await api.patch(`/sessions/${sessionId}/complete`, {
+        notes,
+      });
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error);
+    }
+  }
+
+  // Approve session completion (student action)
+  async approveSessionCompletion(sessionId) {
+    try {
+      const response = await api.patch(
+        `/sessions/${sessionId}/approve-completion`
+      );
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error);
+    }
+  }
+
+  // Reject session completion (student action)
+  async rejectSessionCompletion(sessionId, reason = "") {
+    try {
+      const response = await api.patch(
+        `/sessions/${sessionId}/reject-completion`,
+        { reason }
+      );
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error);
+    }
+  }
+
+  // Get pending completion requests (for students)
+  async getPendingCompletionRequests() {
+    try {
+      const response = await api.get("/sessions/pending-completions");
       return response.data;
     } catch (error) {
       throw this.handleError(error);
@@ -144,12 +181,9 @@ class SessionService {
 
   // Error handler
   handleError(error) {
-    console.log("SessionService handleError:", error);
     if (error.response && error.response.data) {
-      console.log("Error response data:", error.response.data);
       return error.response.data;
     }
-    console.log("Network or unknown error:", error.message);
     return { message: "Network error or server is unavailable" };
   }
 }

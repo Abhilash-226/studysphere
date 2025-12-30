@@ -36,7 +36,13 @@ const sessionSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["scheduled", "completed", "cancelled", "rescheduled"],
+      enum: [
+        "scheduled",
+        "completed",
+        "cancelled",
+        "rescheduled",
+        "pending_completion",
+      ],
       default: "scheduled",
     },
     mode: {
@@ -47,6 +53,31 @@ const sessionSchema = new mongoose.Schema(
     meetingLink: {
       type: String,
       trim: true,
+    },
+    // Online classroom meeting room details
+    meetingRoom: {
+      roomId: {
+        type: String,
+        trim: true,
+      },
+      roomUrl: {
+        type: String,
+        trim: true,
+      },
+      isActive: {
+        type: Boolean,
+        default: false,
+      },
+      startedAt: {
+        type: Date,
+      },
+      startedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+      endedAt: {
+        type: Date,
+      },
     },
     location: {
       address: String,
@@ -106,6 +137,34 @@ const sessionSchema = new mongoose.Schema(
     completionNotes: {
       type: String,
       trim: true,
+    },
+    // Completion approval workflow
+    completionRequest: {
+      requestedAt: {
+        type: Date,
+      },
+      requestedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+      notes: {
+        type: String,
+        trim: true,
+      },
+      respondedAt: {
+        type: Date,
+      },
+      respondedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+      approved: {
+        type: Boolean,
+      },
+      rejectionReason: {
+        type: String,
+        trim: true,
+      },
     },
     reviewedAt: {
       type: Date,

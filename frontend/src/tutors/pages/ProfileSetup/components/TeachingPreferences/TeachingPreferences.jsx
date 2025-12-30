@@ -89,49 +89,45 @@ const TeachingPreferences = ({ profileData, updateProfileData }) => {
       {/* Teaching Mode */}
       <div className="form-group">
         <label>Teaching Mode</label>
-        <p className="help-text">Select all that apply</p>
+        <p className="help-text">
+          Select how you want to teach (you can select both)
+        </p>
         <div className="checkbox-group">
           <div className="checkbox-item">
             <input
               type="checkbox"
-              id="mode-online-individual"
-              checked={profileData.teachingMode.includes("online_individual")}
-              onChange={() => handleTeachingModeChange("online_individual")}
+              id="mode-online"
+              checked={profileData.teachingMode.includes("online")}
+              onChange={() => handleTeachingModeChange("online")}
             />
-            <label htmlFor="mode-online-individual">Online (Individual)</label>
-          </div>
-          <div className="checkbox-item">
-            <input
-              type="checkbox"
-              id="mode-online-group"
-              checked={profileData.teachingMode.includes("online_group")}
-              onChange={() => handleTeachingModeChange("online_group")}
-            />
-            <label htmlFor="mode-online-group">Online (Group)</label>
-          </div>
-          <div className="checkbox-item">
-            <input
-              type="checkbox"
-              id="mode-offline-home"
-              checked={profileData.teachingMode.includes("offline_home")}
-              onChange={() => handleTeachingModeChange("offline_home")}
-            />
-            <label htmlFor="mode-offline-home">
-              In-Person (Student's Home)
+            <label htmlFor="mode-online">
+              <strong>Online Tutoring</strong>
+              <span className="mode-description">
+                Conduct live video sessions through our platform. Students book
+                and pay online.
+              </span>
             </label>
           </div>
           <div className="checkbox-item">
             <input
               type="checkbox"
-              id="mode-offline-classroom"
-              checked={profileData.teachingMode.includes("offline_classroom")}
-              onChange={() => handleTeachingModeChange("offline_classroom")}
+              id="mode-offline"
+              checked={profileData.teachingMode.includes("offline")}
+              onChange={() => handleTeachingModeChange("offline")}
             />
-            <label htmlFor="mode-offline-classroom">
-              In-Person (Tutor's Classroom)
+            <label htmlFor="mode-offline">
+              <strong>In-Person Tutoring</strong>
+              <span className="mode-description">
+                Students can contact you directly for in-person sessions. You
+                handle scheduling and payments.
+              </span>
             </label>
           </div>
         </div>
+        <p className="info-note">
+          <strong>Note:</strong> For group classes/coaching centres, use the{" "}
+          <strong>Classrooms</strong> feature to list your institute.
+        </p>
       </div>
 
       {/* Subjects */}
@@ -177,10 +173,12 @@ const TeachingPreferences = ({ profileData, updateProfileData }) => {
       </div>
 
       {/* Location (for offline teaching) */}
-      {(profileData.teachingMode.includes("offline_home") ||
-        profileData.teachingMode.includes("offline_classroom")) && (
+      {profileData.teachingMode.includes("offline") && (
         <div className="form-group">
           <label>Location for In-Person Sessions</label>
+          <p className="help-text">
+            Where are you available for in-person tutoring?
+          </p>
           <div className="location-fields">
             <div>
               <input
@@ -193,7 +191,7 @@ const TeachingPreferences = ({ profileData, updateProfileData }) => {
             <div>
               <input
                 type="text"
-                placeholder="State/Province"
+                placeholder="State"
                 value={profileData.location.state}
                 onChange={(e) => handleLocationChange("state", e.target.value)}
               />
@@ -202,7 +200,7 @@ const TeachingPreferences = ({ profileData, updateProfileData }) => {
           <div style={{ marginTop: "10px" }}>
             <input
               type="text"
-              placeholder="Country"
+              placeholder="Country (e.g., India)"
               value={profileData.location.country}
               onChange={(e) => handleLocationChange("country", e.target.value)}
             />
@@ -210,23 +208,25 @@ const TeachingPreferences = ({ profileData, updateProfileData }) => {
         </div>
       )}
 
-      {/* Hourly Rate */}
-      <div className="form-group">
-        <label htmlFor="hourlyRate">Hourly Rate ($)</label>
-        <input
-          type="number"
-          id="hourlyRate"
-          min="0"
-          step="5"
-          value={profileData.hourlyRate}
-          onChange={handleHourlyRateChange}
-          placeholder="Your hourly rate in USD"
-        />
-        <p className="help-text">
-          Set your hourly rate in USD. You can adjust this later based on your
-          experience.
-        </p>
-      </div>
+      {/* Hourly Rate - Only shown for online tutoring */}
+      {profileData.teachingMode.includes("online") && (
+        <div className="form-group">
+          <label htmlFor="hourlyRate">Hourly Rate (₹)</label>
+          <input
+            type="number"
+            id="hourlyRate"
+            min="0"
+            step="50"
+            value={profileData.hourlyRate}
+            onChange={handleHourlyRateChange}
+            placeholder="Your hourly rate in INR (e.g., 500)"
+          />
+          <p className="help-text">
+            Set your hourly rate in Indian Rupees. This will be used for online
+            session bookings.
+          </p>
+        </div>
+      )}
     </div>
   );
 };

@@ -14,3 +14,31 @@
 .home-page .hero-section {
   margin-bottom: -1px; /* Eliminate any gap between sections */
 }
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  .home-page {
+    padding-top: 0;
+  }
+
+  .home-page > section {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .home-page {
+    overflow-x: hidden;
+  }
+
+  .home-page > section {
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+  }
+
+  .home-page .container {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+}

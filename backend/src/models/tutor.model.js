@@ -130,12 +130,10 @@ const tutorSchema = new mongoose.Schema(
     teachingMode: {
       type: [String],
       enum: [
-        "online_individual",
-        "online_group",
-        "offline_home",
-        "offline_classroom",
+        "online", // Online individual tutoring (with booking & payment)
+        "offline", // In-person individual tutoring (contact only)
       ],
-      default: ["online_individual"],
+      default: ["online"],
     },
     subjects: {
       type: [String],

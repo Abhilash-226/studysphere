@@ -61,18 +61,32 @@
 .sidebar-content {
   position: relative;
   z-index: 2;
+  display: block !important;
+  width: 100%;
+}
+
+.sidebar-header {
+  display: block !important;
+  width: 100%;
+  clear: both;
 }
 
 .sidebar-header h2 {
   font-size: 1.75rem;
   font-weight: 700;
   margin-bottom: 1rem;
+  display: block !important;
+  width: 100% !important;
+  float: none !important;
+  clear: both;
 }
 
 @media (min-width: 992px) {
   .sidebar-header h2 {
     font-size: 2rem;
     margin-bottom: 1.5rem;
+    display: block !important;
+    width: 100% !important;
   }
 }
 
@@ -81,6 +95,10 @@
   margin-bottom: 1.5rem;
   opacity: 0.9;
   line-height: 1.6;
+  display: block !important;
+  width: 100% !important;
+  float: none !important;
+  clear: both;
 }
 
 @media (min-width: 992px) {
@@ -90,10 +108,20 @@
   }
 }
 
+.tutor-info-alert {
+  display: block !important;
+  width: 100%;
+  margin-top: 1rem;
+  text-align: left;
+}
+
 .auth-image {
   margin: 1.5rem auto;
   text-align: center;
   animation: float 6s ease-in-out infinite;
+  display: block !important;
+  width: 100%;
+  clear: both;
 }
 
 @media (min-width: 992px) {

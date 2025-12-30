@@ -5,7 +5,7 @@ import {
   FaClock,
   FaMapMarkerAlt,
   FaVideo,
-  FaDollarSign,
+  FaRupeeSign,
 } from "react-icons/fa";
 import PropTypes from "prop-types";
 import sessionService from "../../../services/session.service";
@@ -210,8 +210,8 @@ const SessionBookingModal = ({ show, onHide, tutor, onBookingSuccess }) => {
                 <h5>{tutor.name}</h5>
                 <p className="text-muted mb-1">{tutor.specialization}</p>
                 <div className="d-flex align-items-center mb-2">
-                  <FaDollarSign className="me-1" />
-                  <span className="fw-bold">${tutor.hourlyRate}/hour</span>
+                  <FaRupeeSign className="me-1" />
+                  <span className="fw-bold">₹{tutor.hourlyRate}/hour</span>
                 </div>
                 <div className="subjects">
                   {tutor.subjects?.map((subject, index) => (

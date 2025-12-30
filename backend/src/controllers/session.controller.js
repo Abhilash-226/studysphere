@@ -2,6 +2,8 @@ const Session = require("../models/session.model");
 const Tutor = require("../models/tutor.model");
 const Student = require("../models/student.model");
 const User = require("../models/user.model");
+const Payment = require("../models/payment.model");
+const paymentService = require("../services/payment.service");
 
 // Create a new session (Student books a session with tutor)
 exports.createSession = async (req, res) => {
@@ -181,11 +183,6 @@ exports.getAllSessions = async (req, res) => {
           message: "Student profile not found",
         });
       }
-      console.log("=== getAllSessions Debug ===");
-      console.log("User ID from token:", userId);
-      console.log("Student profile found:", student._id.toString());
-      console.log("Student profile user ID:", student.user.toString());
-      console.log("=== End Debug ===");
       query.student = student._id;
     } else if (userRole === "tutor") {
       const tutor = await Tutor.findOne({ user: userId });
@@ -244,6 +241,8 @@ exports.getAllSessions = async (req, res) => {
       status: session.status,
       paymentStatus: session.paymentStatus,
       rating: session.rating,
+      completionRequest: session.completionRequest,
+      completedAt: session.completedAt,
       tutor: {
         id: session.tutor._id,
         name: `${session.tutor.user.firstName} ${session.tutor.user.lastName}`,
@@ -338,6 +337,8 @@ exports.getTutorSessions = async (req, res) => {
       paymentStatus: session.paymentStatus,
       rating: session.rating,
       review: session.review,
+      completionRequest: session.completionRequest,
+      completedAt: session.completedAt,
       student: {
         id: session.student._id,
         name: `${session.student.user.firstName} ${session.student.user.lastName}`,
@@ -403,15 +404,6 @@ exports.getSessionById = async (req, res) => {
     }
 
     // Check if user has access to this session
-    console.log("=== Session Access Debug ===");
-    console.log("User ID from token:", userId);
-    console.log("User role from token:", userRole);
-    console.log(
-      "Session student user ID:",
-      session.student?.user?._id?.toString()
-    );
-    console.log("Session tutor user ID:", session.tutor?.user?._id?.toString());
-
     // Fix: Convert userId to string for proper comparison
     const userIdString = userId.toString();
 
@@ -420,15 +412,6 @@ exports.getSessionById = async (req, res) => {
         session.student.user._id.toString() === userIdString) ||
       (userRole === "tutor" &&
         session.tutor.user._id.toString() === userIdString);
-
-    console.log("User ID as string:", userIdString);
-    console.log(
-      "Student comparison:",
-      userRole === "student",
-      session.student.user._id.toString() === userIdString
-    );
-    console.log("Has access:", hasAccess);
-    console.log("=== End Debug ===");
 
     if (!hasAccess) {
       return res.status(403).json({
@@ -454,6 +437,8 @@ exports.getSessionById = async (req, res) => {
         rating: session.rating,
         notes: session.notes,
         meetingLink: session.meetingLink,
+        // Include class active status for Join button visibility
+        isClassActive: session.meetingRoom?.isActive || false,
         tutor: {
           id: session.tutor._id,
           name: `${session.tutor.user.firstName} ${session.tutor.user.lastName}`,
@@ -518,6 +503,23 @@ exports.cancelSession = async (req, res) => {
       });
     }
 
+    // Refund payment if exists
+    let paymentRefunded = false;
+    const payment = await Payment.findOne({ session: id });
+    if (payment && ["authorized", "captured"].includes(payment.status)) {
+      try {
+        await paymentService.refundPayment(payment._id, {
+          reason: reason || "Session cancelled",
+          initiatedBy: userId,
+        });
+        paymentRefunded = true;
+        session.paymentStatus = "refunded";
+      } catch (refundError) {
+        console.error("Error refunding payment:", refundError);
+        // Continue with cancellation even if refund fails
+      }
+    }
+
     // Update session status
     session.status = "cancelled";
     session.cancelReason = reason || "No reason provided";
@@ -535,6 +537,7 @@ exports.cancelSession = async (req, res) => {
         cancelReason: session.cancelReason,
         cancelledAt: session.cancelledAt,
       },
+      paymentRefunded,
     });
   } catch (error) {
     console.error("Error cancelling session:", error);
@@ -623,7 +626,7 @@ exports.addSessionReview = async (req, res) => {
   }
 };
 
-// Complete session (tutor only)
+// Request session completion (tutor only) - sends request to student for approval
 exports.completeSession = async (req, res) => {
   try {
     const { id } = req.params;
@@ -645,40 +648,248 @@ exports.completeSession = async (req, res) => {
     if (session.tutor.user.toString() !== userId) {
       return res.status(403).json({
         success: false,
-        message: "Only the assigned tutor can complete this session",
+        message: "Only the assigned tutor can request session completion",
       });
     }
 
-    // Check if session is scheduled
+    // Check if session is scheduled or rescheduled
     if (session.status !== "scheduled" && session.status !== "rescheduled") {
       return res.status(400).json({
         success: false,
-        message: "Can only complete scheduled sessions",
+        message: "Can only request completion for scheduled sessions",
       });
     }
 
-    // Update session status
-    session.status = "completed";
-    session.completedAt = new Date();
-    session.completionNotes = notes || "";
+    // Update session status to pending_completion
+    session.status = "pending_completion";
+    session.completionRequest = {
+      requestedAt: new Date(),
+      requestedBy: userId,
+      notes: notes || "",
+    };
 
     await session.save();
 
     res.status(200).json({
       success: true,
-      message: "Session completed successfully",
+      message: "Completion request sent to student for approval",
+      session: {
+        id: session._id,
+        status: session.status,
+        completionRequest: session.completionRequest,
+      },
+    });
+  } catch (error) {
+    console.error("Error requesting session completion:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to request session completion",
+      error: error.message,
+    });
+  }
+};
+
+// Approve session completion (student only)
+exports.approveSessionCompletion = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+
+    const session = await Session.findById(id)
+      .populate("tutor")
+      .populate("student");
+
+    if (!session) {
+      return res.status(404).json({
+        success: false,
+        message: "Session not found",
+      });
+    }
+
+    // Check if user is the student of this session
+    if (session.student.user.toString() !== userId) {
+      return res.status(403).json({
+        success: false,
+        message: "Only the assigned student can approve session completion",
+      });
+    }
+
+    // Check if session is pending completion
+    if (session.status !== "pending_completion") {
+      return res.status(400).json({
+        success: false,
+        message: "This session does not have a pending completion request",
+      });
+    }
+
+    // Capture payment if exists
+    let paymentCaptured = false;
+    const payment = await Payment.findOne({ session: id });
+    if (payment && payment.status === "authorized") {
+      try {
+        await paymentService.capturePayment(payment._id);
+        paymentCaptured = true;
+      } catch (paymentError) {
+        console.error("Error capturing payment:", paymentError);
+        // Continue with session completion even if payment capture fails
+      }
+    }
+
+    // Update session status to completed
+    session.status = "completed";
+    session.completedAt = new Date();
+    session.completionNotes = session.completionRequest?.notes || "";
+    session.completionRequest.respondedAt = new Date();
+    session.completionRequest.respondedBy = userId;
+    session.completionRequest.approved = true;
+
+    await session.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Session completion approved successfully",
       session: {
         id: session._id,
         status: session.status,
         completedAt: session.completedAt,
         completionNotes: session.completionNotes,
       },
+      paymentCaptured,
     });
   } catch (error) {
-    console.error("Error completing session:", error);
+    console.error("Error approving session completion:", error);
     res.status(500).json({
       success: false,
-      message: "Failed to complete session",
+      message: "Failed to approve session completion",
+      error: error.message,
+    });
+  }
+};
+
+// Reject session completion (student only)
+exports.rejectSessionCompletion = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { reason } = req.body;
+    const userId = req.user.id;
+
+    const session = await Session.findById(id)
+      .populate("tutor")
+      .populate("student");
+
+    if (!session) {
+      return res.status(404).json({
+        success: false,
+        message: "Session not found",
+      });
+    }
+
+    // Check if user is the student of this session
+    if (session.student.user.toString() !== userId) {
+      return res.status(403).json({
+        success: false,
+        message: "Only the assigned student can reject session completion",
+      });
+    }
+
+    // Check if session is pending completion
+    if (session.status !== "pending_completion") {
+      return res.status(400).json({
+        success: false,
+        message: "This session does not have a pending completion request",
+      });
+    }
+
+    // Revert session status back to scheduled
+    session.status = "scheduled";
+    session.completionRequest.respondedAt = new Date();
+    session.completionRequest.respondedBy = userId;
+    session.completionRequest.approved = false;
+    session.completionRequest.rejectionReason = reason || "No reason provided";
+
+    await session.save();
+
+    res.status(200).json({
+      success: true,
+      message:
+        "Session completion rejected. Session is back to scheduled status.",
+      session: {
+        id: session._id,
+        status: session.status,
+        completionRequest: session.completionRequest,
+      },
+    });
+  } catch (error) {
+    console.error("Error rejecting session completion:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to reject session completion",
+      error: error.message,
+    });
+  }
+};
+
+// Get pending completion requests for a student
+exports.getPendingCompletionRequests = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // Find student profile
+    const student = await Student.findOne({ user: userId });
+    if (!student) {
+      return res.status(404).json({
+        success: false,
+        message: "Student profile not found",
+      });
+    }
+
+    // Get sessions with pending completion
+    const sessions = await Session.find({
+      student: student._id,
+      status: "pending_completion",
+    })
+      .populate([
+        {
+          path: "tutor",
+          populate: {
+            path: "user",
+            select: "firstName lastName email profileImage",
+          },
+        },
+      ])
+      .sort({ "completionRequest.requestedAt": -1 });
+
+    // Format sessions for response
+    const formattedSessions = sessions.map((session) => ({
+      id: session._id,
+      title: session.title,
+      subject: session.subject,
+      description: session.description,
+      startTime: session.startTime,
+      endTime: session.endTime,
+      mode: session.mode,
+      price: session.price,
+      status: session.status,
+      tutor: {
+        id: session.tutor._id,
+        name: `${session.tutor.user.firstName} ${session.tutor.user.lastName}`,
+        email: session.tutor.user.email,
+        profileImage: session.tutor.user.profileImage,
+      },
+      completionRequest: session.completionRequest,
+      createdAt: session.createdAt,
+    }));
+
+    res.status(200).json({
+      success: true,
+      sessions: formattedSessions,
+      count: formattedSessions.length,
+    });
+  } catch (error) {
+    console.error("Error fetching pending completion requests:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch pending completion requests",
       error: error.message,
     });
   }

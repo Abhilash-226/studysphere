@@ -155,14 +155,18 @@ router.get(
       // Transform the data for frontend
       const transformedSessions = sessions.map((session) => ({
         _id: session._id,
+        id: session._id, // Include both for compatibility
         title: session.title,
         subject: session.subject,
         startTime: session.startTime,
         endTime: session.endTime,
         status: session.status,
+        mode: session.mode || "online",
         meetingUrl: session.meetingUrl,
         location: session.location,
         sessionType: session.sessionType,
+        // Include class active status for showing Join button
+        isClassActive: session.meetingRoom?.isActive || false,
         tutor: session.tutor
           ? {
               _id: session.tutor._id,

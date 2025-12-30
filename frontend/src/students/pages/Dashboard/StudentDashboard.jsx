@@ -137,41 +137,6 @@ const StudentDashboard = () => {
       />
 
       {/* Real-time Connection Status */}
-      <Row className="mb-3">
-        <Col>
-          <div className="d-flex align-items-center justify-content-between">
-            <div className="d-flex align-items-center">
-              <Badge
-                bg={isConnected ? "success" : "secondary"}
-                text={isConnected ? "white" : "white"}
-                className="me-2"
-              >
-                <i
-                  className={`fas fa-circle me-1 ${
-                    isConnected ? "text-white" : "text-white"
-                  }`}
-                ></i>
-                {isConnected ? "Live Updates" : "Offline"}
-              </Badge>
-              {lastUpdated && (
-                <small className="text-muted">
-                  Last updated: {new Date(lastUpdated).toLocaleTimeString()}
-                </small>
-              )}
-            </div>
-            <Button
-              variant="outline-primary"
-              size="sm"
-              onClick={() => refreshData()}
-              disabled={loading}
-            >
-              <i className="fas fa-sync-alt me-1"></i>
-              Refresh
-            </Button>
-          </div>
-        </Col>
-      </Row>
-
       {error && (
         <Alert variant="danger" className="mb-4">
           <Alert.Heading>Error</Alert.Heading>

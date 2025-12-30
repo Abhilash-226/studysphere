@@ -65,7 +65,7 @@ const RecommendedTutors = ({ tutors }) => {
                           {tutor.subjects?.length > 3 ? "..." : ""}
                         </p>
                         <p className="small mb-0">
-                          <strong>Rate:</strong> ${tutor.hourlyRate}/hr
+                          <strong>Rate:</strong> ₹{tutor.hourlyRate}/hr
                         </p>
                       </div>
                     </div>

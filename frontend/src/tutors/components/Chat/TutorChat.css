@@ -1,12 +1,17 @@
 /* TutorChat.css */
 
 .tutor-chat-container {
-  height: calc(100vh - 110px); /* Adjust based on your layout */
+  height: calc(100vh - 80px);
 }
 
 .tutor-chat-header {
-  background-color: #f8f9fa;
-  border-bottom: 1px solid #e9ecef;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+}
+
+.tutor-chat-header h5 {
+  font-weight: 600;
 }
 
 .conversation-sidebar {
@@ -24,27 +29,111 @@
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  background: #f8f9fa;
 }
 
 .select-conversation-placeholder {
   text-align: center;
   padding: 2rem;
+  background: #f8f9fa;
 }
 
 .select-conversation-placeholder h5 {
   margin-bottom: 0.5rem;
   color: #495057;
+  font-weight: 600;
 }
 
 /* Media queries for mobile */
+@media (max-width: 991.98px) {
+  .tutor-chat-container {
+    height: calc(100vh - 70px);
+  }
+
+  .tutor-chat-header {
+    padding: 12px 16px;
+  }
+
+  .tutor-chat-header h5 {
+    font-size: 1.1rem;
+  }
+
+  .conversation-sidebar {
+    max-height: 320px;
+  }
+}
+
 @media (max-width: 767.98px) {
   .tutor-chat-container {
-    height: calc(100vh - 80px); /* Adjust for mobile */
+    height: calc(100vh - 60px);
+    padding: 0;
   }
   
   .conversation-sidebar {
-    height: auto;
-    max-height: 300px;
-    margin-bottom: 1rem;
+    height: 100%;
+    max-height: none;
+    margin-bottom: 0;
+  }
+
+  .conversation-sidebar .card {
+    border-radius: 0;
+    border: none;
+  }
+
+  .tutor-chat-header {
+    padding: 14px 16px;
+    border-radius: 0;
+  }
+
+  .tutor-chat-header h5 {
+    font-size: 1.1rem;
+  }
+
+  .chat-main-content {
+    height: 100%;
+  }
+
+  .chat-main-content .card {
+    border-radius: 0;
+    border: none;
+  }
+
+  .select-conversation-placeholder {
+    padding: 3rem 1.5rem;
+  }
+
+  .select-conversation-placeholder h5 {
+    font-size: 1.1rem;
+  }
+
+  .select-conversation-placeholder p {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .tutor-chat-container {
+    height: calc(100vh - 56px);
+    padding: 0;
+  }
+
+  .tutor-chat-header {
+    padding: 12px 14px;
+  }
+
+  .tutor-chat-header h5 {
+    font-size: 1rem;
+  }
+
+  .select-conversation-placeholder {
+    padding: 2rem 1rem;
+  }
+
+  .select-conversation-placeholder h5 {
+    font-size: 1rem;
+  }
+
+  .select-conversation-placeholder p {
+    font-size: 0.85rem;
   }
 }

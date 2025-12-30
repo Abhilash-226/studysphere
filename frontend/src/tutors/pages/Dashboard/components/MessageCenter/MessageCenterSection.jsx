@@ -19,7 +19,7 @@ const MessageCenterSection = ({ messageStats = {} }) => {
   } = messageStats;
 
   return (
-    <Card className="mb-4">
+    <Card className="mb-4 message-center-card">
       <Card.Header className="d-flex justify-content-between align-items-center">
         <div className="d-flex align-items-center">
           <FaComments className="me-2 text-primary" />
@@ -29,38 +29,36 @@ const MessageCenterSection = ({ messageStats = {} }) => {
           View Messages
         </Link>
       </Card.Header>
-      <Card.Body>
-        <Row>
-          <Col md={6} className="mb-3">
-            <div className="d-flex align-items-center">
-              <div className="icon-bg bg-primary text-white rounded-circle p-3 me-3">
-                <FaEnvelope size={24} />
-              </div>
-              <div>
-                <h6 className="mb-0">Unread Messages</h6>
-                <p className="mb-0">{unreadCount} messages</p>
-              </div>
+      <Card.Body className="py-3">
+        <div className="message-stats-row">
+          <div className="message-stat-item">
+            <div className="icon-bg bg-primary text-white">
+              <FaEnvelope size={16} />
             </div>
-          </Col>
-        </Row>
-        <Row className="mt-2">
-          <Col md={6} className="mb-3 mb-md-0">
-            <div className="d-flex align-items-center">
-              <div className="icon-bg bg-success text-white rounded-circle p-3 me-3">
-                <FaComments size={24} />
-              </div>
-              <div>
-                <h6 className="mb-0">Total Conversations</h6>
-                <p className="mb-0">{totalConversations} active threads</p>
-              </div>
+            <div className="stat-content">
+              <span className="stat-value">{unreadCount}</span>
+              <span className="stat-label">Unread</span>
             </div>
-          </Col>
-        </Row>
-        <div className="text-center mt-4">
-          <Button as={Link} to="/tutor/chat" variant="primary">
-            <FaEnvelope className="me-2" /> Check Messages
-          </Button>
+          </div>
+          <div className="message-stat-item">
+            <div className="icon-bg bg-success text-white">
+              <FaComments size={16} />
+            </div>
+            <div className="stat-content">
+              <span className="stat-value">{totalConversations}</span>
+              <span className="stat-label">Conversations</span>
+            </div>
+          </div>
         </div>
+        <Button
+          as={Link}
+          to="/tutor/chat"
+          variant="primary"
+          size="sm"
+          className="w-100 mt-3"
+        >
+          <FaEnvelope className="me-2" /> Check Messages
+        </Button>
       </Card.Body>
     </Card>
   );

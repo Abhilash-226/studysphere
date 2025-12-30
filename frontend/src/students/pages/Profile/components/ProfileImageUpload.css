@@ -70,6 +70,46 @@
   .upload-icon {
     font-size: 1rem;
   }
+
+  .upload-hint small {
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .upload-area {
+    min-height: 55px;
+    padding: 0.625rem;
+    border-radius: 6px;
+  }
+
+  .upload-content {
+    font-size: 0.85rem;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+
+  .upload-icon {
+    font-size: 0.95rem;
+  }
+
+  .upload-hint {
+    margin-top: 0.35rem;
+  }
+
+  .upload-hint small {
+    font-size: 0.65rem;
+  }
+
+  .profile-image-upload .btn {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  .profile-image-upload .spinner-border {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
 }
 
 /* Animation for upload feedback */

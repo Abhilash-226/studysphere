@@ -1,7 +1,12 @@
 import React from "react";
 import { Card, ListGroup, Button, Badge } from "react-bootstrap";
-import { Link } from "react-router-dom";
-import { FaCalendarAlt, FaClock, FaMapMarkerAlt } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  FaCalendarAlt,
+  FaClock,
+  FaMapMarkerAlt,
+  FaVideo,
+} from "react-icons/fa";
 import "./UpcomingSessions.css";
 
 /**
@@ -11,6 +16,8 @@ import "./UpcomingSessions.css";
  * @returns {React.ReactElement} - Rendered component
  */
 const UpcomingSessions = ({ sessions }) => {
+  const navigate = useNavigate();
+
   // Format date to display in a user-friendly way
   const formatDate = (dateString) => {
     const options = { weekday: "long", month: "short", day: "numeric" };
@@ -76,6 +83,8 @@ const UpcomingSessions = ({ sessions }) => {
                         ? "success"
                         : session.status === "pending"
                         ? "warning"
+                        : session.status === "scheduled"
+                        ? "primary"
                         : "secondary"
                     }
                     text={session.status === "pending" ? "dark" : "white"}
@@ -85,16 +94,41 @@ const UpcomingSessions = ({ sessions }) => {
                       ? "Confirmed"
                       : session.status === "pending"
                       ? "Pending"
+                      : session.status === "scheduled"
+                      ? "Scheduled"
                       : session.status}
                   </Badge>
-                  <Button
-                    as={Link}
-                    to={`/student/sessions/${session.id}`}
-                    variant="outline-secondary"
-                    size="sm"
-                  >
-                    Details
-                  </Button>
+                  <div className="d-flex gap-2">
+                    {/* Enter Classroom button for online sessions - ClassroomPage handles join logic */}
+                    {session.mode === "online" &&
+                      (session.status === "scheduled" ||
+                        session.status === "confirmed") && (
+                        <Button
+                          variant={
+                            session.isClassActive
+                              ? "success"
+                              : "outline-primary"
+                          }
+                          size="sm"
+                          onClick={() =>
+                            navigate(
+                              `/student/classroom/${session.id || session._id}`
+                            )
+                          }
+                        >
+                          <FaVideo className="me-1" />
+                          {session.isClassActive ? "Join Now" : "Classroom"}
+                        </Button>
+                      )}
+                    <Button
+                      as={Link}
+                      to={`/student/sessions/${session.id || session._id}`}
+                      variant="outline-secondary"
+                      size="sm"
+                    >
+                      Details
+                    </Button>
+                  </div>
                 </div>
               </div>
             </ListGroup.Item>

@@ -63,14 +63,8 @@ exports.getAllTutors = async (req, res) => {
         ? req.query.teachingMode
         : [req.query.teachingMode];
 
-      // Handle special case for online/offline filtering
-      if (modes.includes("online")) {
-        filter.teachingMode = { $in: ["online_individual", "online_group"] };
-      } else if (modes.includes("offline")) {
-        filter.teachingMode = { $in: ["offline_home", "offline_classroom"] };
-      } else {
-        filter.teachingMode = { $in: modes };
-      }
+      // Filter by teaching mode (online or offline)
+      filter.teachingMode = { $in: modes };
     }
 
     // Build OR conditions array for complex filters
@@ -315,7 +309,7 @@ exports.getTutorById = async (req, res) => {
       bio: tutor.bio || "",
       subjects: tutor.subjects || [],
       availability: tutor.availability || [],
-      teachingMode: tutor.teachingMode || ["online_individual"],
+      teachingMode: tutor.teachingMode || ["online"],
       hourlyRate: tutor.hourlyRate || 0,
       location: tutor.location || { city: "", state: "", country: "" },
       rating: tutor.rating || null,
@@ -749,6 +743,8 @@ exports.getTutorSessions = async (req, res) => {
         subject: session.subject,
         status: session.status,
         meetingLink: session.meetingLink || null,
+        // Include class active status for showing Start/Join button
+        isClassActive: session.meetingRoom?.isActive || false,
       };
     });
 

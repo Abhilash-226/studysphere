@@ -16,7 +16,7 @@ import {
   FaClock,
   FaUser,
   FaVideo,
-  FaDollarSign,
+  FaRupeeSign,
   FaStar,
   FaCheckCircle,
 } from "react-icons/fa";
@@ -200,9 +200,9 @@ const TutorSessionManagement = () => {
           <Card className="stats-card border-success">
             <Card.Body className="text-center">
               <div className="stats-icon earnings">
-                <FaDollarSign />
+                <FaRupeeSign />
               </div>
-              <h3>${stats.totalEarnings}</h3>
+              <h3>₹{stats.totalEarnings}</h3>
               <p className="text-muted mb-0">Total Earnings</p>
             </Card.Body>
           </Card>

@@ -9,18 +9,22 @@ import {
   Button,
   Alert,
   Badge,
-  InputGroup,
 } from "react-bootstrap";
 import {
   FaArrowLeft,
   FaCalendarAlt,
   FaClock,
-  FaUser,
   FaVideo,
-  FaMapMarkerAlt,
-  FaDollarSign,
+  FaRupeeSign,
   FaPaperPlane,
+  FaStar,
+  FaCheckCircle,
+  FaGraduationCap,
+  FaBook,
+  FaEdit,
+  FaInfoCircle,
 } from "react-icons/fa";
+import { HiSparkles } from "react-icons/hi";
 import sessionRequestService from "../../../shared/services/sessionRequestService";
 import tutorService from "../../../shared/services/tutor.service";
 import uploadService from "../../../shared/services/upload.service";
@@ -219,7 +223,7 @@ const BookSessionPage = () => {
 
       // Redirect to dashboard after a short delay
       setTimeout(() => {
-        navigate("/students/dashboard", {
+        navigate("/student/dashboard", {
           state: { message: "Session request sent successfully!" },
         });
       }, 2000);
@@ -233,335 +237,420 @@ const BookSessionPage = () => {
 
   if (success) {
     return (
-      <Container className="mt-5">
-        <Row className="justify-content-center">
-          <Col md={6}>
-            <Card className="success-card">
-              <Card.Body className="text-center">
-                <FaPaperPlane size={48} className="text-success mb-3" />
-                <h3>Request Sent Successfully!</h3>
-                <p className="text-muted">
-                  Your session request has been sent to {tutorData?.name}.
-                  You'll be notified when they respond.
-                </p>
-                <Button
-                  variant="primary"
-                  onClick={() => navigate("/students/dashboard")}
-                >
-                  Go to Dashboard
-                </Button>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-      </Container>
+      <div className="book-session-page">
+        <Container>
+          <Row className="justify-content-center align-items-center min-vh-75">
+            <Col md={6} lg={5}>
+              <Card className="success-card">
+                <Card.Body className="text-center p-5">
+                  <div className="success-icon-wrapper">
+                    <FaCheckCircle size={60} />
+                  </div>
+                  <h3 className="mt-4 mb-3">Request Sent Successfully!</h3>
+                  <p className="text-muted mb-4">
+                    Your session request has been sent to{" "}
+                    <strong>{tutorData?.name}</strong>. You'll receive a
+                    notification when they respond.
+                  </p>
+                  <Button
+                    variant="primary"
+                    size="lg"
+                    className="px-5"
+                    onClick={() => navigate("/student/dashboard")}
+                  >
+                    Go to Dashboard
+                  </Button>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
+        </Container>
+      </div>
     );
   }
 
   // Loading state while fetching tutor data
   if (tutorLoading) {
     return (
-      <Container className="mt-5">
-        <Row className="justify-content-center">
-          <Col md={6}>
-            <Card>
-              <Card.Body className="text-center py-5">
-                <div className="spinner-border text-primary mb-3" role="status">
-                  <span className="visually-hidden">Loading...</span>
-                </div>
-                <h5>Loading tutor information...</h5>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-      </Container>
+      <div className="book-session-page">
+        <Container>
+          <Row className="justify-content-center align-items-center min-vh-75">
+            <Col md={6}>
+              <Card className="loading-card">
+                <Card.Body className="text-center py-5">
+                  <div className="loading-spinner">
+                    <div className="spinner-border text-primary" role="status">
+                      <span className="visually-hidden">Loading...</span>
+                    </div>
+                  </div>
+                  <h5 className="mt-4">Loading tutor information...</h5>
+                  <p className="text-muted">Please wait a moment</p>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
+        </Container>
+      </div>
     );
   }
 
   // Error state if tutor data couldn't be loaded
   if (!tutorData) {
     return (
-      <Container className="mt-5">
-        <Row className="justify-content-center">
-          <Col md={6}>
-            <Card>
-              <Card.Body className="text-center py-5">
-                <h5>Tutor not found</h5>
-                <p className="text-muted">
-                  Unable to load tutor information. Please try again.
-                </p>
-                <Button variant="primary" onClick={() => navigate("/tutors")}>
-                  Browse Tutors
-                </Button>
+      <div className="book-session-page">
+        <Container>
+          <Row className="justify-content-center align-items-center min-vh-75">
+            <Col md={6}>
+              <Card className="error-card">
+                <Card.Body className="text-center py-5">
+                  <div className="error-icon">😕</div>
+                  <h5 className="mt-3">Tutor not found</h5>
+                  <p className="text-muted">
+                    Unable to load tutor information. Please try again.
+                  </p>
+                  <Button variant="primary" onClick={() => navigate("/tutors")}>
+                    Browse Tutors
+                  </Button>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
+        </Container>
+      </div>
+    );
+  }
+
+  return (
+    <div className="book-session-page">
+      {/* Page Header */}
+      <div className="page-header">
+        <div className="header-content">
+          <Button
+            variant="link"
+            className="back-button"
+            onClick={() => navigate(-1)}
+            aria-label="Back"
+          >
+            <FaArrowLeft />
+          </Button>
+          <h1 className="page-title">Book Your Session</h1>
+        </div>
+      </div>
+
+      <Container className="main-content">
+        {error && (
+          <Alert
+            variant="danger"
+            dismissible
+            onClose={() => setError("")}
+            className="mb-4"
+          >
+            <FaInfoCircle className="me-2" />
+            {error}
+          </Alert>
+        )}
+
+        <Row className="g-4">
+          {/* Tutor Profile Card */}
+          <Col lg={4}>
+            <div className="tutor-card-wrapper">
+              <Card className="tutor-info-card">
+                <div className="tutor-card-header">
+                  <div className="online-badge">
+                    <FaVideo /> Online Session
+                  </div>
+                </div>
+                <Card.Body>
+                  <div className="tutor-profile">
+                    <div className="avatar-wrapper">
+                      <img
+                        src={formatImageUrl(
+                          tutorData?.image || tutorData?.profileImage
+                        )}
+                        alt={tutorData?.name}
+                        className="tutor-avatar"
+                        onError={handleImageError}
+                      />
+                      <div className="avatar-ring"></div>
+                    </div>
+                    <h4 className="tutor-name">{tutorData?.name}</h4>
+                    {tutorData?.rating && (
+                      <div className="tutor-rating">
+                        <FaStar className="star-icon" />
+                        <span>{tutorData.rating}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="rate-badge">
+                    <FaRupeeSign />
+                    <span className="rate-amount">{tutorData?.hourlyRate}</span>
+                    <span className="rate-period">/hour</span>
+                  </div>
+
+                  <div className="tutor-subjects">
+                    <div className="section-label">
+                      <FaGraduationCap />
+                      <span>Expertise</span>
+                    </div>
+                    <div className="subjects-grid">
+                      {tutorData?.subjects && tutorData.subjects.length > 0 ? (
+                        tutorData.subjects.map((subject, index) => (
+                          <span key={index} className="subject-chip">
+                            {subject}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-muted">No subjects listed</span>
+                      )}
+                    </div>
+                  </div>
+
+                  {tutorData?.bio && (
+                    <div className="tutor-bio">
+                      <div className="section-label">
+                        <FaInfoCircle />
+                        <span>About</span>
+                      </div>
+                      <p>{tutorData.bio}</p>
+                    </div>
+                  )}
+                </Card.Body>
+              </Card>
+
+              {/* Quick Info */}
+              <div className="quick-info">
+                <div className="info-item">
+                  <FaVideo className="info-icon" />
+                  <span>HD Video Call</span>
+                </div>
+                <div className="info-item">
+                  <FaCheckCircle className="info-icon" />
+                  <span>Instant Confirmation</span>
+                </div>
+              </div>
+            </div>
+          </Col>
+
+          {/* Booking Form */}
+          <Col lg={8}>
+            <Card className="booking-form-card">
+              <Card.Body className="p-4">
+                <Form onSubmit={handleSubmit}>
+                  {/* Section: What to Learn */}
+                  <div className="form-section">
+                    <div className="section-header">
+                      <div className="section-icon">
+                        <FaBook />
+                      </div>
+                      <h5>What would you like to learn?</h5>
+                    </div>
+
+                    <Row className="g-3">
+                      <Col md={6}>
+                        <Form.Group>
+                          <Form.Label>Subject</Form.Label>
+                          <Form.Select
+                            name="subject"
+                            value={formData.subject}
+                            onChange={handleChange}
+                            className="custom-select"
+                            required
+                          >
+                            <option value="">Choose a subject</option>
+                            {tutorData?.subjects &&
+                            tutorData.subjects.length > 0 ? (
+                              tutorData.subjects.map((subject, index) => (
+                                <option key={index} value={subject}>
+                                  {subject}
+                                </option>
+                              ))
+                            ) : (
+                              <option value="General" key="general">
+                                General Tutoring
+                              </option>
+                            )}
+                          </Form.Select>
+                        </Form.Group>
+                      </Col>
+                      <Col md={6}>
+                        <Form.Group>
+                          <Form.Label>Session Title</Form.Label>
+                          <Form.Control
+                            type="text"
+                            name="title"
+                            value={formData.title}
+                            onChange={handleChange}
+                            className="custom-input"
+                            placeholder="e.g., Calculus Fundamentals"
+                            required
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col xs={12}>
+                        <Form.Group>
+                          <Form.Label>
+                            Description{" "}
+                            <span className="optional-tag">Optional</span>
+                          </Form.Label>
+                          <Form.Control
+                            as="textarea"
+                            rows={2}
+                            name="description"
+                            value={formData.description}
+                            onChange={handleChange}
+                            className="custom-textarea"
+                            placeholder="Describe what you'd like to cover or any specific questions..."
+                          />
+                        </Form.Group>
+                      </Col>
+                    </Row>
+                  </div>
+
+                  {/* Section: Schedule */}
+                  <div className="form-section">
+                    <div className="section-header">
+                      <div className="section-icon">
+                        <FaCalendarAlt />
+                      </div>
+                      <h5>When do you want to meet?</h5>
+                    </div>
+
+                    <Row className="g-3">
+                      <Col md={4}>
+                        <Form.Group>
+                          <Form.Label>
+                            <FaCalendarAlt className="label-icon" /> Date
+                          </Form.Label>
+                          <Form.Control
+                            type="date"
+                            name="selectedDate"
+                            value={formData.selectedDate}
+                            onChange={handleChange}
+                            className="custom-input"
+                            min={new Date().toISOString().split("T")[0]}
+                            required
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col md={4}>
+                        <Form.Group>
+                          <Form.Label>
+                            <FaClock className="label-icon" /> Start Time
+                          </Form.Label>
+                          <Form.Control
+                            type="time"
+                            name="startTime"
+                            value={formData.startTime}
+                            onChange={handleChange}
+                            className="custom-input"
+                            required
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col md={4}>
+                        <Form.Group>
+                          <Form.Label>
+                            <FaClock className="label-icon" /> Duration
+                          </Form.Label>
+                          <Form.Select
+                            name="duration"
+                            value={formData.duration}
+                            onChange={handleChange}
+                            className="custom-select"
+                            required
+                          >
+                            <option value="30">30 minutes</option>
+                            <option value="60">1 hour</option>
+                            <option value="90">1.5 hours</option>
+                            <option value="120">2 hours</option>
+                            <option value="180">3 hours</option>
+                          </Form.Select>
+                        </Form.Group>
+                      </Col>
+                    </Row>
+                  </div>
+
+                  {/* Section: Message */}
+                  <div className="form-section">
+                    <div className="section-header">
+                      <div className="section-icon">
+                        <FaEdit />
+                      </div>
+                      <h5>Message to Tutor (Optional)</h5>
+                    </div>
+
+                    <Form.Group>
+                      <Form.Control
+                        as="textarea"
+                        rows={2}
+                        name="message"
+                        value={formData.message}
+                        onChange={handleChange}
+                        className="custom-textarea"
+                        placeholder="Any special requirements or questions..."
+                      />
+                    </Form.Group>
+                  </div>
+
+                  {/* Price Summary */}
+                  {proposedPrice > 0 && (
+                    <div className="price-summary">
+                      <div className="price-header">
+                        <HiSparkles className="sparkle-icon" />
+                        <span>Session Summary</span>
+                      </div>
+                      <div className="price-details">
+                        <div className="price-row">
+                          <span>Duration</span>
+                          <span>{formData.duration} minutes</span>
+                        </div>
+                        <div className="price-row">
+                          <span>Rate</span>
+                          <span>₹{tutorData?.hourlyRate}/hour</span>
+                        </div>
+                        <div className="price-row total">
+                          <span>Total</span>
+                          <span className="total-amount">₹{proposedPrice}</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Action Buttons */}
+                  <div className="form-actions">
+                    <Button
+                      variant="outline-secondary"
+                      className="cancel-btn"
+                      onClick={() => navigate(-1)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      type="submit"
+                      className="submit-btn"
+                      disabled={loading || proposedPrice <= 0}
+                    >
+                      {loading ? (
+                        <>
+                          <span className="spinner-border spinner-border-sm me-2" />
+                          Sending...
+                        </>
+                      ) : (
+                        <>
+                          <FaPaperPlane className="me-2" />
+                          Send Request
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </Form>
               </Card.Body>
             </Card>
           </Col>
         </Row>
       </Container>
-    );
-  }
-
-  return (
-    <Container className="book-session-page">
-      {/* Header */}
-      <Row className="mb-4">
-        <Col>
-          <div className="d-flex align-items-center mb-3">
-            <Button
-              variant="outline-secondary"
-              size="sm"
-              onClick={() => navigate(-1)}
-              className="me-3"
-            >
-              <FaArrowLeft className="me-1" />
-              Back
-            </Button>
-            <h2 className="mb-0">Book a Session</h2>
-          </div>
-        </Col>
-      </Row>
-
-      <Row>
-        {/* Tutor Info Card */}
-        <Col lg={4} className="mb-4">
-          <Card className="tutor-info-card">
-            <Card.Body>
-              <div className="text-center mb-3">
-                <img
-                  src={formatImageUrl(
-                    tutorData?.image || tutorData?.profileImage
-                  )}
-                  alt={tutorData?.name}
-                  className="tutor-avatar"
-                  onError={handleImageError}
-                />
-                <h5 className="mt-2">{tutorData?.name}</h5>
-                <Badge bg="primary">${tutorData?.hourlyRate}/hour</Badge>
-              </div>
-
-              <div className="tutor-details">
-                <h6>Subjects:</h6>
-                <div className="subjects-list">
-                  {tutorData?.subjects && tutorData.subjects.length > 0 ? (
-                    tutorData.subjects.map((subject, index) => (
-                      <Badge key={index} bg="secondary" className="me-1 mb-1">
-                        {subject}
-                      </Badge>
-                    ))
-                  ) : (
-                    <span className="text-muted">No subjects listed</span>
-                  )}
-                </div>
-
-                {tutorData?.bio && (
-                  <>
-                    <h6 className="mt-3">About:</h6>
-                    <p className="text-muted small">{tutorData.bio}</p>
-                  </>
-                )}
-              </div>
-            </Card.Body>
-          </Card>
-        </Col>
-
-        {/* Booking Form */}
-        <Col lg={8}>
-          <Card className="booking-form-card">
-            <Card.Header>
-              <h5 className="mb-0">Session Details</h5>
-            </Card.Header>
-            <Card.Body>
-              {error && (
-                <Alert
-                  variant="danger"
-                  dismissible
-                  onClose={() => setError("")}
-                >
-                  {error}
-                </Alert>
-              )}
-
-              <Form onSubmit={handleSubmit}>
-                <Row>
-                  <Col md={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Subject *</Form.Label>
-                      <Form.Select
-                        name="subject"
-                        value={formData.subject}
-                        onChange={handleChange}
-                        required
-                      >
-                        <option value="">Select a subject</option>
-                        {tutorData?.subjects &&
-                        tutorData.subjects.length > 0 ? (
-                          tutorData.subjects.map((subject, index) => (
-                            <option key={index} value={subject}>
-                              {subject}
-                            </option>
-                          ))
-                        ) : (
-                          <option value="General" key="general">
-                            General Tutoring
-                          </option>
-                        )}
-                      </Form.Select>
-                    </Form.Group>
-                  </Col>
-                  <Col md={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Session Title *</Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="title"
-                        value={formData.title}
-                        onChange={handleChange}
-                        placeholder="e.g., Algebra Help, Essay Review"
-                        required
-                      />
-                    </Form.Group>
-                  </Col>
-                </Row>
-
-                <Form.Group className="mb-3">
-                  <Form.Label>Description</Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    rows={3}
-                    name="description"
-                    value={formData.description}
-                    onChange={handleChange}
-                    placeholder="Describe what you'd like to work on..."
-                  />
-                </Form.Group>
-
-                <Row>
-                  <Col md={4}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Date *</Form.Label>
-                      <Form.Control
-                        type="date"
-                        name="selectedDate"
-                        value={formData.selectedDate}
-                        onChange={handleChange}
-                        min={new Date().toISOString().split("T")[0]}
-                        required
-                      />
-                    </Form.Group>
-                  </Col>
-                  <Col md={4}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Start Time *</Form.Label>
-                      <Form.Control
-                        type="time"
-                        name="startTime"
-                        value={formData.startTime}
-                        onChange={handleChange}
-                        required
-                      />
-                    </Form.Group>
-                  </Col>
-                  <Col md={4}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Duration *</Form.Label>
-                      <Form.Select
-                        name="duration"
-                        value={formData.duration}
-                        onChange={handleChange}
-                        required
-                      >
-                        <option value="30">30 minutes</option>
-                        <option value="60">1 hour</option>
-                        <option value="90">1.5 hours</option>
-                        <option value="120">2 hours</option>
-                        <option value="180">3 hours</option>
-                      </Form.Select>
-                    </Form.Group>
-                  </Col>
-                </Row>
-
-                {/* Online Session Mode (Fixed) */}
-                <Form.Group className="mb-3">
-                  <Form.Label>Session Mode</Form.Label>
-                  <div>
-                    <Form.Check
-                      type="radio"
-                      id="mode-online"
-                      name="mode"
-                      value="online"
-                      checked={true}
-                      disabled={true}
-                      label={
-                        <span>
-                          <FaVideo className="me-1" />
-                          Online Session
-                        </span>
-                      }
-                    />
-                    <small className="text-muted">
-                      Only online sessions are available for booking
-                    </small>
-                  </div>
-                </Form.Group>
-
-                <Form.Group className="mb-3">
-                  <Form.Label>Message to Tutor</Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    rows={2}
-                    name="message"
-                    value={formData.message}
-                    onChange={handleChange}
-                    placeholder="Any additional information for the tutor..."
-                  />
-                </Form.Group>
-
-                {/* Price Display */}
-                {proposedPrice > 0 && (
-                  <Card className="price-card mb-3">
-                    <Card.Body>
-                      <div className="d-flex justify-content-between align-items-center">
-                        <div>
-                          <h6 className="mb-1">Estimated Cost</h6>
-                          <small className="text-muted">
-                            Based on{" "}
-                            {tutorData?.hourlyRate
-                              ? `$${tutorData.hourlyRate}/hour`
-                              : "hourly rate"}
-                          </small>
-                        </div>
-                        <div className="price-display">
-                          <FaDollarSign className="me-1" />
-                          <span className="price-amount">${proposedPrice}</span>
-                        </div>
-                      </div>
-                    </Card.Body>
-                  </Card>
-                )}
-
-                <div className="d-flex justify-content-end">
-                  <Button
-                    variant="secondary"
-                    className="me-2"
-                    onClick={() => navigate(-1)}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    type="submit"
-                    variant="primary"
-                    disabled={loading || proposedPrice <= 0}
-                  >
-                    {loading ? "Sending Request..." : "Send Request"}
-                    <FaPaperPlane className="ms-2" />
-                  </Button>
-                </div>
-              </Form>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-    </Container>
+    </div>
   );
 };
 

@@ -73,6 +73,17 @@ const ChatPage = ({ currentUser, basePath }) => {
 
   const { conversationId } = useParams();
   const navigate = useNavigate();
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [showMessages, setShowMessages] = useState(false);
+
+  // Handle window resize for mobile detection
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Prevent page scrolling when chat page loads
   useEffect(() => {
@@ -89,6 +100,7 @@ const ChatPage = ({ currentUser, basePath }) => {
       const conversation = conversations.find((c) => c._id === conversationId);
       if (conversation) {
         setActiveConversation(conversation);
+        setShowMessages(true);
       } else {
         // If conversation doesn't exist, redirect to chat home
         navigate(basePath);
@@ -105,7 +117,15 @@ const ChatPage = ({ currentUser, basePath }) => {
   // Handle conversation selection
   const handleConversationSelect = (conversation) => {
     setActiveConversation(conversation);
+    setShowMessages(true);
     navigate(`${basePath}/${conversation._id}`);
+  };
+
+  // Handle back button on mobile
+  const handleBack = () => {
+    setShowMessages(false);
+    setActiveConversation(null);
+    navigate(basePath);
   };
 
   // Prevent page from scrolling to footer on initial load
@@ -115,34 +135,52 @@ const ChatPage = ({ currentUser, basePath }) => {
   }, []);
 
   return (
-    <Container fluid className="chat-container">
-      <Row className="h-100">
-        {/* Conversation List Sidebar */}
-        <Col md={4} lg={3} className="conversation-sidebar">
-          <Card className="h-100">
-            <Card.Header>
-              <h5 className="mb-0">Messages</h5>
+    <Container
+      fluid
+      className={`chat-container ${isMobile ? "chat-mobile" : ""}`}
+    >
+      <Row className="h-100 g-0">
+        {/* Conversation List Sidebar - Hidden on mobile when viewing messages */}
+        <Col
+          md={4}
+          lg={3}
+          className={`conversation-sidebar ${
+            isMobile && showMessages ? "d-none" : ""
+          }`}
+        >
+          <Card className="h-100 border-0 rounded-0">
+            <Card.Header className="chat-list-header">
+              <h5 className="mb-0">
+                <i className="bi bi-chat-dots me-2"></i>
+                Messages
+              </h5>
               {conversations.length > 0 && (
-                <small className="text-muted">
-                  {conversations.length} conversation
-                  {conversations.length !== 1 ? "s" : ""}
-                </small>
+                <span className="conversation-count">
+                  {conversations.length}
+                </span>
               )}
             </Card.Header>
             <Card.Body className="p-0">
               <ConversationList
                 onConversationSelect={handleConversationSelect}
                 selectedConversationId={activeConversation?._id}
+                showHeader={false}
               />
             </Card.Body>
           </Card>
         </Col>
 
-        {/* Main Chat Area */}
-        <Col md={8} lg={9} className="chat-main-content">
-          <Card className="h-100">
+        {/* Main Chat Area - Full width on mobile when viewing messages */}
+        <Col
+          md={8}
+          lg={9}
+          className={`chat-main-content ${
+            isMobile && !showMessages ? "d-none" : ""
+          }`}
+        >
+          <Card className="h-100 border-0 rounded-0">
             {error && (
-              <Alert variant="danger" className="m-3">
+              <Alert variant="danger" className="m-3 mb-0">
                 {error}
               </Alert>
             )}
@@ -152,13 +190,13 @@ const ChatPage = ({ currentUser, basePath }) => {
                 {/* Chat Header */}
                 <ChatHeader
                   conversation={activeConversation}
-                  onBack={() => navigate(basePath)}
-                  showBackButton={window.innerWidth <= 768} // Show on mobile
+                  onBack={handleBack}
+                  showBackButton={isMobile}
                 />
 
                 {/* Messages */}
                 <Card.Body
-                  className="p-0"
+                  className="chat-messages-area p-0"
                   style={{ overflowY: "auto", flex: 1 }}
                 >
                   <MessageList
@@ -168,38 +206,30 @@ const ChatPage = ({ currentUser, basePath }) => {
                 </Card.Body>
 
                 {/* Message Input */}
-                <Card.Footer className="p-2">
+                <Card.Footer className="chat-input-footer p-2">
                   <MessageInput
                     conversationId={activeConversation._id}
                     disabled={loading}
-                    placeholder={`Send a message to ${activeConversation.otherUser.name}...`}
+                    placeholder={`Message ${
+                      activeConversation.otherUser?.name || "user"
+                    }...`}
                   />
                 </Card.Footer>
               </>
             ) : (
-              /* Welcome Screen */
+              /* Welcome Screen - Only shown on desktop or when no conversation selected */
               <div className="select-conversation-placeholder d-flex flex-column align-items-center justify-content-center h-100">
-                <div className="text-center">
-                  <h4 className="mb-3">Welcome to your messages</h4>
-                  <p className="text-muted mb-4">
-                    Select a conversation from the list to start chatting, or
-                    contact a{" "}
-                    {currentUser?.role === "student" ? "tutor" : "student"} to
-                    begin a new conversation.
+                <div className="text-center p-4">
+                  <div className="empty-chat-icon mb-3">
+                    <i
+                      className="bi bi-chat-square-text"
+                      style={{ fontSize: "3rem", color: "#6c757d" }}
+                    ></i>
+                  </div>
+                  <h5 className="mb-2">Your Messages</h5>
+                  <p className="text-muted mb-0">
+                    Select a conversation to start chatting
                   </p>
-                  {conversations.length === 0 && (
-                    <div className="empty-state">
-                      <p className="text-muted">
-                        <small>
-                          No conversations yet. Start by browsing{" "}
-                          {currentUser?.role === "student"
-                            ? "tutors"
-                            : "students"}{" "}
-                          and sending a message.
-                        </small>
-                      </p>
-                    </div>
-                  )}
                 </div>
               </div>
             )}

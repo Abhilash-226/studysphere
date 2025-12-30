@@ -126,6 +126,21 @@
 }
 
 /* Responsive Design */
+@media (max-width: 992px) {
+  .sessions-header h2 {
+    font-size: 1.6rem;
+  }
+
+  .session-card {
+    border-radius: 10px;
+  }
+
+  .filter-btn {
+    padding: 0.45rem 0.9rem;
+    font-size: 0.85rem;
+  }
+}
+
 @media (max-width: 768px) {
   .sessions-header h2 {
     font-size: 1.5rem;
@@ -139,6 +154,7 @@
 
   .session-card {
     margin-bottom: 1rem;
+    border-radius: 8px;
   }
 
   .tutor-info {
@@ -147,6 +163,24 @@
 
   .session-time {
     padding: 0.6rem;
+  }
+
+  .session-subject {
+    font-size: 1.1rem;
+  }
+
+  .session-topic {
+    font-size: 0.9rem;
+  }
+
+  .tutor-avatar {
+    width: 35px;
+    height: 35px;
+  }
+
+  .search-input {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.875rem;
   }
 }
 
@@ -157,12 +191,78 @@
 
   .sessions-header {
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
+    padding: 0 0.5rem;
+  }
+
+  .sessions-header h2 {
+    font-size: 1.35rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .sessions-header p {
+    font-size: 0.95rem;
   }
 
   .status-badge {
     font-size: 0.7rem;
     padding: 0.3rem 0.6rem;
+  }
+
+  .filter-btn {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.65rem;
+    border-radius: 15px;
+  }
+
+  .session-card {
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  }
+
+  .session-card .card-body {
+    padding: 0.875rem;
+  }
+
+  .session-subject {
+    font-size: 1rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .session-topic {
+    font-size: 0.85rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .tutor-info {
+    padding: 0.6rem;
+    border-radius: 6px;
+  }
+
+  .tutor-avatar {
+    width: 32px;
+    height: 32px;
+  }
+
+  .tutor-name {
+    font-size: 0.9rem;
+  }
+
+  .session-time {
+    padding: 0.5rem;
+    margin-top: 0.75rem;
+    border-radius: 6px;
+  }
+
+  .session-time .fa-calendar-alt,
+  .session-time .fa-clock {
+    font-size: 0.8rem;
+  }
+
+  .search-input {
+    font-size: 0.85rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 15px;
   }
 }
 
@@ -193,4 +293,19 @@
 .session-card.pending .status-badge {
   background-color: #ffc107 !important;
   color: #212529 !important;
+}
+
+/* Pending Completion Approval Section */
+.pending-approval-section {
+  border: 1px solid #17a2b8;
+  border-left: 4px solid #17a2b8;
+}
+
+.session-card.pending_completion {
+  border-left: 4px solid #17a2b8;
+  background-color: #f8f9fa;
+}
+
+.session-card.pending_completion .status-badge {
+  background-color: #17a2b8 !important;
 }

@@ -35,7 +35,7 @@ const TeachingInfoSection = ({ hourlyRate = 0, teachingMode = [], onEdit }) => {
           </div>
           <div>
             <div className="text-muted small">Hourly Rate</div>
-            <div className="fw-bold fs-5">${hourlyRate}</div>
+            <div className="fw-bold fs-5">₹{hourlyRate}</div>
           </div>
         </div>
 

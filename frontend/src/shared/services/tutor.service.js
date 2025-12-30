@@ -158,7 +158,6 @@ class TutorService {
       const response = await api.get("/tutors/dashboard-stats");
       return response.data;
     } catch (error) {
-      console.error("Error fetching dashboard stats:", error);
       // Return default values if API fails
       return {
         totalSessions: 0,

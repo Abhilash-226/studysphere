@@ -16,7 +16,7 @@ import {
   FaClock,
   FaMapMarkerAlt,
   FaVideo,
-  FaDollarSign,
+  FaRupeeSign,
 } from "react-icons/fa";
 import sessionRequestService from "../../../../../shared/services/sessionRequestService";
 import "./SessionRequestsSection.css";
@@ -208,9 +208,9 @@ const SessionRequestsSection = ({
                     </div>
                     <div className="text-end">
                       <div className="d-flex align-items-center text-success mb-1">
-                        <FaDollarSign className="me-1" />
+                        <FaRupeeSign className="me-1" />
                         <span className="fw-bold">
-                          ${request.proposedPrice}
+                          ₹{request.proposedPrice}
                         </span>
                       </div>
                       <Badge bg="info">{request.subject}</Badge>

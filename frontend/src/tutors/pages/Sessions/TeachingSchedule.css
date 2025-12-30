@@ -73,6 +73,11 @@
   border-left: 5px solid #ffc107;
 }
 
+.session-card.pending_completion {
+  border-left: 5px solid #17a2b8;
+  background-color: #f0f9ff;
+}
+
 /* Status Badge */
 .status-badge {
   font-size: 0.75rem;

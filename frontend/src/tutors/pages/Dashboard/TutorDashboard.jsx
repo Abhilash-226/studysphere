@@ -15,7 +15,6 @@ import {
   VerificationStatusSection,
   SessionRequestsSection,
 } from "./components";
-import MyStudentsSection from "./components/MyStudents";
 
 // Import styles
 import "./styles/dashboard-styles.css";
@@ -97,12 +96,24 @@ const TutorDashboard = () => {
         tutorService.getPendingRequestsCount(),
       ]);
 
+      // Extract data from API responses
+      const statsData = dashboardStats?.success
+        ? dashboardStats.data
+        : dashboardStats;
+      const requestsCount =
+        pendingRequestsCount?.count ?? pendingRequestsCount ?? 0;
+
       // Update real-time dashboard data
       updateDashboardData({
         upcomingSessions: sessionsResponse || [],
         verificationStatus: status,
         messageStats: msgStats?.success
-          ? msgStats.stats
+          ? {
+              unreadCount: msgStats.unreadCount || 0,
+              totalConversations: msgStats.totalConversations || 0,
+              responseRate: 0,
+              averageResponseTime: 0,
+            }
           : {
               unreadCount: 0,
               totalConversations: 0,
@@ -110,7 +121,7 @@ const TutorDashboard = () => {
               averageResponseTime: 0,
             },
         sessionRequests: requests || [],
-        dashboardStats: dashboardStats || {
+        dashboardStats: statsData || {
           totalSessions: 0,
           totalHours: 0,
           totalStudents: 0,
@@ -119,7 +130,7 @@ const TutorDashboard = () => {
           pendingRequests: 0,
           averageRating: 0,
         },
-        pendingRequestsCount: pendingRequestsCount || 0,
+        pendingRequestsCount: requestsCount,
       });
 
       setLoading(false);
@@ -136,50 +147,20 @@ const TutorDashboard = () => {
 
   return (
     <Container className="py-5">
-      {/* Real-time Connection Status */}
-      <Row className="mb-3">
-        <Col>
-          <div className="d-flex align-items-center justify-content-between">
-            <div className="d-flex align-items-center">
-              <Badge
-                bg={isConnected ? "success" : "secondary"}
-                text={isConnected ? "white" : "white"}
-                className="me-2"
-              >
-                <i
-                  className={`fas fa-circle me-1 ${
-                    isConnected ? "text-white" : "text-white"
-                  }`}
-                ></i>
-                {isConnected ? "Live Updates" : "Offline"}
-              </Badge>
-              {lastUpdated && (
-                <small className="text-muted">
-                  Last updated: {new Date(lastUpdated).toLocaleTimeString()}
-                </small>
-              )}
-            </div>
-            <Button
-              variant="outline-primary"
-              size="sm"
-              onClick={() => refreshData()}
-              disabled={loading}
-            >
-              <i className="fas fa-sync-alt me-1"></i>
-              Refresh
-            </Button>
-          </div>
-        </Col>
-      </Row>
-
       {/* Welcome Header with action buttons */}
       <WelcomeHeaderSection user={currentUser} messageStats={messageStats} />
 
       {/* Stats Cards */}
       <StatsCardsSection
         messageStats={messageStats}
-        sessionCount={upcomingSessions.length}
-        requestCount={pendingRequestsCount || 0}
+        sessionCount={
+          upcomingSessions?.length || dashboardStats?.upcomingSessions || 0
+        }
+        requestCount={
+          pendingRequestsCount ||
+          sessionRequests?.filter((r) => r.status === "pending")?.length ||
+          0
+        }
         totalStudents={dashboardStats?.totalStudents || 0}
       />
 
@@ -199,11 +180,6 @@ const TutorDashboard = () => {
               }
               loading={loading}
             />
-          </div>
-
-          {/* My Students Section */}
-          <div className="mt-4">
-            <MyStudentsSection />
           </div>
         </Col>
 

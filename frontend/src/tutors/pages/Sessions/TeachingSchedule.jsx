@@ -23,7 +23,7 @@ import {
   FaSearch,
   FaFilter,
   FaChartLine,
-  FaDollarSign,
+  FaRupeeSign,
 } from "react-icons/fa";
 import sessionService from "../../../shared/services/session.service";
 import { formatImageUrl } from "../../../shared/utils/imageUtils";
@@ -42,6 +42,7 @@ const TeachingSchedule = () => {
   const statusOptions = [
     { value: "all", label: "All Sessions", variant: "secondary" },
     { value: "scheduled", label: "Upcoming", variant: "primary" },
+    { value: "pending_completion", label: "Pending Approval", variant: "info" },
     { value: "completed", label: "Completed", variant: "success" },
     { value: "cancelled", label: "Cancelled", variant: "danger" },
     { value: "rescheduled", label: "Rescheduled", variant: "warning" },
@@ -59,25 +60,15 @@ const TeachingSchedule = () => {
     try {
       setLoading(true);
       setError(null);
-      console.log("Fetching tutor sessions...");
-
-      // Debug: Check user info
-      const userStr = localStorage.getItem("user");
-      const currentUser = userStr ? JSON.parse(userStr) : null;
-      console.log("Current user role:", currentUser?.role);
-      console.log("Current user ID:", currentUser?.id);
 
       const response = await sessionService.getTutorSessions();
-      console.log("Tutor sessions response:", response);
 
       if (response && response.success) {
         setSessions(response.sessions || []);
-        console.log("Tutor sessions set:", response.sessions);
       } else {
         setError("Failed to load sessions");
       }
     } catch (err) {
-      console.error("Error fetching tutor sessions:", err);
       if (err.message && err.message.includes("404")) {
         setError(
           "Tutor profile not found. Please complete your profile setup."
@@ -149,9 +140,7 @@ const TeachingSchedule = () => {
   };
 
   const handleViewDetails = (sessionId) => {
-    console.log("handleViewDetails called with sessionId:", sessionId);
     if (!sessionId || sessionId === "undefined") {
-      console.error("Invalid sessionId:", sessionId);
       setError("Invalid session ID. Cannot view details.");
       return;
     }
@@ -159,19 +148,27 @@ const TeachingSchedule = () => {
   };
 
   const handleJoinSession = (session) => {
-    if (session.meetingLink) {
+    // Navigate to classroom for online sessions
+    if (session.mode === "online") {
+      navigate(`/tutor/classroom/${session.id || session._id}`);
+    } else if (session.meetingLink) {
       window.open(session.meetingLink, "_blank");
     } else {
-      setError("Meeting link not available for this session");
+      setError("This is not an online session");
     }
   };
 
   const handleMarkCompleted = async (sessionId) => {
     try {
-      await sessionService.markSessionCompleted(sessionId);
+      const result = await sessionService.markSessionCompleted(sessionId);
+      if (result.success) {
+        // Show success message that request was sent
+        setError(null);
+        alert("Completion request sent to student for approval.");
+      }
       fetchSessions(); // Refresh the sessions list
     } catch (error) {
-      setError("Failed to mark session as completed");
+      setError("Failed to send completion request");
     }
   };
 
@@ -305,7 +302,6 @@ const TeachingSchedule = () => {
           ) : (
             <Row>
               {filteredSessions.map((session) => {
-                console.log("Rendering tutor session:", session);
                 const { date, time } = formatDateTime(session.startTime);
                 const endTime = formatDateTime(session.endTime).time;
 
@@ -394,9 +390,9 @@ const TeachingSchedule = () => {
                             </div>
                             {session.price && (
                               <div className="d-flex align-items-center">
-                                <FaDollarSign className="me-2 text-muted" />
+                                <FaRupeeSign className="me-2 text-muted" />
                                 <span className="fw-bold text-success">
-                                  ${session.price}
+                                  ₹{session.price}
                                 </span>
                               </div>
                             )}
@@ -406,7 +402,7 @@ const TeachingSchedule = () => {
                           <div className="session-actions mt-3">
                             {session.status === "scheduled" && (
                               <div className="d-flex gap-2 flex-wrap">
-                                {session.meetingLink && (
+                                {session.mode === "online" && (
                                   <Button
                                     variant="success"
                                     size="sm"
@@ -429,7 +425,7 @@ const TeachingSchedule = () => {
                                         handleMarkCompleted(session.id)
                                       }
                                     >
-                                      Mark as Completed
+                                      Request Completion
                                     </Dropdown.Item>
                                     <Dropdown.Item
                                       onClick={() =>
@@ -441,6 +437,14 @@ const TeachingSchedule = () => {
                                     </Dropdown.Item>
                                   </Dropdown.Menu>
                                 </Dropdown>
+                              </div>
+                            )}
+                            {session.status === "pending_completion" && (
+                              <div className="d-flex gap-2 flex-wrap align-items-center">
+                                <Badge bg="info" className="py-2 px-3">
+                                  <FaClock className="me-1" />
+                                  Awaiting Student Approval
+                                </Badge>
                               </div>
                             )}
                           </div>

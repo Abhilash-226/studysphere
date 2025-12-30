@@ -93,3 +93,97 @@
   color: #212529;
   display: block;
 }
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  .profile-image-container {
+    width: 100px;
+    height: 100px;
+  }
+
+  .profile-edit-button {
+    width: 32px;
+    height: 32px;
+    bottom: 3px;
+    right: 3px;
+  }
+
+  .profile-header {
+    padding: 1rem;
+    margin-bottom: 55px;
+  }
+
+  .profile-header .profile-image-container {
+    bottom: -50px;
+  }
+
+  .profile-info {
+    margin-top: 55px;
+    padding: 0 0.75rem;
+  }
+
+  .profile-completion {
+    padding: 0.5rem 0.75rem 0;
+  }
+
+  .profile-completion-label,
+  .profile-completion-value {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .profile-image-container {
+    width: 85px;
+    height: 85px;
+  }
+
+  .profile-edit-button {
+    width: 28px;
+    height: 28px;
+    bottom: 2px;
+    right: 2px;
+    border-radius: 6px;
+  }
+
+  .profile-edit-button svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .profile-header {
+    padding: 0.875rem;
+    margin-bottom: 48px;
+    border-radius: 10px 10px 0 0;
+  }
+
+  .profile-header .profile-image-container {
+    bottom: -42px;
+  }
+
+  .profile-info {
+    margin-top: 48px;
+    padding: 0 0.5rem;
+  }
+
+  .profile-info h4 {
+    font-size: 1.1rem;
+  }
+
+  .profile-info p {
+    font-size: 0.85rem;
+  }
+
+  .profile-completion {
+    padding: 0.4rem 0.5rem 0;
+  }
+
+  .profile-completion-row {
+    margin-bottom: 0.25rem;
+  }
+
+  .profile-completion-label,
+  .profile-completion-value {
+    font-size: 0.7rem;
+  }
+}

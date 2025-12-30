@@ -17,7 +17,6 @@ const processConversations = async (conversations, userId) => {
       );
 
       if (!otherParticipant) {
-        console.log("No other participant found for conversation:", conv._id);
         return null; // Skip conversations without other participants
       }
 
@@ -184,8 +183,6 @@ exports.getConversations = async (req, res) => {
     const userId = req.user.id;
     const userRole = req.user.role;
 
-    console.log(`Getting conversations for ${userRole} with ID: ${userId}`);
-
     // For tutors, we need to ensure they only see conversations where they are directly involved
     if (userRole === "tutor") {
       const tutorData = await Tutor.findOne({ user: userId })
@@ -199,23 +196,15 @@ exports.getConversations = async (req, res) => {
         });
       }
 
-      console.log(`Found tutor record with ID: ${tutorData._id}`);
-
       // First get all conversations where this user is a participant
       const allConversations = await Conversation.find({
         participants: userId,
       }).lean();
 
-      console.log(`Found ${allConversations.length} total conversations`);
-
       // Filter to only include conversations where this tutor is the actual tutor
       const tutorConversations = allConversations.filter(
         (conv) =>
           conv.tutor && conv.tutor.toString() === tutorData._id.toString()
-      );
-
-      console.log(
-        `Filtered to ${tutorConversations.length} tutor-specific conversations`
       );
 
       // Now populate these filtered conversations
@@ -265,7 +254,6 @@ exports.getConversations = async (req, res) => {
         );
 
         if (!otherParticipant) {
-          console.log("No other participant found for conversation:", conv._id);
           return null; // Skip conversations without other participants
         }
 
@@ -395,10 +383,6 @@ exports.createConversation = async (req, res) => {
         }
       }
     } catch (err) {
-      console.warn(
-        `Error while attempting to resolve recipientId ${recipientId} as Tutor:`,
-        err.message
-      );
       // continue and attempt to use the original recipientId below
     }
 
@@ -481,9 +465,6 @@ exports.createConversation = async (req, res) => {
     } catch (saveErr) {
       // Handle duplicate key error which can occur if unique index is hit concurrently
       if (saveErr && saveErr.code === 11000) {
-        console.warn(
-          "Duplicate conversation detected when saving, attempting to find existing conversation..."
-        );
         const found = await Conversation.findOne({
           participants: { $all: [userId, resolvedRecipientId] },
         });

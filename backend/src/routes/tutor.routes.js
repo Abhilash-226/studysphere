@@ -98,41 +98,6 @@ router.put(
   }
 );
 
-// GET tutor sessions (protected - tutor only)
-router.get("/sessions", authenticateToken, checkRole(["tutor"]), (req, res) => {
-  const status = req.query.status || "all";
-
-  // Mock data for upcoming sessions
-  const upcomingSessions = [
-    {
-      id: "session1",
-      studentName: "Alice Johnson",
-      studentImage: "https://randomuser.me/api/portraits/women/32.jpg",
-      subject: "Mathematics",
-      topic: "Calculus - Derivatives",
-      date: new Date(Date.now() + 86400000).toISOString(), // Tomorrow
-      startTime: "10:00 AM",
-      endTime: "11:30 AM",
-      status: "confirmed",
-      notes: "Focus on application problems",
-    },
-    {
-      id: "session2",
-      studentName: "Bob Smith",
-      studentImage: "https://randomuser.me/api/portraits/men/45.jpg",
-      subject: "Physics",
-      topic: "Mechanics - Newton's Laws",
-      date: new Date(Date.now() + 172800000).toISOString(), // Day after tomorrow
-      startTime: "3:00 PM",
-      endTime: "4:30 PM",
-      status: "pending",
-      notes: "Student requested practice problems",
-    },
-  ];
-
-  res.status(200).json(upcomingSessions);
-});
-
 // ADMIN: Update tutor verification status (protected - admin only)
 router.put(
   "/:id/verification-status",
