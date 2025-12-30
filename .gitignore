@@ -23,6 +23,10 @@ logs
 .DS_Store
 Thumbs.db
 
+# Backup files
+*.backup
+*.bak
+
 # Uploaded files
 backend/uploads/
 uploads/
