@@ -4,7 +4,9 @@ import io from "socket.io-client";
 class ChatService {
   constructor() {
     this.socket = null;
-    this.baseURL = import.meta.env.VITE_API_URL?.replace("/api", "") || "http://localhost:5000";
+    this.baseURL =
+      import.meta.env.VITE_API_URL?.replace("/api", "") ||
+      "http://localhost:5000";
     this.listeners = {};
     this.isConnected = false;
   }
@@ -89,7 +91,7 @@ class ChatService {
       // Remove from stored listeners
       if (this.listeners[event]) {
         this.listeners[event] = this.listeners[event].filter(
-          (cb) => cb !== callback
+          (cb) => cb !== callback,
         );
       }
     }
@@ -132,7 +134,7 @@ class ChatService {
                 conv.createdAt ||
                 new Date().toISOString(),
             };
-          }
+          },
         );
       }
 
@@ -156,7 +158,7 @@ class ChatService {
         response.data.conversation = {
           ...response.data.conversation,
           otherUser: this.normalizeUserObject(
-            response.data.conversation.otherUser
+            response.data.conversation.otherUser,
           ),
           updatedAt:
             response.data.conversation.lastMessageTime ||
@@ -229,7 +231,7 @@ class ChatService {
       if (initialMessage) {
         const messageResponse = await this.sendMessage(
           conversationId,
-          initialMessage
+          initialMessage,
         );
 
         if (!messageResponse.success) {
@@ -257,7 +259,7 @@ class ChatService {
         `/chat/conversations/${conversationId}/messages`,
         {
           params: { page, limit },
-        }
+        },
       );
 
       // Normalize message format
@@ -288,7 +290,7 @@ class ChatService {
         `/chat/conversations/${conversationId}/messages`,
         {
           content,
-        }
+        },
       );
       return response.data;
     } catch (error) {
@@ -300,7 +302,7 @@ class ChatService {
   async markAsRead(conversationId) {
     try {
       const response = await api.put(
-        `/chat/conversations/${conversationId}/read`
+        `/chat/conversations/${conversationId}/read`,
       );
       return response.data;
     } catch (error) {
@@ -312,7 +314,7 @@ class ChatService {
   async clearConversation(conversationId) {
     try {
       const response = await api.delete(
-        `/chat/conversations/${conversationId}/messages`
+        `/chat/conversations/${conversationId}/messages`,
       );
       return response.data;
     } catch (error) {
