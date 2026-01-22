@@ -1,5 +1,6 @@
 import React from "react";
 import { Container, Row, Col, Nav, Tab } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import "./CategoriesSection.css";
 
 const CategoriesSection = () => {
@@ -29,19 +30,29 @@ const CategoriesSection = () => {
                         <h3>Primary Classes</h3>
                         <ul className="category-list">
                           <li>
-                            <a href="/tutors/online/class-1">Class 1 Tuition</a>
+                            <Link to="/tutors/online/class-1">
+                              Class 1 Tuition
+                            </Link>
                           </li>
                           <li>
-                            <a href="/tutors/online/class-2">Class 2 Tuition</a>
+                            <Link to="/tutors/online/class-2">
+                              Class 2 Tuition
+                            </Link>
                           </li>
                           <li>
-                            <a href="/tutors/online/class-3">Class 3 Tuition</a>
+                            <Link to="/tutors/online/class-3">
+                              Class 3 Tuition
+                            </Link>
                           </li>
                           <li>
-                            <a href="/tutors/online/class-4">Class 4 Tuition</a>
+                            <Link to="/tutors/online/class-4">
+                              Class 4 Tuition
+                            </Link>
                           </li>
                           <li>
-                            <a href="/tutors/online/class-5">Class 5 Tuition</a>
+                            <Link to="/tutors/online/class-5">
+                              Class 5 Tuition
+                            </Link>
                           </li>
                         </ul>
                       </div>
@@ -51,29 +62,35 @@ const CategoriesSection = () => {
                         <h3>Middle & High School</h3>
                         <ul className="category-list">
                           <li>
-                            <a href="/tutors/online/class-6">Class 6 Tuition</a>
+                            <Link to="/tutors/online/class-6">
+                              Class 6 Tuition
+                            </Link>
                           </li>
                           <li>
-                            <a href="/tutors/online/class-7">Class 7 Tuition</a>
+                            <Link to="/tutors/online/class-7">
+                              Class 7 Tuition
+                            </Link>
                           </li>
                           <li>
-                            <a href="/tutors/online/class-8">Class 8 Tuition</a>
+                            <Link to="/tutors/online/class-8">
+                              Class 8 Tuition
+                            </Link>
                           </li>
                           <li>
-                            <a
-                              href="/tutors/online/class-9"
+                            <Link
+                              to="/tutors/online/class-9"
                               className="popular"
                             >
                               Class 9 Tuition
-                            </a>
+                            </Link>
                           </li>
                           <li>
-                            <a
-                              href="/tutors/online/class-10"
+                            <Link
+                              to="/tutors/online/class-10"
                               className="popular"
                             >
                               Class 10 Tuition
-                            </a>
+                            </Link>
                           </li>
                         </ul>
                       </div>
@@ -83,30 +100,32 @@ const CategoriesSection = () => {
                         <h3>Learning Format</h3>
                         <ul className="category-list">
                           <li>
-                            <a
-                              href="/tutors/online/one-on-one"
+                            <Link
+                              to="/tutors/online/one-on-one"
                               className="popular"
                             >
                               One-on-One Tutoring
-                            </a>
+                            </Link>
                           </li>
                           <li>
-                            <a href="/tutors/online/group">Group Tutoring</a>
+                            <Link to="/tutors/online/group">
+                              Group Tutoring
+                            </Link>
                           </li>
                           <li>
-                            <a href="/tutors/online/self-paced">
+                            <Link to="/tutors/online/self-paced">
                               Self-Paced Learning
-                            </a>
+                            </Link>
                           </li>
                           <li>
-                            <a href="/tutors/online/live">
+                            <Link to="/tutors/online/live">
                               Live Interactive Classes
-                            </a>
+                            </Link>
                           </li>
                           <li>
-                            <a href="/tutors/online/recorded">
+                            <Link to="/tutors/online/recorded">
                               Recorded Lessons
-                            </a>
+                            </Link>
                           </li>
                         </ul>
                       </div>
@@ -123,29 +142,29 @@ const CategoriesSection = () => {
                         <h3>Primary Classes</h3>
                         <ul className="category-list">
                           <li>
-                            <a href="/tutors/offline/class-1">
+                            <Link to="/tutors/offline/class-1">
                               Class 1 Tuition
-                            </a>
+                            </Link>
                           </li>
                           <li>
-                            <a href="/tutors/offline/class-2">
+                            <Link to="/tutors/offline/class-2">
                               Class 2 Tuition
-                            </a>
+                            </Link>
                           </li>
                           <li>
-                            <a href="/tutors/offline/class-3">
+                            <Link to="/tutors/offline/class-3">
                               Class 3 Tuition
-                            </a>
+                            </Link>
                           </li>
                           <li>
-                            <a href="/tutors/offline/class-4">
+                            <Link to="/tutors/offline/class-4">
                               Class 4 Tuition
-                            </a>
+                            </Link>
                           </li>
                           <li>
-                            <a href="/tutors/offline/class-5">
+                            <Link to="/tutors/offline/class-5">
                               Class 5 Tuition
-                            </a>
+                            </Link>
                           </li>
                         </ul>
                       </div>
@@ -155,35 +174,35 @@ const CategoriesSection = () => {
                         <h3>Middle & High School</h3>
                         <ul className="category-list">
                           <li>
-                            <a href="/tutors/offline/class-6">
+                            <Link to="/tutors/offline/class-6">
                               Class 6 Tuition
-                            </a>
+                            </Link>
                           </li>
                           <li>
-                            <a href="/tutors/offline/class-7">
+                            <Link to="/tutors/offline/class-7">
                               Class 7 Tuition
-                            </a>
+                            </Link>
                           </li>
                           <li>
-                            <a href="/tutors/offline/class-8">
+                            <Link to="/tutors/offline/class-8">
                               Class 8 Tuition
-                            </a>
+                            </Link>
                           </li>
                           <li>
-                            <a
-                              href="/tutors/offline/class-9"
+                            <Link
+                              to="/tutors/offline/class-9"
                               className="popular"
                             >
                               Class 9 Tuition
-                            </a>
+                            </Link>
                           </li>
                           <li>
-                            <a
-                              href="/tutors/offline/class-10"
+                            <Link
+                              to="/tutors/offline/class-10"
                               className="popular"
                             >
                               Class 10 Tuition
-                            </a>
+                            </Link>
                           </li>
                         </ul>
                       </div>
@@ -193,27 +212,29 @@ const CategoriesSection = () => {
                         <h3>Learning Format</h3>
                         <ul className="category-list">
                           <li>
-                            <a href="/tutors/offline/home" className="popular">
+                            <Link to="/tutors/offline/home" className="popular">
                               Home Tutoring
-                            </a>
+                            </Link>
                           </li>
                           <li>
-                            <a href="/tutors/offline/center">
+                            <Link to="/tutors/offline/center">
                               Tutoring Centers
-                            </a>
+                            </Link>
                           </li>
                           <li>
-                            <a href="/tutors/offline/group">Group Classes</a>
+                            <Link to="/tutors/offline/group">
+                              Group Classes
+                            </Link>
                           </li>
                           <li>
-                            <a href="/tutors/offline/weekend">
+                            <Link to="/tutors/offline/weekend">
                               Weekend Batches
-                            </a>
+                            </Link>
                           </li>
                           <li>
-                            <a href="/tutors/offline/individual">
+                            <Link to="/tutors/offline/individual">
                               Individual Attention
-                            </a>
+                            </Link>
                           </li>
                         </ul>
                       </div>

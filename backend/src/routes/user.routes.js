@@ -26,7 +26,24 @@ router.put("/change-password", authenticateToken, (req, res) => {
 router.post(
   "/upload-profile-image",
   authenticateToken,
-  uploadProfileImage.single("profileImage"),
+  (req, res, next) => {
+    uploadProfileImage.single("profileImage")(req, res, (err) => {
+      if (err) {
+        console.error("Multer upload error:", err);
+        if (err.code === "LIMIT_FILE_SIZE") {
+          return res.status(400).json({
+            success: false,
+            message: "File too large. Maximum size is 2MB.",
+          });
+        }
+        return res.status(400).json({
+          success: false,
+          message: err.message || "Error uploading file",
+        });
+      }
+      next();
+    });
+  },
   async (req, res) => {
     try {
       // Check if file was uploaded
@@ -44,7 +61,7 @@ router.post(
       const user = await User.findByIdAndUpdate(
         userId,
         { profileImage: req.file.path.replace(/\\/g, "/") }, // Normalize path for cross-platform
-        { new: true }
+        { new: true },
       ).select("-password");
 
       if (!user) {
@@ -67,9 +84,11 @@ router.post(
       res.status(500).json({
         success: false,
         message: "Server error during profile image upload",
+        error:
+          process.env.NODE_ENV === "development" ? error.message : undefined,
       });
     }
-  }
+  },
 );
 
 // Get current user's details (protected - any authenticated user)

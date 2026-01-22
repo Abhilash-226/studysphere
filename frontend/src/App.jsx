@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import React, { useEffect } from "react";
 import Navbar from "./shared/components/Navigation/Navbar";
 import Footer from "./shared/components/Navigation/Footer";
@@ -49,6 +49,18 @@ import ChatPage from "./shared/components/Chat/pages/ChatPage";
 import { ClassroomPage } from "./classrooms";
 import { AuthProvider } from "./shared/context/AuthContext";
 import { ProtectedRoute } from "./shared/components/Route";
+// Static Pages
+import {
+  AboutPage,
+  ContactPage,
+  PricingPage,
+  HowItWorksPage,
+  SubjectsPage,
+  TermsPage,
+  PrivacyPage,
+  FAQPage,
+} from "./shared/pages/StaticPages";
+import NotFoundPage from "./shared/pages/NotFoundPage";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 
@@ -102,11 +114,24 @@ const App = () => {
 
                 <Route path="/tutors" element={<TutorsPage />} />
                 <Route
+                  path="/find-tutors"
+                  element={<Navigate to="/tutors" replace />}
+                />
+                <Route
                   path="/online-tuition"
                   element={<TutorsPage teachingMode="online" />}
                 />
                 <Route
                   path="/offline-tuition"
+                  element={<TutorsPage teachingMode="offline" />}
+                />
+                {/* Class-based tutor filtering routes */}
+                <Route
+                  path="/tutors/online/:filter"
+                  element={<TutorsPage teachingMode="online" />}
+                />
+                <Route
+                  path="/tutors/offline/:filter"
                   element={<TutorsPage teachingMode="offline" />}
                 />
                 <Route path="/tutors/:id" element={<TutorDetailsPage />} />
@@ -123,6 +148,16 @@ const App = () => {
                   path="/tutor-verification-pending"
                   element={<TutorVerificationPending />}
                 />
+
+                {/* Static Pages */}
+                <Route path="/about" element={<AboutPage />} />
+                <Route path="/contact" element={<ContactPage />} />
+                <Route path="/pricing" element={<PricingPage />} />
+                <Route path="/how-it-works" element={<HowItWorksPage />} />
+                <Route path="/subjects" element={<SubjectsPage />} />
+                <Route path="/terms" element={<TermsPage />} />
+                <Route path="/privacy" element={<PrivacyPage />} />
+                <Route path="/faq" element={<FAQPage />} />
 
                 {/* Protected Student Routes */}
                 <Route
@@ -232,7 +267,7 @@ const App = () => {
                 </Route>
 
                 {/* Catch All Route */}
-                <Route path="*" element={<div>Page Not Found</div>} />
+                <Route path="*" element={<NotFoundPage />} />
               </Routes>
             </div>
           </AppLayout>

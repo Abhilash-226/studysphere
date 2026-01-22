@@ -19,8 +19,8 @@ const documentStorage = multer.diskStorage({
     cb(null, DOCUMENT_PATH);
   },
   filename: (req, file, cb) => {
-    // Use userId + current timestamp to ensure unique filenames
-    const userId = req.user.id;
+    // Use userId from req.user (set by auth middleware) or fallback to timestamp
+    const userId = req.user?.id || "anonymous";
     const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
     const extension = path.extname(file.originalname);
     cb(null, `${userId}-${uniqueSuffix}${extension}`);
@@ -33,7 +33,8 @@ const profileImageStorage = multer.diskStorage({
     cb(null, PROFILE_IMAGE_PATH);
   },
   filename: (req, file, cb) => {
-    const userId = req.user.id;
+    // Use userId from req.user (set by auth middleware) or fallback to timestamp
+    const userId = req.user?.id || "anonymous";
     const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
     const extension = path.extname(file.originalname);
     cb(null, `${userId}-${uniqueSuffix}${extension}`);
@@ -48,9 +49,9 @@ const documentFilter = (req, file, cb) => {
   if (!allowedFileTypes.includes(extension)) {
     return cb(
       new Error(
-        "Only PDF, DOC, DOCX, JPG, JPEG or PNG files are allowed for documents!"
+        "Only PDF, DOC, DOCX, JPG, JPEG or PNG files are allowed for documents!",
       ),
-      false
+      false,
     );
   }
   cb(null, true);
@@ -64,7 +65,7 @@ const imageFilter = (req, file, cb) => {
   if (!allowedFileTypes.includes(extension)) {
     return cb(
       new Error("Only JPG, JPEG or PNG files are allowed for profile images!"),
-      false
+      false,
     );
   }
   cb(null, true);

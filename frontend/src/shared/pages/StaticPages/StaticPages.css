@@ -1,0 +1,477 @@
+/* Static Pages Shared Styles */
+
+.static-page {
+  min-height: 100vh;
+}
+
+/* Page Hero */
+.page-hero {
+  background: linear-gradient(135deg, #f8faff 0%, #e8f0ff 100%);
+  padding: 60px 0;
+  margin-bottom: 0;
+}
+
+.page-hero h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-bottom: 15px;
+}
+
+.page-hero .lead {
+  font-size: 1.15rem;
+  color: #555;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Content Sections */
+.content-section {
+  padding: 60px 0;
+}
+
+.content-section h2 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin-bottom: 20px;
+}
+
+.content-section h3 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.content-section p {
+  color: #555;
+  line-height: 1.7;
+}
+
+/* Stats Section */
+.stats-section {
+  background: #4a7aff;
+  padding: 50px 0;
+  color: white;
+}
+
+.stat-item {
+  padding: 20px;
+}
+
+.stat-number {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.stat-label {
+  font-size: 1rem;
+  opacity: 0.9;
+  margin-bottom: 0;
+}
+
+/* Values Section */
+.values-section {
+  padding: 60px 0;
+  background: #f8faff;
+}
+
+.value-card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.value-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.value-icon {
+  font-size: 2.5rem;
+  color: #4a7aff;
+  margin-bottom: 15px;
+}
+
+.value-card .card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.value-card .card-text {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* Contact Page */
+.contact-form-card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.contact-info-card {
+  border: none;
+  border-radius: 10px;
+  background: #f8faff;
+  transition: transform 0.2s ease;
+}
+
+.contact-info-card:hover {
+  transform: translateX(5px);
+}
+
+.contact-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #4a7aff 0%, #2b5be3 100%);
+  color: white;
+  border-radius: 10px;
+  font-size: 1rem;
+}
+
+/* Pricing Page */
+.pricing-card {
+  border: 2px solid #e8e8e8;
+  border-radius: 16px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.pricing-card:hover {
+  border-color: #4a7aff;
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(74, 122, 255, 0.15);
+}
+
+.pricing-card.popular {
+  border-color: #4a7aff;
+  box-shadow: 0 10px 30px rgba(74, 122, 255, 0.2);
+}
+
+.popular-badge {
+  position: absolute;
+  top: 15px;
+  right: -35px;
+  transform: rotate(45deg);
+  padding: 5px 40px;
+  font-size: 0.75rem;
+}
+
+.plan-name {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.plan-price {
+  margin: 20px 0;
+}
+
+.plan-price .price {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #4a7aff;
+}
+
+.plan-price .period {
+  font-size: 1rem;
+  color: #666;
+}
+
+.feature-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+}
+
+.feature-list li {
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  align-items: center;
+}
+
+.feature-list li.disabled {
+  color: #aaa;
+}
+
+.tutor-pricing-section {
+  padding: 60px 0;
+}
+
+.benefit-list {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+}
+
+.benefit-list li {
+  padding: 8px 0;
+  display: flex;
+  align-items: center;
+}
+
+.tutor-earnings-card {
+  border: none;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #4a7aff 0%, #2b5be3 100%);
+  color: white;
+}
+
+.earnings-display .amount {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.earnings-display .period {
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
+/* How It Works Page */
+.step-card {
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  position: relative;
+  padding-top: 30px;
+}
+
+.step-number {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #4a7aff 0%, #2b5be3 100%);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.step-icon {
+  font-size: 2.5rem;
+  color: #4a7aff;
+  margin-bottom: 15px;
+}
+
+.features-section {
+  padding: 60px 0;
+  background: #f8faff;
+}
+
+.feature-item h4 {
+  color: #1a1a2e;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+/* Subjects Page */
+.subject-card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.subject-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.subject-icon {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+}
+
+.subject-card .card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.tutor-count {
+  color: #666;
+  font-size: 0.85rem;
+  margin-top: 10px;
+}
+
+.tutor-count .count {
+  font-weight: 600;
+  color: #4a7aff;
+}
+
+.level-card {
+  border: 2px solid #e8e8e8;
+  border-radius: 12px;
+  transition: border-color 0.3s ease;
+}
+
+.level-card:hover {
+  border-color: #4a7aff;
+}
+
+.boards-list {
+  gap: 15px;
+}
+
+.board-badge {
+  background: #4a7aff;
+  color: white;
+  padding: 10px 25px;
+  border-radius: 25px;
+  font-weight: 500;
+}
+
+/* Legal Pages (Terms, Privacy) */
+.legal-content {
+  line-height: 1.8;
+}
+
+.legal-content h2 {
+  font-size: 1.4rem;
+  margin-top: 35px;
+  margin-bottom: 15px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.legal-content h2:first-child {
+  border-top: none;
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.legal-content h3 {
+  font-size: 1.15rem;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.legal-content ul {
+  margin-bottom: 20px;
+}
+
+.legal-content ul li {
+  margin-bottom: 8px;
+}
+
+/* FAQ Page */
+.search-section {
+  padding: 30px 0;
+  background: white;
+}
+
+.search-section .input-group {
+  box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.search-section .input-group-text {
+  background: white;
+  border: none;
+  padding-left: 20px;
+}
+
+.search-section .form-control {
+  border: none;
+  padding: 15px;
+  font-size: 1rem;
+}
+
+.search-section .form-control:focus {
+  box-shadow: none;
+}
+
+.category-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #4a7aff;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #4a7aff;
+}
+
+.faq-category .accordion-item {
+  border: none;
+  border-radius: 10px !important;
+  margin-bottom: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.faq-category .accordion-button {
+  font-weight: 500;
+  color: #1a1a2e;
+  background: white;
+  padding: 18px 20px;
+}
+
+.faq-category .accordion-button:not(.collapsed) {
+  background: #f8faff;
+  color: #4a7aff;
+}
+
+.faq-category .accordion-button:focus {
+  box-shadow: none;
+}
+
+.faq-category .accordion-body {
+  color: #555;
+  line-height: 1.7;
+  padding: 20px;
+}
+
+/* CTA Section */
+.cta-section {
+  padding: 60px 0;
+}
+
+.cta-section.bg-primary {
+  background: linear-gradient(135deg, #4a7aff 0%, #2b5be3 100%) !important;
+}
+
+.cta-section h3 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .page-hero {
+    padding: 40px 0;
+  }
+
+  .page-hero h1 {
+    font-size: 1.8rem;
+  }
+
+  .content-section {
+    padding: 40px 0;
+  }
+
+  .stat-number {
+    font-size: 2rem;
+  }
+
+  .plan-price .price {
+    font-size: 2rem;
+  }
+}

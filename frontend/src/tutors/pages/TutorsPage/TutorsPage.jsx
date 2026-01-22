@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams, useSearchParams } from "react-router-dom";
 import TutorFilters from "../../components/TutorFilters";
 import TutorCard from "../../components/TutorCard";
 import tutorService from "../../../shared/services/tutor.service";
@@ -92,7 +92,7 @@ const TutorsPage = ({ teachingMode }) => {
         pagination.limit,
         apiFilters,
         sortOption.sort,
-        sortOption.order
+        sortOption.order,
       );
 
       if (response && response.success && response.tutors) {
@@ -180,7 +180,7 @@ const TutorsPage = ({ teachingMode }) => {
             value: city,
             label: city,
             count: response.tutors.filter(
-              (t) => t.location && t.location.city === city
+              (t) => t.location && t.location.city === city,
             ).length,
           }));
 
@@ -206,28 +206,75 @@ const TutorsPage = ({ teachingMode }) => {
   useEffect(() => {
     // Determine teaching mode from props or URL path
     let initialTeachingMode = null;
+    let classFilter = null;
+    let formatFilter = null;
 
+    // Check for URL params (e.g., /tutors/online/class-5)
+    const pathParts = location.pathname.split("/");
+    if (pathParts.includes("online")) {
+      initialTeachingMode = "online";
+    } else if (pathParts.includes("offline")) {
+      initialTeachingMode = "offline";
+    }
+
+    // Check for filter in URL (class level or format)
+    const filterPart = pathParts[pathParts.length - 1];
+    if (filterPart && filterPart.startsWith("class-")) {
+      classFilter = filterPart.replace("class-", "Class ");
+    } else if (
+      [
+        "one-on-one",
+        "group",
+        "self-paced",
+        "live",
+        "recorded",
+        "home",
+        "coaching-center",
+        "tuition-center",
+      ].includes(filterPart)
+    ) {
+      formatFilter = filterPart;
+    }
+
+    // Apply teaching mode from props
     if (teachingMode === "online") {
-      initialTeachingMode = "online"; // Use general online mode
+      initialTeachingMode = "online";
     } else if (teachingMode === "offline") {
-      initialTeachingMode = "offline"; // Use general offline mode
+      initialTeachingMode = "offline";
     } else if (location.pathname === "/online-tuition") {
       initialTeachingMode = "online";
     } else if (location.pathname === "/offline-tuition") {
       initialTeachingMode = "offline";
     }
 
-    // Apply the teaching mode filter if it was determined
+    // Check URL search params (e.g., /tutors?subject=Mathematics)
+    const searchParams = new URLSearchParams(location.search);
+    const subjectParam = searchParams.get("subject");
+    const searchParam = searchParams.get("search");
+
+    // Build initial filters
+    const newFilters = { ...filters };
+
     if (initialTeachingMode) {
-      setFilters((prevFilters) => ({
-        ...prevFilters,
-        teachingMode: initialTeachingMode,
-      }));
+      newFilters.teachingMode = initialTeachingMode;
+    }
+
+    if (subjectParam) {
+      newFilters.subjects = [subjectParam];
+    }
+
+    if (searchParam) {
+      newFilters.search = searchParam;
+    }
+
+    // Apply the filters
+    if (initialTeachingMode || subjectParam || searchParam) {
+      setFilters(newFilters);
     } else {
-      // If no teaching mode specified, just fetch with current filters
+      // If no filters specified, just fetch with current filters
       fetchTutors(filters);
     }
-  }, [location.pathname, teachingMode]);
+  }, [location.pathname, location.search, teachingMode]);
 
   // Apply filters
   useEffect(() => {

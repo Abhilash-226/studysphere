@@ -1,5 +1,5 @@
-import React from "react";
-import { Container, Row, Col, Form, Button } from "react-bootstrap";
+import React, { useState } from "react";
+import { Container, Row, Col, Form, Button, Alert } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import {
   FaFacebookF,
@@ -11,10 +11,74 @@ import {
   FaEnvelope,
   FaPhoneAlt,
   FaArrowRight,
+  FaCheck,
+  FaSpinner,
 } from "react-icons/fa";
 import "./Footer.css";
 
 const Footer = () => {
+  const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [subscribeStatus, setSubscribeStatus] = useState({
+    type: "",
+    message: "",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const validateEmail = (email) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  };
+
+  const handleEmailChange = (e) => {
+    const value = e.target.value;
+    setEmail(value);
+
+    // Real-time validation
+    if (value && !validateEmail(value)) {
+      setEmailError("Please enter a valid email address");
+    } else {
+      setEmailError("");
+    }
+
+    // Clear any previous status
+    if (subscribeStatus.message) {
+      setSubscribeStatus({ type: "", message: "" });
+    }
+  };
+
+  const handleSubscribe = async (e) => {
+    e.preventDefault();
+
+    if (!email) {
+      setEmailError("Email is required");
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      setEmailError("Please enter a valid email address");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setEmailError("");
+
+    // Simulate API call
+    setTimeout(() => {
+      setSubscribeStatus({
+        type: "success",
+        message: "Thank you for subscribing! We'll keep you updated.",
+      });
+      setEmail("");
+      setIsSubmitting(false);
+
+      // Auto-hide success message after 5 seconds
+      setTimeout(() => {
+        setSubscribeStatus({ type: "", message: "" });
+      }, 5000);
+    }, 1000);
+  };
+
   return (
     <footer className="site-footer">
       <div className="footer-main">
@@ -126,30 +190,69 @@ const Footer = () => {
                 <p className="mb-3">
                   Stay updated with our latest news and offers
                 </p>
-                <Form className="d-flex mb-3">
-                  <Form.Control
-                    type="email"
-                    placeholder="Your email address"
-                    className="me-2"
-                    style={{
-                      borderRadius: "8px",
-                      border: "1px solid #dde",
-                      padding: "10px 15px",
-                      boxShadow: "none",
-                    }}
-                  />
-                  <Button
-                    variant="primary"
-                    style={{
-                      borderRadius: "8px",
-                      background:
-                        "linear-gradient(135deg, #4a7aff 0%, #2b5be3 100%)",
-                      border: "none",
-                      padding: "0 15px",
-                    }}
+
+                {subscribeStatus.message && (
+                  <Alert
+                    variant={subscribeStatus.type}
+                    className="py-2 mb-3"
+                    style={{ fontSize: "0.9rem" }}
                   >
-                    <FaArrowRight />
-                  </Button>
+                    {subscribeStatus.type === "success" && (
+                      <FaCheck className="me-2" />
+                    )}
+                    {subscribeStatus.message}
+                  </Alert>
+                )}
+
+                <Form
+                  onSubmit={handleSubscribe}
+                  className="d-flex flex-column mb-3"
+                >
+                  <div className="d-flex mb-2">
+                    <Form.Control
+                      type="email"
+                      placeholder="Your email address"
+                      className={`me-2 ${emailError ? "is-invalid" : email && validateEmail(email) ? "is-valid" : ""}`}
+                      style={{
+                        borderRadius: "8px",
+                        border: emailError
+                          ? "1px solid #dc3545"
+                          : "1px solid #dde",
+                        padding: "10px 15px",
+                        boxShadow: "none",
+                      }}
+                      value={email}
+                      onChange={handleEmailChange}
+                      disabled={isSubmitting}
+                    />
+                    <Button
+                      variant="primary"
+                      type="submit"
+                      disabled={isSubmitting || !!emailError}
+                      style={{
+                        borderRadius: "8px",
+                        background:
+                          "linear-gradient(135deg, #4a7aff 0%, #2b5be3 100%)",
+                        border: "none",
+                        padding: "0 15px",
+                        minWidth: "50px",
+                      }}
+                    >
+                      {isSubmitting ? (
+                        <FaSpinner className="fa-spin" />
+                      ) : (
+                        <FaArrowRight />
+                      )}
+                    </Button>
+                  </div>
+                  {emailError && (
+                    <Form.Text
+                      className="text-danger"
+                      style={{ fontSize: "0.8rem" }}
+                    >
+                      {emailError}
+                    </Form.Text>
+                  )}
                 </Form>
 
                 <h4 className="mt-4">Contact</h4>
