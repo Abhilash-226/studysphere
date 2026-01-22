@@ -2,6 +2,13 @@
  * Helper utility to format image URLs for the application
  */
 
+// Get the backend URL from environment or fallback
+const getBackendUrl = () => {
+  const apiUrl = import.meta.env.VITE_API_URL || "";
+  // Remove /api suffix to get base backend URL
+  return apiUrl.replace(/\/api$/, "");
+};
+
 /**
  * Formats an image URL to ensure it's properly accessible
  * @param {string} imageUrl - The image URL from the API response
@@ -28,6 +35,9 @@ export const formatImageUrl = (imageUrl) => {
     return normalizedUrl;
   }
 
+  // Get backend URL for uploads
+  const backendUrl = getBackendUrl();
+
   // Handle uploads that might have been incorrectly prefixed or contain uploads path
   if (
     normalizedUrl.includes("uploads/profileImages/") ||
@@ -36,15 +46,15 @@ export const formatImageUrl = (imageUrl) => {
     // Extract just the uploads path
     const uploadsIndex = normalizedUrl.indexOf("uploads/");
     const cleanPath = normalizedUrl.substring(uploadsIndex);
-    // Use absolute URL to avoid React Router conflicts
-    const formattedUrl = `${window.location.origin}/${cleanPath}`;
+    // Use backend URL for uploads
+    const formattedUrl = backendUrl ? `${backendUrl}/${cleanPath}` : `/${cleanPath}`;
     return formattedUrl;
   }
 
   // If the URL is a relative path starting with 'uploads/' (after normalization)
   if (normalizedUrl.startsWith("uploads/")) {
-    // Use absolute URL to avoid React Router conflicts
-    const formattedUrl = `${window.location.origin}/${normalizedUrl}`;
+    // Use backend URL for uploads
+    const formattedUrl = backendUrl ? `${backendUrl}/${normalizedUrl}` : `/${normalizedUrl}`;
     return formattedUrl;
   }
 
