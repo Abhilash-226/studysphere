@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Create an axios instance with base configuration
 const api = axios.create({
-  baseURL: "/api", // Using relative URL for proxy support
+  baseURL: import.meta.env.VITE_API_URL || "/api",
   headers: {
     "Content-Type": "application/json",
   },

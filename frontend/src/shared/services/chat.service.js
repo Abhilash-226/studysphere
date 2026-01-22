@@ -4,7 +4,7 @@ import io from "socket.io-client";
 class ChatService {
   constructor() {
     this.socket = null;
-    this.baseURL = "http://localhost:5000"; // Should match your backend URL
+    this.baseURL = import.meta.env.VITE_API_URL?.replace("/api", "") || "http://localhost:5000";
     this.listeners = {};
     this.isConnected = false;
   }
