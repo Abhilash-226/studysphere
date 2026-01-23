@@ -47,14 +47,18 @@ export const formatImageUrl = (imageUrl) => {
     const uploadsIndex = normalizedUrl.indexOf("uploads/");
     const cleanPath = normalizedUrl.substring(uploadsIndex);
     // Use backend URL for uploads
-    const formattedUrl = backendUrl ? `${backendUrl}/${cleanPath}` : `/${cleanPath}`;
+    const formattedUrl = backendUrl
+      ? `${backendUrl}/${cleanPath}`
+      : `/${cleanPath}`;
     return formattedUrl;
   }
 
   // If the URL is a relative path starting with 'uploads/' (after normalization)
   if (normalizedUrl.startsWith("uploads/")) {
     // Use backend URL for uploads
-    const formattedUrl = backendUrl ? `${backendUrl}/${normalizedUrl}` : `/${normalizedUrl}`;
+    const formattedUrl = backendUrl
+      ? `${backendUrl}/${normalizedUrl}`
+      : `/${normalizedUrl}`;
     return formattedUrl;
   }
 

@@ -73,19 +73,19 @@ const ChatProvider = ({ children }) => {
         console.log("Received new message via WebSocket:", message);
         console.log(
           "Current conversations:",
-          conversations.map((c) => ({ id: c.id, _id: c._id }))
+          conversations.map((c) => ({ id: c.id, _id: c._id })),
         );
         console.log("Message conversation ID:", message.conversationId);
 
         setMessages((prev) => {
           console.log(
             "Adding message to messages array, current length:",
-            prev.length
+            prev.length,
           );
           const updatedMessages = [...prev, message];
           // Sort messages to ensure proper chronological order
           return updatedMessages.sort(
-            (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+            (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
           );
         });
 
@@ -96,7 +96,7 @@ const ChatProvider = ({ children }) => {
               "Checking conversation",
               conv.id,
               "against message conversationId",
-              message.conversationId
+              message.conversationId,
             );
             return conv.id === message.conversationId ||
               conv._id === message.conversationId
@@ -106,7 +106,7 @@ const ChatProvider = ({ children }) => {
                   unreadCount: conv.unreadCount + 1,
                 }
               : conv;
-          })
+          }),
         );
       });
 
@@ -114,11 +114,11 @@ const ChatProvider = ({ children }) => {
         console.log("Message delivered:", data);
         setMessages((prev) => {
           const updatedMessages = prev.map((msg) =>
-            msg.id === data.tempId ? { ...data.message, pending: false } : msg
+            msg.id === data.tempId ? { ...data.message, pending: false } : msg,
           );
           // Sort messages to ensure proper chronological order
           return updatedMessages.sort(
-            (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+            (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
           );
         });
       });
@@ -146,7 +146,9 @@ const ChatProvider = ({ children }) => {
 
     setLoading(true);
     try {
-      const endpoint = "/api/chat/conversations";
+      const API_URL =
+        import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+      const endpoint = `${API_URL}/chat/conversations`;
 
       const response = await fetch(endpoint, {
         headers: {
@@ -167,7 +169,7 @@ const ChatProvider = ({ children }) => {
         .filter((conv) => conv !== null);
 
       const sortedConversations = sortConversationsByTime(
-        normalizedConversations
+        normalizedConversations,
       );
 
       setConversations(sortedConversations);
@@ -194,7 +196,9 @@ const ChatProvider = ({ children }) => {
 
       setLoading(true);
       try {
-        const endpoint = `/api/chat/conversations/${conversationId}/messages`;
+        const API_URL =
+          import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+        const endpoint = `${API_URL}/chat/conversations/${conversationId}/messages`;
 
         const response = await fetch(endpoint, {
           headers: {
@@ -238,7 +242,7 @@ const ChatProvider = ({ children }) => {
         setLoading(false);
       }
     },
-    [socket, connected] // Add socket dependencies for join-conversation
+    [socket, connected], // Add socket dependencies for join-conversation
   );
 
   // Store the latest fetchMessages in ref
@@ -255,7 +259,7 @@ const ChatProvider = ({ children }) => {
         setMessages([]);
       }
     },
-    [] // No dependencies to prevent recreating
+    [], // No dependencies to prevent recreating
   );
 
   // Store the latest setActiveConversationAndFetch in ref for stable access
@@ -283,7 +287,7 @@ const ChatProvider = ({ children }) => {
     if (hasConversations && !activeConversation && !hasAutoSelected.current) {
       console.log(
         "Auto-selecting first conversation with ID:",
-        conversations[0]?._id
+        conversations[0]?._id,
       );
       hasAutoSelected.current = true;
       // Use ref to avoid dependency issues
@@ -302,12 +306,11 @@ const ChatProvider = ({ children }) => {
 
         setLoading(true);
         try {
-          const endpoint = "/api/chat/conversations";
           const API_URL =
-            import.meta.env.VITE_API_URL || "http://localhost:5000";
-          const fullUrl = `${API_URL}${endpoint}`;
+            import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+          const endpoint = `${API_URL}/chat/conversations`;
 
-          const response = await fetch(fullUrl, {
+          const response = await fetch(endpoint, {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
@@ -326,7 +329,7 @@ const ChatProvider = ({ children }) => {
             .filter((conv) => conv !== null);
 
           const sortedConversations = sortConversationsByTime(
-            normalizedConversations
+            normalizedConversations,
           );
 
           setConversations(sortedConversations);
@@ -384,18 +387,20 @@ const ChatProvider = ({ children }) => {
         const updatedMessages = [...prev, optimisticMessage];
         // Sort messages to ensure proper chronological order
         return updatedMessages.sort(
-          (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+          (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
         );
       });
     },
-    [socket, connected] // Remove userId dependency, use ref instead
+    [socket, connected], // Remove userId dependency, use ref instead
   );
 
   // Create a new conversation
   const createConversation = useCallback(
     async (otherUserId, otherUserRole) => {
       try {
-        const endpoint = "/api/chat/conversations";
+        const API_URL =
+          import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+        const endpoint = `${API_URL}/chat/conversations`;
 
         const response = await fetch(endpoint, {
           method: "POST",
@@ -426,7 +431,7 @@ const ChatProvider = ({ children }) => {
         return null;
       }
     },
-    [setActiveConversationAndFetch]
+    [setActiveConversationAndFetch],
   );
 
   const value = {

@@ -35,7 +35,7 @@ const LoginForm = ({ userType = "student" }) => {
     try {
       const response = await authService.googleAuth(
         credentialResponse.credential,
-        userType
+        userType,
       );
 
       if (response.token && response.user) {
@@ -50,14 +50,14 @@ const LoginForm = ({ userType = "student" }) => {
               response.user,
               response.token,
               response.user.role,
-              "/tutor/profile-setup"
+              "/tutor/profile-setup",
             );
           } else {
             login(
               response.user,
               response.token,
               response.user.role,
-              "/student/profile"
+              "/student/profile",
             );
           }
         } else {
@@ -101,7 +101,7 @@ const LoginForm = ({ userType = "student" }) => {
       // Call authentication service
       const response = await authService.login(
         formData.email,
-        formData.password
+        formData.password,
       );
 
       // Check if response has token and user data
@@ -127,11 +127,11 @@ const LoginForm = ({ userType = "student" }) => {
             <Link to="/resend-verification" className="text-primary">
               Need to resend verification email?
             </Link>
-          </div>
+          </div>,
         );
       } else {
         setError(
-          err.message || "An error occurred during login. Please try again."
+          err.message || "An error occurred during login. Please try again.",
         );
       }
     } finally {
@@ -287,7 +287,7 @@ const LoginForm = ({ userType = "student" }) => {
                   text="signin_with"
                   shape="rectangular"
                   size="large"
-                  width="100%"
+                  width={400}
                   theme="outline"
                 />
               )}

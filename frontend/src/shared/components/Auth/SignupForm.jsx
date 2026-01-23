@@ -45,7 +45,7 @@ const SignupForm = ({ userType = "student" }) => {
     try {
       const response = await authService.googleAuth(
         credentialResponse.credential,
-        userType
+        userType,
       );
 
       if (response.token && response.user) {
@@ -60,14 +60,14 @@ const SignupForm = ({ userType = "student" }) => {
               response.user,
               response.token,
               response.user.role || userType,
-              "/tutor/profile-setup"
+              "/tutor/profile-setup",
             );
           } else {
             login(
               response.user,
               response.token,
               response.user.role || userType,
-              "/student/profile"
+              "/student/profile",
             );
           }
         } else {
@@ -175,7 +175,9 @@ const SignupForm = ({ userType = "student" }) => {
           login(response.user, response.token, userType);
           // Tutors go to profile setup, students go to dashboard
           navigate(
-            userType === "tutor" ? "/tutor/profile-setup" : "/student/dashboard"
+            userType === "tutor"
+              ? "/tutor/profile-setup"
+              : "/student/dashboard",
           );
         } else {
           setError("Registration completed, but login failed.");
@@ -183,7 +185,7 @@ const SignupForm = ({ userType = "student" }) => {
       }
     } catch (err) {
       setError(
-        err.message || "An error occurred during signup. Please try again."
+        err.message || "An error occurred during signup. Please try again.",
       );
     } finally {
       setIsSubmitting(false);
@@ -436,8 +438,8 @@ const SignupForm = ({ userType = "student" }) => {
                 {isSubmitting
                   ? "Creating Account..."
                   : userType === "tutor"
-                  ? "Sign up as a Tutor"
-                  : "Sign up as a Student"}
+                    ? "Sign up as a Tutor"
+                    : "Sign up as a Student"}
               </Button>
             </div>
 
@@ -459,7 +461,7 @@ const SignupForm = ({ userType = "student" }) => {
                   text="signup_with"
                   shape="rectangular"
                   size="large"
-                  width="100%"
+                  width={400}
                   theme="outline"
                 />
               )}
