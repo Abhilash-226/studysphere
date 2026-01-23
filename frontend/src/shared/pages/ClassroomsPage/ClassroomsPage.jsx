@@ -33,9 +33,18 @@ import {
 import { useNavigate, useSearchParams } from "react-router-dom";
 import offlineClassroomService from "../../services/offlineClassroom.service";
 import { formatImageUrl } from "../../utils/imageUtils";
+import useSEO from "../../hooks/useSEO";
 import "./ClassroomsPage.css";
 
 const ClassroomsPage = () => {
+  useSEO({
+    title: "Find Classrooms Near You",
+    description:
+      "Discover quality offline coaching classes in your area. Browse classrooms, compare tutors, and find the perfect learning environment for your educational needs.",
+    keywords:
+      "offline classes, coaching centers, classrooms near me, tutoring centers, coaching classes, physical classes",
+  });
+
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 

@@ -1,0 +1,10 @@
+# Robots.txt for StudySphere
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://studysphere-frontend-gtvp.onrender.com/sitemap.xml
+
+# Disallow admin and private routes
+Disallow: /admin/*
+Disallow: /api/*

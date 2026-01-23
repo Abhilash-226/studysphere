@@ -12,8 +12,15 @@ import {
 import "./AuthForms.css";
 import { useAuth } from "../../context/AuthContext";
 import authService from "../../services/auth.service";
+import useSEO from "../../hooks/useSEO";
 
 const LoginForm = ({ userType = "student" }) => {
+  useSEO({
+    title: `${userType === "tutor" ? "Tutor" : "Student"} Login`,
+    description: `Login to your StudySphere ${userType} account. Access your dashboard, manage sessions, and connect with ${userType === "tutor" ? "students" : "tutors"}.`,
+    keywords: "login, sign in, StudySphere login, tutor login, student login",
+  });
+
   const navigate = useNavigate();
   const { login, setError: setAuthError } = useAuth();
   const [formData, setFormData] = useState({

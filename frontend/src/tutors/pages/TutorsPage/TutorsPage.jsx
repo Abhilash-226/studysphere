@@ -3,9 +3,20 @@ import { useLocation, useParams, useSearchParams } from "react-router-dom";
 import TutorFilters from "../../components/TutorFilters";
 import TutorCard from "../../components/TutorCard";
 import tutorService from "../../../shared/services/tutor.service";
+import useSEO from "../../../shared/hooks/useSEO";
 import "./TutorsPage.css";
 
 const TutorsPage = ({ teachingMode }) => {
+  useSEO({
+    title: teachingMode
+      ? `${teachingMode === "online" ? "Online" : "Offline"} Tutors`
+      : "Find Expert Tutors",
+    description:
+      "Browse and connect with qualified tutors for personalized learning. Filter by subject, location, availability, and teaching mode to find your perfect tutor.",
+    keywords:
+      "find tutors, online tutors, offline tutors, private tutoring, subject tutors, qualified teachers",
+  });
+
   const [tutors, setTutors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
