@@ -28,11 +28,15 @@ const TutorProfileSetup = () => {
     subjects: [], // array of subjects
     preferredClasses: [], // array of class levels
     location: {
+      street: "",
+      area: "",
       city: "",
       state: "",
+      pincode: "",
       country: "",
     },
     hourlyRate: 0,
+    monthlyRate: 0,
 
     // Qualifications
     qualification: "",
@@ -129,6 +133,7 @@ const TutorProfileSetup = () => {
       );
       formData.append("location", JSON.stringify(profileData.location));
       formData.append("hourlyRate", profileData.hourlyRate);
+      formData.append("monthlyRate", profileData.monthlyRate || 0);
 
       // Only append qualification fields if they've been changed
       // These fields might have been populated from signup
@@ -290,35 +295,29 @@ const TutorProfileSetup = () => {
         </header>
 
         <div className="setup-progress">
-          <div className="progress-bar">
+          <div className="tutor-progress-steps">
             <div
-              className="progress-fill"
-              style={{ width: `${(currentStep / 4) * 100}%` }}
-            ></div>
-          </div>
-          <div className="progress-steps">
-            <div
-              className={`progress-step ${currentStep >= 1 ? "active" : ""}`}
+              className={`tutor-progress-step ${currentStep >= 1 ? "active" : ""}`}
             >
-              <div className="step-number">1</div>
+              <div className="tutor-step-number">1</div>
               <span>Basic Info</span>
             </div>
             <div
-              className={`progress-step ${currentStep >= 2 ? "active" : ""}`}
+              className={`tutor-progress-step ${currentStep >= 2 ? "active" : ""}`}
             >
-              <div className="step-number">2</div>
+              <div className="tutor-step-number">2</div>
               <span>Teaching</span>
             </div>
             <div
-              className={`progress-step ${currentStep >= 3 ? "active" : ""}`}
+              className={`tutor-progress-step ${currentStep >= 3 ? "active" : ""}`}
             >
-              <div className="step-number">3</div>
+              <div className="tutor-step-number">3</div>
               <span>Qualifications</span>
             </div>
             <div
-              className={`progress-step ${currentStep >= 4 ? "active" : ""}`}
+              className={`tutor-progress-step ${currentStep >= 4 ? "active" : ""}`}
             >
-              <div className="step-number">4</div>
+              <div className="tutor-step-number">4</div>
               <span>Availability</span>
             </div>
           </div>

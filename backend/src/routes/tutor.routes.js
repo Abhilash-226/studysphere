@@ -1,7 +1,7 @@
 const express = require("express");
 const { authenticateToken } = require("../middleware/auth.middleware");
 const { checkRole } = require("../middleware/role.middleware");
-const { uploadDocument, uploadProfileImage } = require("../middleware/uploads");
+const { uploadDocument, uploadProfileImage, uploadMixed } = require("../middleware/uploads");
 const tutorController = require("../controllers/tutor.controller");
 
 const router = express.Router();
@@ -68,7 +68,7 @@ router.put(
   "/profile",
   authenticateToken,
   checkRole(["tutor"]),
-  uploadProfileImage.fields([
+  uploadMixed.fields([
     { name: "profileImage", maxCount: 1 },
     { name: "idDocument", maxCount: 1 },
     { name: "qualificationDocument", maxCount: 1 },

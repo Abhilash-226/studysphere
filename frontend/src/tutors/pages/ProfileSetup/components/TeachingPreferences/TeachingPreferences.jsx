@@ -2,35 +2,19 @@ import React, { useState } from "react";
 import "./TeachingPreferences.css";
 
 const SUBJECTS = [
-  "Mathematics",
-  "Physics",
-  "Chemistry",
-  "Biology",
-  "Computer Science",
-  "Literature",
-  "History",
-  "Geography",
-  "Economics",
-  "Business Studies",
-  "Political Science",
-  "Psychology",
-  "Sociology",
+  "Telugu",
+  "Hindi",
   "English",
-  "Spanish",
-  "French",
-  "German",
-  "Art",
-  "Music",
-  "Physical Education",
+  "Maths",
+  "Physics",
+  "Biology",
+  "Social",
 ];
 
 const CLASS_LEVELS = [
   "Elementary (Grades 1-5)",
   "Middle School (Grades 6-8)",
   "High School (Grades 9-12)",
-  "College/University",
-  "Adult Education",
-  "Professional Development",
 ];
 
 /**
@@ -77,6 +61,11 @@ const TeachingPreferences = ({ profileData, updateProfileData }) => {
   const handleHourlyRateChange = (e) => {
     const rate = parseFloat(e.target.value);
     updateProfileData({ hourlyRate: rate });
+  };
+
+  const handleMonthlyRateChange = (e) => {
+    const rate = parseFloat(e.target.value);
+    updateProfileData({ monthlyRate: rate });
   };
 
   return (
@@ -175,10 +164,26 @@ const TeachingPreferences = ({ profileData, updateProfileData }) => {
       {/* Location (for offline teaching) */}
       {profileData.teachingMode.includes("offline") && (
         <div className="form-group">
-          <label>Location for In-Person Sessions</label>
+          <label>Full Address for In-Person Sessions</label>
           <p className="help-text">
-            Where are you available for in-person tutoring?
+            Provide your complete address where you're available for in-person tutoring
           </p>
+          <div style={{ marginBottom: "10px" }}>
+            <input
+              type="text"
+              placeholder="Street Address"
+              value={profileData.location.street || ""}
+              onChange={(e) => handleLocationChange("street", e.target.value)}
+            />
+          </div>
+          <div style={{ marginBottom: "10px" }}>
+            <input
+              type="text"
+              placeholder="Area/Locality"
+              value={profileData.location.area || ""}
+              onChange={(e) => handleLocationChange("area", e.target.value)}
+            />
+          </div>
           <div className="location-fields">
             <div>
               <input
@@ -197,13 +202,23 @@ const TeachingPreferences = ({ profileData, updateProfileData }) => {
               />
             </div>
           </div>
-          <div style={{ marginTop: "10px" }}>
-            <input
-              type="text"
-              placeholder="Country (e.g., India)"
-              value={profileData.location.country}
-              onChange={(e) => handleLocationChange("country", e.target.value)}
-            />
+          <div className="location-fields" style={{ marginTop: "10px" }}>
+            <div>
+              <input
+                type="text"
+                placeholder="Pincode"
+                value={profileData.location.pincode || ""}
+                onChange={(e) => handleLocationChange("pincode", e.target.value)}
+              />
+            </div>
+            <div>
+              <input
+                type="text"
+                placeholder="Country (e.g., India)"
+                value={profileData.location.country}
+                onChange={(e) => handleLocationChange("country", e.target.value)}
+              />
+            </div>
           </div>
         </div>
       )}
@@ -211,7 +226,7 @@ const TeachingPreferences = ({ profileData, updateProfileData }) => {
       {/* Hourly Rate - Only shown for online tutoring */}
       {profileData.teachingMode.includes("online") && (
         <div className="form-group">
-          <label htmlFor="hourlyRate">Hourly Rate (₹)</label>
+          <label htmlFor="hourlyRate">Per Hour Rate (₹)</label>
           <input
             type="number"
             id="hourlyRate"
@@ -222,8 +237,26 @@ const TeachingPreferences = ({ profileData, updateProfileData }) => {
             placeholder="Your hourly rate in INR (e.g., 500)"
           />
           <p className="help-text">
-            Set your hourly rate in Indian Rupees. This will be used for online
-            session bookings.
+            Set your per hour rate in Indian Rupees for online sessions.
+          </p>
+        </div>
+      )}
+
+      {/* Monthly Rate - Only shown for offline tutoring */}
+      {profileData.teachingMode.includes("offline") && (
+        <div className="form-group">
+          <label htmlFor="monthlyRate">Per Month Rate (₹)</label>
+          <input
+            type="number"
+            id="monthlyRate"
+            min="0"
+            step="100"
+            value={profileData.monthlyRate || 0}
+            onChange={handleMonthlyRateChange}
+            placeholder="Your monthly rate in INR (e.g., 5000)"
+          />
+          <p className="help-text">
+            Set your per month rate in Indian Rupees for offline sessions.
           </p>
         </div>
       )}

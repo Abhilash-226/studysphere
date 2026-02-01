@@ -40,7 +40,7 @@ const useSEO = ({ title, description, keywords }) => {
 
     // Update Open Graph description
     const ogDescription = document.querySelector(
-      'meta[property="og:description"]'
+      'meta[property="og:description"]',
     );
     if (ogDescription && description) {
       ogDescription.setAttribute("content", description);
@@ -54,7 +54,7 @@ const useSEO = ({ title, description, keywords }) => {
 
     // Update Twitter description
     const twitterDescription = document.querySelector(
-      'meta[name="twitter:description"]'
+      'meta[name="twitter:description"]',
     );
     if (twitterDescription && description) {
       twitterDescription.setAttribute("content", description);

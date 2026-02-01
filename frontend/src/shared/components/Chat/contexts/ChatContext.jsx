@@ -71,18 +71,22 @@ const ChatProvider = ({ children }) => {
 
       newSocket.on("new_message", (message) => {
         console.log("Received new message via WebSocket:", message);
-        console.log(
-          "Current conversations:",
-          conversations.map((c) => ({ id: c.id, _id: c._id })),
-        );
         console.log("Message conversation ID:", message.conversationId);
 
+        // Normalize the message to ensure it has the correct structure (senderId, etc.)
+        const normalizedMsg = normalizeMessage(message, userIdRef.current);
+
         setMessages((prev) => {
+          // Check if message already exists (to avoid duplicates)
+          if (prev.some((m) => m._id === normalizedMsg._id)) {
+            return prev;
+          }
+
           console.log(
             "Adding message to messages array, current length:",
             prev.length,
           );
-          const updatedMessages = [...prev, message];
+          const updatedMessages = [...prev, normalizedMsg];
           // Sort messages to ensure proper chronological order
           return updatedMessages.sort(
             (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
@@ -92,17 +96,11 @@ const ChatProvider = ({ children }) => {
         // Update conversation last message
         setConversations((prev) =>
           prev.map((conv) => {
-            console.log(
-              "Checking conversation",
-              conv.id,
-              "against message conversationId",
-              message.conversationId,
-            );
             return conv.id === message.conversationId ||
               conv._id === message.conversationId
               ? {
                   ...conv,
-                  lastMessage: message,
+                  lastMessage: message.content, // Use content string for consistency
                   unreadCount: conv.unreadCount + 1,
                 }
               : conv;
@@ -112,13 +110,22 @@ const ChatProvider = ({ children }) => {
 
       newSocket.on("message_delivered", (data) => {
         console.log("Message delivered:", data);
+        
+        // Normalize the confirmed message
+        const normalizedConfirmedMsg = normalizeMessage(
+          data.message,
+          userIdRef.current
+        );
+
         setMessages((prev) => {
           const updatedMessages = prev.map((msg) =>
-            msg.id === data.tempId ? { ...data.message, pending: false } : msg,
+            msg.id === data.tempId
+              ? { ...normalizedConfirmedMsg, pending: false }
+              : msg
           );
           // Sort messages to ensure proper chronological order
           return updatedMessages.sort(
-            (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
+            (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
           );
         });
       });

@@ -1,50 +1,31 @@
 const multer = require("multer");
-const path = require("path");
-const fs = require("fs");
-
-// Define storage locations
-const DOCUMENT_PATH = "uploads/documents";
-const PROFILE_IMAGE_PATH = "uploads/profileImages";
-
-// Ensure upload directories exist
-[DOCUMENT_PATH, PROFILE_IMAGE_PATH].forEach((dir) => {
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
-});
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const { cloudinary } = require("../config/cloudinary.config");
 
 // Storage configuration for documents
-const documentStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, DOCUMENT_PATH);
-  },
-  filename: (req, file, cb) => {
-    // Use userId from req.user (set by auth middleware) or fallback to timestamp
-    const userId = req.user?.id || "anonymous";
-    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-    const extension = path.extname(file.originalname);
-    cb(null, `${userId}-${uniqueSuffix}${extension}`);
+const documentStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "studysphere/documents",
+    allowed_formats: ["pdf", "doc", "docx", "jpg", "jpeg", "png"],
+    resource_type: "auto",
   },
 });
 
 // Storage configuration for profile images
-const profileImageStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, PROFILE_IMAGE_PATH);
-  },
-  filename: (req, file, cb) => {
-    // Use userId from req.user (set by auth middleware) or fallback to timestamp
-    const userId = req.user?.id || "anonymous";
-    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-    const extension = path.extname(file.originalname);
-    cb(null, `${userId}-${uniqueSuffix}${extension}`);
+const profileImageStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "studysphere/profile_images",
+    allowed_formats: ["jpg", "jpeg", "png"],
+    transformation: [{ width: 500, height: 500, crop: "limit" }],
   },
 });
 
 // File filter to validate document types
 const documentFilter = (req, file, cb) => {
   const allowedFileTypes = [".pdf", ".doc", ".docx", ".jpg", ".jpeg", ".png"];
-  const extension = path.extname(file.originalname).toLowerCase();
+  const extension = require("path").extname(file.originalname).toLowerCase();
 
   if (!allowedFileTypes.includes(extension)) {
     return cb(
@@ -60,7 +41,7 @@ const documentFilter = (req, file, cb) => {
 // File filter to validate image types
 const imageFilter = (req, file, cb) => {
   const allowedFileTypes = [".jpg", ".jpeg", ".png"];
-  const extension = path.extname(file.originalname).toLowerCase();
+  const extension = require("path").extname(file.originalname).toLowerCase();
 
   if (!allowedFileTypes.includes(extension)) {
     return cb(
@@ -85,9 +66,70 @@ const uploadProfileImage = multer({
   limits: { fileSize: 2 * 1024 * 1024 }, // 2MB limit
 });
 
+// Storage configuration for mixed content (dynamic based on field name)
+const mixedStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: async (req, file) => {
+    // Default to documents settings
+    let folder = "studysphere/documents";
+    let allowed_formats = ["pdf", "doc", "docx", "jpg", "jpeg", "png"];
+    let transformation = []; // No transformation by default
+
+    // Specific settings for profile image
+    if (file.fieldname === "profileImage") {
+      folder = "studysphere/profile_images";
+      allowed_formats = ["jpg", "jpeg", "png"];
+      transformation = [{ width: 500, height: 500, crop: "limit" }];
+    }
+
+    return {
+      folder: folder,
+      allowed_formats: allowed_formats,
+      resource_type: "auto",
+      transformation: transformation,
+    };
+  },
+});
+
+// File filter for mixed content
+const mixedFilter = (req, file, cb) => {
+  if (file.fieldname === "profileImage") {
+    // Apply image filter logic
+    const allowedImageTypes = [".jpg", ".jpeg", ".png"];
+    const extension = require("path").extname(file.originalname).toLowerCase();
+    if (!allowedImageTypes.includes(extension)) {
+      return cb(
+        new Error(
+          "Only JPG, JPEG or PNG files are allowed for profile images!"
+        ),
+        false
+      );
+    }
+  } else {
+    // Apply document filter logic
+    const allowedDocTypes = [".pdf", ".doc", ".docx", ".jpg", ".jpeg", ".png"];
+    const extension = require("path").extname(file.originalname).toLowerCase();
+    if (!allowedDocTypes.includes(extension)) {
+      return cb(
+        new Error(
+          "Only PDF, DOC, DOCX, JPG, JPEG or PNG files are allowed for documents!"
+        ),
+        false
+      );
+    }
+  }
+  cb(null, true);
+};
+
+// Setup upload middleware for mixed content (tutor profile)
+const uploadMixed = multer({
+  storage: mixedStorage,
+  fileFilter: mixedFilter,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit max for any file
+});
+
 module.exports = {
   uploadDocument,
   uploadProfileImage,
-  DOCUMENT_PATH,
-  PROFILE_IMAGE_PATH,
+  uploadMixed,
 };

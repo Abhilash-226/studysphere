@@ -5,6 +5,7 @@ const Tutor = require("../models/tutor.model");
 const Student = require("../models/student.model");
 const mongoose = require("mongoose");
 const chatService = require("../services/chat.service");
+const { encrypt, decrypt } = require("../utils/encryption");
 
 // Helper function to process conversations consistently
 const processConversations = async (conversations, userId) => {
@@ -25,7 +26,7 @@ const processConversations = async (conversations, userId) => {
       return {
         id: conv._id,
         otherUser: otherUserData,
-        lastMessage: conv.lastMessage || "",
+        lastMessage: decrypt(conv.lastMessage || ""),
         lastMessageTime: conv.lastMessageTime,
         unreadCount: conv.unreadCount.get(userId.toString()) || 0,
         type: conv.type,
@@ -338,7 +339,7 @@ exports.getConversationById = async (req, res) => {
     const formattedConversation = {
       id: conversation._id,
       otherUser: await formatUserData(otherParticipant),
-      lastMessage: conversation.lastMessage || "",
+      lastMessage: decrypt(conversation.lastMessage || ""),
       lastMessageTime: conversation.lastMessageTime,
       unreadCount: conversation.unreadCount.get(userId.toString()) || 0,
       type: conversation.type,
@@ -560,7 +561,7 @@ exports.getMessagesByConversation = async (req, res) => {
     const formattedMessages = await Promise.all(
       messages.map(async (message) => ({
         id: message._id,
-        content: message.content,
+        content: decrypt(message.content),
         sender: await formatUserData(message.sender),
         isSentByCurrentUser: message.sender._id.toString() === userId,
         createdAt: message.createdAt,
@@ -628,14 +629,14 @@ exports.sendMessage = async (req, res) => {
       conversation: conversationId,
       sender: senderId,
       receiver: receiverId,
-      content,
+      content: encrypt(content),
       read: false,
     });
 
     await newMessage.save();
 
     // Update the conversation's last message and time
-    conversation.lastMessage = content;
+    conversation.lastMessage = encrypt(content);
     conversation.lastMessageTime = new Date();
 
     // Increment unread count for other participants
@@ -660,7 +661,7 @@ exports.sendMessage = async (req, res) => {
     // Format the message for WebSocket notification with consistent sender data
     const formattedMessage = {
       id: newMessage._id,
-      content: newMessage.content,
+      content: decrypt(newMessage.content), // Decrypt for the current user/websocket
       sender: await formatUserData(sender),
       createdAt: newMessage.createdAt,
       read: newMessage.read,

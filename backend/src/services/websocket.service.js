@@ -3,6 +3,7 @@ const User = require("../models/user.model");
 const Message = require("../models/message.model");
 const Conversation = require("../models/conversation.model");
 const mongoose = require("mongoose");
+const { encrypt, decrypt } = require("../utils/encryption");
 
 // Store active connections with userIds
 const activeConnections = new Map();
@@ -149,11 +150,11 @@ function setupWebSocket(io) {
           return;
         }
 
-        // Create and save the message
+        // Create and save the message (ENCRYPTED)
         const message = new Message({
           sender: socket.userId,
           conversation: messageData.conversationId,
-          content: messageData.content,
+          content: encrypt(messageData.content),
           timestamp: new Date(),
         });
 
@@ -162,27 +163,30 @@ function setupWebSocket(io) {
         // Populate sender information
         await message.populate("sender", "firstName lastName profileImage");
 
-        // Update conversation's last message
-        conversation.lastMessage = message._id;
+        // Update conversation's last message (ENCRYPTED)
+        conversation.lastMessage = encrypt(messageData.content);
         conversation.lastActivity = new Date();
         await conversation.save();
 
         const messageResponse = {
           _id: message._id,
-          content: message.content,
+          content: messageData.content, // Return DECRYPTED content to client
           sender: message.sender,
           timestamp: message.timestamp,
           conversationId: messageData.conversationId,
           messageId: messageData.messageId, // Include original messageId for client tracking
         };
 
-        // Send success response to sender
-        socket.emit("message_sent", messageResponse);
+        // Send success response to sender (using frontend-expected event name: message_delivered)
+        socket.emit("message_delivered", {
+            tempId: messageData.messageId,
+            message: messageResponse
+        });
 
-        // Broadcast to all users in the conversation
+        // Broadcast to all users in the conversation (using frontend-expected event name: new_message)
         socket
           .to(`conversation:${messageData.conversationId}`)
-          .emit("message_received", messageResponse);
+          .emit("new_message", messageResponse);
 
         console.log(
           `Message saved and broadcast for conversation ${messageData.conversationId}`

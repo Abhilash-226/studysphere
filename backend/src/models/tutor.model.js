@@ -99,6 +99,9 @@ const tutorSchema = new mongoose.Schema(
     hourlyRate: {
       type: Number,
     },
+    monthlyRate: {
+      type: Number,
+    },
     availability: [
       {
         day: {
@@ -140,12 +143,23 @@ const tutorSchema = new mongoose.Schema(
       default: [],
     },
     location: {
+      street: String,
+      area: String,
       city: String,
       state: String,
+      pincode: String,
       country: String,
       address: String,
       postalCode: String,
       timeZone: String,
+    },
+    preferredClasses: {
+      type: [String],
+      default: [],
+    },
+    certifications: {
+      type: [String],
+      default: [],
     },
   },
   {

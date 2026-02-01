@@ -85,6 +85,9 @@ const ScrollToTop = () => {
 };
 
 const App = () => {
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith('/admin');
+
   return (
     <ErrorBoundary>
       <AuthProvider>
@@ -271,7 +274,7 @@ const App = () => {
               </Routes>
             </div>
           </AppLayout>
-          <Footer />
+          {!isAdminRoute && <Footer />}
         </div>
       </AuthProvider>
     </ErrorBoundary>

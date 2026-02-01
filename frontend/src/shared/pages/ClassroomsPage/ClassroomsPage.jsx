@@ -63,7 +63,7 @@ const ClassroomsPage = () => {
   const [city, setCity] = useState(searchParams.get("city") || "");
   const [selectedSubjects, setSelectedSubjects] = useState([]);
   const [batchType, setBatchType] = useState(
-    searchParams.get("batchType") || ""
+    searchParams.get("batchType") || "",
   );
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortOrder, setSortOrder] = useState("desc");
@@ -156,7 +156,7 @@ const ClassroomsPage = () => {
     setSelectedSubjects((prev) =>
       prev.includes(subject)
         ? prev.filter((s) => s !== subject)
-        : [...prev, subject]
+        : [...prev, subject],
     );
     setPagination((prev) => ({ ...prev, currentPage: 1 }));
   };
@@ -445,8 +445,8 @@ const ClassroomsPage = () => {
                             {classroom.batchInfo?.batchType === "individual"
                               ? "Individual"
                               : classroom.batchInfo?.batchType === "group"
-                              ? "Group Class"
-                              : "Individual & Group"}
+                                ? "Group Class"
+                                : "Individual & Group"}
                           </span>
                         </div>
 

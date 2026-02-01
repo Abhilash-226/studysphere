@@ -89,7 +89,6 @@ const TutorsSection = () => {
       <div className="container">
         <div className="section-header">
           <h2>Meet Our Top Tutors</h2>
-          <p>Learn from the best minds in their fields</p>
         </div>
 
         {loading ? (

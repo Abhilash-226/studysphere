@@ -5,6 +5,7 @@ const morgan = require("morgan");
 const helmet = require("helmet");
 const path = require("path");
 require("dotenv").config();
+const initAdmin = require("./src/utils/initAdmin");
 
 // Import routes
 const authRoutes = require("./src/routes/auth.routes");
@@ -114,8 +115,11 @@ mongoose
     useUnifiedTopology: true,
     dbName: process.env.DB_NAME || "studysphere",
   })
-  .then(() => {
+  .then(async () => {
     console.log("Connected to MongoDB");
+
+    // Initialize Admin Account
+    await initAdmin();
 
     // Create HTTP server
     const server = require("http").createServer(app);

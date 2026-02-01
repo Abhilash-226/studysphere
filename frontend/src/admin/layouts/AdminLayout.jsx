@@ -1,12 +1,19 @@
-import React, { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../shared/context/AuthContext";
 import "./AdminLayout.css";
 
 const AdminLayout = ({ children }) => {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarExpanded, setSidebarExpanded] = useState(true);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Close mobile sidebar on route change
+  useEffect(() => {
+    setMobileSidebarOpen(false);
+  }, [location.pathname]);
 
   const handleLogout = () => {
     logout();
@@ -38,20 +45,33 @@ const AdminLayout = ({ children }) => {
 
   return (
     <div className="admin-layout">
+      {/* Mobile Sidebar Overlay */}
+      <div 
+        className={`sidebar-overlay ${mobileSidebarOpen ? "show" : ""}`}
+        onClick={() => setMobileSidebarOpen(false)}
+      />
+
       {/* Sidebar */}
-      <aside className={`admin-sidebar ${sidebarOpen ? "open" : "collapsed"}`}>
+      <aside 
+        className={`admin-sidebar ${!sidebarExpanded ? "collapsed" : ""} ${mobileSidebarOpen ? "open" : ""}`}
+      >
         <div className="sidebar-header">
           <div className="brand">
-            <i className="bi bi-mortarboard-fill brand-icon"></i>
-            {sidebarOpen && <span className="brand-text">StudySphere</span>}
+            <div className="brand-icon">
+              <i className="bi bi-mortarboard-fill"></i>
+            </div>
+            {(sidebarExpanded || mobileSidebarOpen) && (
+              <span className="brand-text">StudySphere</span>
+            )}
           </div>
           <button
             className="sidebar-toggle"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
+            onClick={() => setSidebarExpanded(!sidebarExpanded)}
+            title={sidebarExpanded ? "Collapse Sidebar" : "Expand Sidebar"}
           >
             <i
               className={`bi ${
-                sidebarOpen ? "bi-chevron-left" : "bi-chevron-right"
+                sidebarExpanded ? "bi-chevron-left" : "bi-chevron-right"
               }`}
             ></i>
           </button>
@@ -59,7 +79,7 @@ const AdminLayout = ({ children }) => {
 
         <nav className="sidebar-nav">
           <div className="nav-section">
-            {sidebarOpen && (
+            {(sidebarExpanded || mobileSidebarOpen) && (
               <span className="nav-section-title">Main Menu</span>
             )}
             <ul className="nav-list">
@@ -72,7 +92,7 @@ const AdminLayout = ({ children }) => {
                     }
                   >
                     <i className={`bi ${item.icon}`}></i>
-                    {sidebarOpen && <span>{item.label}</span>}
+                    {(sidebarExpanded || mobileSidebarOpen) && <span>{item.label}</span>}
                   </NavLink>
                 </li>
               ))}
@@ -81,7 +101,7 @@ const AdminLayout = ({ children }) => {
         </nav>
 
         <div className="sidebar-footer">
-          {sidebarOpen && (
+          {(sidebarExpanded || mobileSidebarOpen) && (
             <div className="admin-info">
               <div className="admin-avatar">
                 {user?.name?.charAt(0)?.toUpperCase() || "A"}
@@ -94,7 +114,7 @@ const AdminLayout = ({ children }) => {
           )}
           <button className="logout-btn" onClick={handleLogout}>
             <i className="bi bi-box-arrow-right"></i>
-            {sidebarOpen && <span>Logout</span>}
+            {(sidebarExpanded || mobileSidebarOpen) && <span>Logout</span>}
           </button>
         </div>
       </aside>
@@ -103,6 +123,12 @@ const AdminLayout = ({ children }) => {
       <main className="admin-main">
         <header className="admin-header">
           <div className="header-left">
+            <button 
+              className="mobile-toggle"
+              onClick={() => setMobileSidebarOpen(true)}
+            >
+              <i className="bi bi-list"></i>
+            </button>
             <h1 className="page-title">Admin Panel</h1>
           </div>
           <div className="header-right">
@@ -111,8 +137,8 @@ const AdminLayout = ({ children }) => {
               <span className="notification-badge">3</span>
             </button>
             <div className="header-user">
+              <i className="bi bi-person"></i>
               <span>{user?.name || "Admin"}</span>
-              <i className="bi bi-person-circle"></i>
             </div>
           </div>
         </header>

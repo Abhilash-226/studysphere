@@ -11,15 +11,28 @@ const DAYS_OF_WEEK = [
   "Sunday",
 ];
 
-const TIME_SLOTS = Array.from({ length: 24 * 4 }, (_, i) => {
-  const hour = Math.floor(i / 4);
-  const minute = (i % 4) * 15;
-  const amPm = hour < 12 ? "AM" : "PM";
-  const hour12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
-  return `${hour12.toString().padStart(2, "0")}:${minute
-    .toString()
-    .padStart(2, "0")} ${amPm}`;
-});
+// Generate time slots in 30-minute intervals from 9:00 AM to 8:00 PM
+const TIME_SLOTS = (() => {
+  const slots = [];
+  const startHour = 9; // 9 AM
+  const endHour = 20; // 8 PM
+  
+  for (let hour = startHour; hour <= endHour; hour++) {
+    for (let minute = 0; minute < 60; minute += 30) {
+      // Skip 8:30 PM since we want to end at 8:00 PM
+      if (hour === endHour && minute > 0) break;
+      
+      const amPm = hour < 12 ? "AM" : "PM";
+      const hour12 = hour === 12 ? 12 : hour > 12 ? hour - 12 : hour;
+      const timeString = `${hour12.toString().padStart(2, "0")}:${minute
+        .toString()
+        .padStart(2, "0")} ${amPm}`;
+      slots.push(timeString);
+    }
+  }
+  
+  return slots;
+})();
 
 /**
  * AvailabilitySchedule - Component for setting availability schedule

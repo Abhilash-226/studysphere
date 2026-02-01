@@ -19,7 +19,8 @@ const SignupForm = ({ userType = "student" }) => {
   useSEO({
     title: `${userType === "tutor" ? "Become a Tutor" : "Student Sign Up"}`,
     description: `Create your StudySphere ${userType} account. ${userType === "tutor" ? "Start teaching and earning by connecting with students." : "Find expert tutors and start your learning journey today."}`,
-    keywords: "sign up, register, create account, join StudySphere, tutor registration, student registration",
+    keywords:
+      "sign up, register, create account, join StudySphere, tutor registration, student registration",
   });
 
   const navigate = useNavigate();
