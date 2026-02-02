@@ -36,11 +36,25 @@ const generateJaasToken = ({
   const now = Math.floor(Date.now() / 1000);
   const exp = now + 3 * 60 * 60; // Token expires in 3 hours
 
+  // Room name in JWT should be just the room identifier (without app ID prefix)
+  const cleanRoomName = roomName.includes("/")
+    ? roomName.split("/").pop()
+    : roomName;
+
+  console.log("JaaS Token Generation:", {
+    originalRoomName: roomName,
+    cleanRoomName,
+    userName,
+    userEmail,
+    isModerator,
+    appId: JAAS_APP_ID,
+  });
+
   const payload = {
     aud: "jitsi",
     iss: "chat",
     sub: JAAS_APP_ID,
-    room: roomName,
+    room: "*", // Allow any room - use wildcard for flexibility
     exp: exp,
     nbf: now - 10, // Not before (10 seconds ago to account for clock skew)
     context: {

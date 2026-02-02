@@ -172,6 +172,18 @@ const VideoClassroom = ({
             : `StudySphere_${roomId}`;
         }
 
+        // Log room configuration for debugging
+        console.log("Jitsi Room Configuration:", {
+          useJaas,
+          domain,
+          jaasAppId,
+          originalRoomId: roomId,
+          computedRoomName: roomName,
+          hasJwt: !!jwt,
+          userName,
+          userRole,
+        });
+
         // Determine if user should be moderator (tutors are moderators)
         const isModerator = userRole === "tutor";
 
