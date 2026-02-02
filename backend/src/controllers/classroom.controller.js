@@ -7,13 +7,19 @@ const Session = require("../models/session.model");
 const Tutor = require("../models/tutor.model");
 const Student = require("../models/student.model");
 const crypto = require("crypto");
+const {
+  generateJaasToken,
+  getJaasDomain,
+  getJaasAppId,
+  isJaasConfigured,
+} = require("../utils/jaas");
 
 /**
  * Generate a unique room ID for Jitsi meeting
  */
 const generateRoomId = (sessionId) => {
   const hash = crypto.randomBytes(4).toString("hex");
-  return `studysphere-${sessionId}-${hash}`;
+  return `StudySphere${sessionId}${hash}`;
 };
 
 /**
@@ -77,7 +83,7 @@ exports.startClass = async (req, res) => {
     const endTime = new Date(session.endTime);
     const earlyJoinMinutes = 15;
     const earliestStart = new Date(
-      startTime.getTime() - earlyJoinMinutes * 60 * 1000
+      startTime.getTime() - earlyJoinMinutes * 60 * 1000,
     );
 
     if (now < earliestStart) {
@@ -101,7 +107,28 @@ exports.startClass = async (req, res) => {
       roomId = generateRoomId(sessionId);
     }
 
-    const roomUrl = `https://meet.jit.si/${roomId}`;
+    // Determine domain and URL based on JaaS configuration
+    const useJaas = isJaasConfigured();
+    const domain = useJaas ? getJaasDomain() : "meet.jit.si";
+    const jaasAppId = useJaas ? getJaasAppId() : null;
+
+    // For JaaS, room name must include the app ID
+    const fullRoomName = useJaas ? `${jaasAppId}/${roomId}` : roomId;
+    const roomUrl = useJaas
+      ? `https://${domain}/${fullRoomName}`
+      : `https://${domain}/${roomId}`;
+
+    // Generate JWT token for tutor (moderator)
+    let jwtToken = null;
+    if (useJaas) {
+      jwtToken = generateJaasToken({
+        roomName: roomId,
+        userName: `${session.tutor.user.firstName} ${session.tutor.user.lastName}`,
+        userEmail: session.tutor.user.email,
+        isModerator: true, // Tutor is always moderator
+        userId: userId,
+      });
+    }
 
     // Update session with meeting room details
     session.meetingRoom = {
@@ -122,6 +149,10 @@ exports.startClass = async (req, res) => {
       data: {
         roomId,
         roomUrl,
+        domain,
+        jaasAppId,
+        jwt: jwtToken,
+        useJaas,
         sessionId: session._id,
         title: session.title,
         subject: session.subject,
@@ -228,12 +259,34 @@ exports.joinClass = async (req, res) => {
       });
     }
 
+    // Determine domain and generate JWT based on JaaS configuration
+    const useJaas = isJaasConfigured();
+    const domain = useJaas ? getJaasDomain() : "meet.jit.si";
+    const jaasAppId = useJaas ? getJaasAppId() : null;
+
+    // Generate JWT token for the user
+    let jwtToken = null;
+    if (useJaas) {
+      const currentUser = isTutor ? session.tutor.user : session.student.user;
+      jwtToken = generateJaasToken({
+        roomName: session.meetingRoom.roomId,
+        userName: `${currentUser.firstName} ${currentUser.lastName}`,
+        userEmail: currentUser.email,
+        isModerator: isTutor, // Only tutor is moderator
+        userId: userId,
+      });
+    }
+
     res.status(200).json({
       success: true,
       message: "Joining class",
       data: {
         roomId: session.meetingRoom.roomId,
         roomUrl: session.meetingRoom.roomUrl,
+        domain,
+        jaasAppId,
+        jwt: jwtToken,
+        useJaas,
         sessionId: session._id,
         title: session.title,
         subject: session.subject,
@@ -380,7 +433,7 @@ exports.getClassStatus = async (req, res) => {
     const endTime = new Date(session.endTime);
     const earlyJoinMinutes = 15;
     const earliestStart = new Date(
-      startTime.getTime() - earlyJoinMinutes * 60 * 1000
+      startTime.getTime() - earlyJoinMinutes * 60 * 1000,
     );
 
     // Determine class status

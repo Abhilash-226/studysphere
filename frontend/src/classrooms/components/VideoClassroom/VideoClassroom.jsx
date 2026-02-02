@@ -1,6 +1,7 @@
 /**
  * VideoClassroom Component
  * Embeds Jitsi Meet video conferencing for online classes
+ * Supports both public Jitsi and JaaS (8x8) with JWT authentication
  */
 
 import React, { useEffect, useRef, useState } from "react";
@@ -40,6 +41,11 @@ const VideoClassroom = ({
   userRole,
   onLeave,
   onEnd,
+  // JaaS specific props
+  domain: propDomain,
+  jaasAppId,
+  jwt,
+  useJaas,
 }) => {
   const jitsiContainerRef = useRef(null);
   const jitsiApiRef = useRef(null);
@@ -71,15 +77,15 @@ const VideoClassroom = ({
           err.name === "PermissionDeniedError"
         ) {
           setPermissionError(
-            "Camera and microphone access is required. Please click the camera icon in your browser's address bar and allow access, then refresh this page."
+            "Camera and microphone access is required. Please click the camera icon in your browser's address bar and allow access, then refresh this page.",
           );
         } else if (err.name === "NotFoundError") {
           setPermissionError(
-            "No camera or microphone found. Please connect a device and refresh."
+            "No camera or microphone found. Please connect a device and refresh.",
           );
         } else {
           setPermissionError(
-            `Could not access camera/microphone: ${err.message}`
+            `Could not access camera/microphone: ${err.message}`,
           );
         }
         setLoading(false);
@@ -103,7 +109,7 @@ const VideoClassroom = ({
       setSessionDuration(
         `${hours.toString().padStart(2, "0")}:${minutes
           .toString()
-          .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
+          .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`,
       );
     }, 1000);
 
@@ -128,9 +134,10 @@ const VideoClassroom = ({
 
         setConnectionStatus("loading-jitsi");
 
-        // Use meet.jit.si directly (more reliable)
+        // Load script from appropriate domain
+        const scriptDomain = useJaas ? "8x8.vc" : "meet.jit.si";
         const script = document.createElement("script");
-        script.src = "https://meet.jit.si/external_api.js";
+        script.src = `https://${scriptDomain}/external_api.js`;
         script.async = true;
         script.onload = () => {
           resolve();
@@ -151,18 +158,30 @@ const VideoClassroom = ({
 
         setConnectionStatus("initializing-jitsi");
 
-        const domain = "meet.jit.si";
+        // Use JaaS domain if configured, otherwise fall back to public Jitsi
+        const domain = useJaas && propDomain ? propDomain : "meet.jit.si";
 
-        // Create unique room name
-        const uniqueRoomName = roomId.includes("studysphere")
-          ? roomId
-          : `StudySphere_${roomId}`;
+        // For JaaS, room name must include the app ID
+        // For public Jitsi, use simple room name
+        let roomName;
+        if (useJaas && jaasAppId) {
+          roomName = `${jaasAppId}/${roomId}`;
+        } else {
+          roomName = roomId.includes("StudySphere")
+            ? roomId
+            : `StudySphere_${roomId}`;
+        }
+
+        // Determine if user should be moderator (tutors are moderators)
+        const isModerator = userRole === "tutor";
 
         const options = {
-          roomName: uniqueRoomName,
+          roomName: roomName,
           parentNode: jitsiContainerRef.current,
           width: "100%",
           height: "100%",
+          // Include JWT token if using JaaS
+          ...(useJaas && jwt ? { jwt: jwt } : {}),
           userInfo: {
             displayName: userName,
             email: userEmail,
@@ -170,25 +189,54 @@ const VideoClassroom = ({
           configOverwrite: {
             startWithAudioMuted: false,
             startWithVideoMuted: false,
-            prejoinPageEnabled: false, // Skip pre-join page since we already have permissions
+            // Skip pre-join to go directly into meeting
+            prejoinPageEnabled: false,
+            prejoinConfig: {
+              enabled: false,
+            },
             disableDeepLinking: true,
             enableWelcomePage: false,
             enableClosePage: false,
             disableInviteFunctions: true,
             hideConferenceSubject: false,
             subject: `${sessionTitle} - ${subject}`,
-            // Disable lobby/moderator requirements
+            // CRITICAL: Disable all lobby/moderator/authentication features
             enableLobby: false,
-            lobbyModeEnabled: false,
-            requireDisplayName: false,
+            lobby: {
+              autoKnock: true,
+              enableChat: false,
+            },
+            // Security settings - make room public
+            roomPasswordNumberOfDigits: 0,
             enableInsecureRoomNameWarning: false,
-            // Auto-grant moderator to first person who joins
+            requireDisplayName: false,
+            // Disable moderator-related features
             disableModeratorIndicator: true,
-            // Additional settings to avoid auth issues
+            enableUserRolesBasedOnToken: false,
+            // Meeting behavior
+            startAudioOnly: false,
             enableNoisyMicDetection: false,
+            // Disable any authentication
+            enableAutomaticUrlCopy: false,
+            // P2P for better performance in 1-on-1 calls
             p2p: {
               enabled: true,
+              stunServers: [
+                { urls: "stun:meet-jit-si-turnrelay.jitsi.net:443" },
+              ],
             },
+            // Make everyone a moderator (all participants have equal rights)
+            disableRemoteMute: false,
+            remoteVideoMenu: {
+              disableKick: true,
+              disableGrantModerator: true,
+            },
+            // Notifications
+            notifications: [],
+            disabledNotifications: [
+              "lobby.notificationTitle",
+              "notify.moderator",
+            ],
           },
           interfaceConfigOverwrite: {
             TOOLBAR_BUTTONS: [
@@ -211,6 +259,10 @@ const VideoClassroom = ({
             DISABLE_JOIN_LEAVE_NOTIFICATIONS: false,
             MOBILE_APP_PROMO: false,
             HIDE_INVITE_MORE_HEADER: true,
+            // Disable pre-join UI elements
+            DISABLE_PRESENCE_STATUS: true,
+            // Make lobby-related buttons hidden
+            TOOLBAR_ALWAYS_VISIBLE: true,
           },
         };
 
@@ -246,7 +298,7 @@ const VideoClassroom = ({
         jitsiApiRef.current.addListener("errorOccurred", (error) => {
           if (isMounted && error.error?.name === "conference.connectionError") {
             setError(
-              "Connection failed. Please check your internet and try again."
+              "Connection failed. Please check your internet and try again.",
             );
             setLoading(false);
           }
@@ -255,7 +307,7 @@ const VideoClassroom = ({
         if (isMounted) {
           setError(
             err.message ||
-              "Failed to load video conferencing. Please try again."
+              "Failed to load video conferencing. Please try again.",
           );
           setLoading(false);
         }
@@ -279,8 +331,14 @@ const VideoClassroom = ({
     userEmail,
     sessionTitle,
     subject,
+    userRole,
     onLeave,
     permissionsGranted,
+    // JaaS specific dependencies
+    propDomain,
+    jaasAppId,
+    jwt,
+    useJaas,
   ]);
 
   const handleEndClass = () => {

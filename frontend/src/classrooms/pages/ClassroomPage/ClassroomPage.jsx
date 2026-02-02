@@ -176,6 +176,11 @@ const ClassroomPage = () => {
           userRole={classStatus?.isTutor ? "tutor" : "student"}
           onLeave={handleLeaveClass}
           onEnd={() => setShowEndModal(true)}
+          // JaaS specific props
+          domain={meetingData.domain}
+          jaasAppId={meetingData.jaasAppId}
+          jwt={meetingData.jwt}
+          useJaas={meetingData.useJaas}
         />
 
         {/* End Class Confirmation Modal */}
@@ -290,8 +295,8 @@ const ClassroomPage = () => {
                       classStatus?.classStatus === "in-progress"
                         ? "success"
                         : classStatus?.classStatus === "ready"
-                        ? "warning"
-                        : "secondary"
+                          ? "warning"
+                          : "secondary"
                     }
                   >
                     {classStatus?.classStatus?.replace("-", " ").toUpperCase()}

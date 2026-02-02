@@ -3,7 +3,23 @@ require('dotenv').config();
 
 const algorithm = 'aes-256-cbc';
 // Key must be 32 bytes (64 hex characters)
-const key = Buffer.from(process.env.MESSAGE_ENCRYPTION_KEY, 'hex');
+const encryptionKey = process.env.MESSAGE_ENCRYPTION_KEY;
+
+if (!encryptionKey) {
+  // Check if we're in production, if so, we must crash
+  if (process.env.NODE_ENV === 'production') {
+    console.error('FATAL ERROR: MESSAGE_ENCRYPTION_KEY is not defined.');
+    process.exit(1);
+  } else {
+    // In development, we can use a warning or a temporary key (though risky, better to warn)
+    console.warn('WARNING: MESSAGE_ENCRYPTION_KEY is not defined. Using a temporary key for development.');
+  }
+}
+
+// Key must be 32 bytes (64 hex characters)
+// Use provided key or a dummy one for dev only to prevent crash
+const activeKey = encryptionKey || '00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff';
+const key = Buffer.from(activeKey, 'hex');
 const ivLength = 16; // AES block size
 
 /**
