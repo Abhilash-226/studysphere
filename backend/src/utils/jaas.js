@@ -9,6 +9,7 @@ const { v4: uuidv4 } = require("uuid");
 // JaaS Configuration
 const JAAS_APP_ID = process.env.JAAS_APP_ID;
 const JAAS_PRIVATE_KEY = process.env.JAAS_PRIVATE_KEY?.replace(/\\n/g, "\n");
+const JAAS_KEY_ID = process.env.JAAS_KEY_ID; // The API Key ID from JaaS dashboard
 
 /**
  * Generate a JWT token for JaaS (8x8 Jitsi)
@@ -75,12 +76,18 @@ const generateJaasToken = ({
   };
 
   try {
+    // Use the actual API Key ID from JaaS dashboard
+    // Format: vpaas-magic-cookie-xxx/your-key-id
+    const keyId = JAAS_KEY_ID || `${JAAS_APP_ID}/default`;
+
+    console.log("JaaS JWT signing with kid:", keyId);
+
     const token = jwt.sign(payload, JAAS_PRIVATE_KEY, {
       algorithm: "RS256",
       header: {
         alg: "RS256",
         typ: "JWT",
-        kid: `${JAAS_APP_ID}/default`,
+        kid: keyId,
       },
     });
 
@@ -112,7 +119,13 @@ const getJaasAppId = () => {
  * @returns {boolean} Whether JaaS is properly configured
  */
 const isJaasConfigured = () => {
-  return !!(JAAS_APP_ID && JAAS_PRIVATE_KEY);
+  const configured = !!(JAAS_APP_ID && JAAS_PRIVATE_KEY && JAAS_KEY_ID);
+  if (!configured && (JAAS_APP_ID || JAAS_PRIVATE_KEY)) {
+    console.warn(
+      "JaaS partially configured. Make sure JAAS_APP_ID, JAAS_KEY_ID, and JAAS_PRIVATE_KEY are all set.",
+    );
+  }
+  return configured;
 };
 
 module.exports = {
