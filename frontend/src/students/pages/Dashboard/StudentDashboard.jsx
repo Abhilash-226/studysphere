@@ -50,7 +50,6 @@ const StudentDashboard = () => {
       completedSessions: 0,
       totalTutors: 0,
     },
-    notificationCount: 0,
   });
 
   const {
@@ -58,7 +57,6 @@ const StudentDashboard = () => {
     messageStats,
     recommendedTutors,
     dashboardStats,
-    notificationCount,
     lastUpdated,
   } = dashboardData;
 
@@ -80,21 +78,19 @@ const StudentDashboard = () => {
         await checkUserRole();
 
         // Fetch data in parallel for better performance
-        const [sessions, messages, tutors, stats, notifications] =
-          await Promise.all([
-            studentService.getBookedSessions("upcoming"),
-            chatService
-              .getStudentMessageStats()
-              .catch(() => ({ unreadCount: 0, totalConversations: 0 })),
-            studentService.getRecommendedTutors().catch(() => []),
-            studentService.getDashboardStats().catch(() => ({
-              totalSessions: 0,
-              upcomingSessions: 0,
-              completedSessions: 0,
-              totalTutors: 0,
-            })),
-            studentService.getNotificationCount().catch(() => 0),
-          ]);
+        const [sessions, messages, tutors, stats] = await Promise.all([
+          studentService.getBookedSessions("upcoming"),
+          chatService
+            .getStudentMessageStats()
+            .catch(() => ({ unreadCount: 0, totalConversations: 0 })),
+          studentService.getRecommendedTutors().catch(() => []),
+          studentService.getDashboardStats().catch(() => ({
+            totalSessions: 0,
+            upcomingSessions: 0,
+            completedSessions: 0,
+            totalTutors: 0,
+          })),
+        ]);
 
         // Update real-time dashboard data
         updateDashboardData({
@@ -108,7 +104,6 @@ const StudentDashboard = () => {
               completedSessions: 0,
               totalTutors: 0,
             },
-          notificationCount: notifications || 0,
         });
         setLoading(false);
       } catch (err) {
@@ -130,11 +125,7 @@ const StudentDashboard = () => {
 
   return (
     <Container className="py-5">
-      <WelcomeHeader
-        userName={currentUser?.firstName || "Student"}
-        notificationCount={notificationCount || 0}
-        unreadMessageCount={messageStats.unreadCount}
-      />
+      <WelcomeHeader user={currentUser} />
 
       {/* Real-time Connection Status */}
       {error && (

@@ -470,7 +470,7 @@ exports.cancelSession = async (req, res) => {
   try {
     const { id } = req.params;
     const { reason } = req.body;
-    const userId = req.user.id;
+    const userId = req.user.id.toString();
 
     const session = await Session.findById(id)
       .populate("tutor")
@@ -554,7 +554,7 @@ exports.addSessionReview = async (req, res) => {
   try {
     const { id } = req.params;
     const { rating, review } = req.body;
-    const userId = req.user.id;
+    const userId = req.user.id.toString();
 
     // Validate input
     if (!rating || rating < 1 || rating > 5) {
@@ -631,7 +631,7 @@ exports.completeSession = async (req, res) => {
   try {
     const { id } = req.params;
     const { notes } = req.body;
-    const userId = req.user.id;
+    const userId = req.user.id.toString();
 
     const session = await Session.findById(id)
       .populate("tutor")
@@ -645,7 +645,12 @@ exports.completeSession = async (req, res) => {
     }
 
     // Check if user is the tutor of this session
-    if (session.tutor.user.toString() !== userId) {
+    const tutorUserId = session.tutor.user.toString();
+    console.log(
+      `Checking session completion authorization - Tutor user ID: ${tutorUserId}, Request user ID: ${userId}`,
+    );
+
+    if (tutorUserId !== userId) {
       return res.status(403).json({
         success: false,
         message: "Only the assigned tutor can request session completion",
@@ -693,7 +698,7 @@ exports.completeSession = async (req, res) => {
 exports.approveSessionCompletion = async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.user.id;
+    const userId = req.user.id.toString();
 
     const session = await Session.findById(id)
       .populate("tutor")
@@ -771,7 +776,7 @@ exports.rejectSessionCompletion = async (req, res) => {
   try {
     const { id } = req.params;
     const { reason } = req.body;
-    const userId = req.user.id;
+    const userId = req.user.id.toString();
 
     const session = await Session.findById(id)
       .populate("tutor")

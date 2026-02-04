@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import chatService from "../../../shared/services/chat.service";
 import { useAuth } from "../../../shared/context/AuthContext";
 import { findExistingConversation } from "./utils/chatUtils";
+import "./ContactTutorButton.css";
 
 const ContactTutorButton = ({ tutorId, tutorName }) => {
   const { isAuthenticated, currentUser } = useAuth();
@@ -19,7 +20,7 @@ const ContactTutorButton = ({ tutorId, tutorName }) => {
     if (!isAuthenticated()) {
       navigate(
         "/login-student?message=You need to login to contact a tutor&redirect=" +
-          window.location.pathname
+          window.location.pathname,
       );
       return;
     }
@@ -66,7 +67,7 @@ const ContactTutorButton = ({ tutorId, tutorName }) => {
         // If conversation exists or was created, send the message
         const sendResponse = await chatService.sendMessage(
           createResponse.conversationId,
-          message
+          message,
         );
 
         if (sendResponse.success) {
@@ -77,13 +78,13 @@ const ContactTutorButton = ({ tutorId, tutorName }) => {
           navigate(`${chatPath}/${createResponse.conversationId}`);
         } else {
           setError(
-            sendResponse.message || "Failed to send message. Please try again."
+            sendResponse.message || "Failed to send message. Please try again.",
           );
         }
       } else {
         setError(
           createResponse.message ||
-            "Failed to create conversation. Please try again."
+            "Failed to create conversation. Please try again.",
         );
       }
     } catch (error) {
@@ -104,7 +105,12 @@ const ContactTutorButton = ({ tutorId, tutorName }) => {
         Contact Tutor
       </Button>
 
-      <Modal show={showModal} onHide={handleCloseModal} centered>
+      <Modal
+        show={showModal}
+        onHide={handleCloseModal}
+        centered
+        className="contact-tutor-modal"
+      >
         <Modal.Header closeButton>
           <Modal.Title>Contact {tutorName}</Modal.Title>
         </Modal.Header>

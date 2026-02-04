@@ -46,13 +46,13 @@ const AdminLayout = ({ children }) => {
   return (
     <div className="admin-layout">
       {/* Mobile Sidebar Overlay */}
-      <div 
+      <div
         className={`sidebar-overlay ${mobileSidebarOpen ? "show" : ""}`}
         onClick={() => setMobileSidebarOpen(false)}
       />
 
       {/* Sidebar */}
-      <aside 
+      <aside
         className={`admin-sidebar ${!sidebarExpanded ? "collapsed" : ""} ${mobileSidebarOpen ? "open" : ""}`}
       >
         <div className="sidebar-header">
@@ -92,7 +92,9 @@ const AdminLayout = ({ children }) => {
                     }
                   >
                     <i className={`bi ${item.icon}`}></i>
-                    {(sidebarExpanded || mobileSidebarOpen) && <span>{item.label}</span>}
+                    {(sidebarExpanded || mobileSidebarOpen) && (
+                      <span>{item.label}</span>
+                    )}
                   </NavLink>
                 </li>
               ))}
@@ -123,7 +125,7 @@ const AdminLayout = ({ children }) => {
       <main className="admin-main">
         <header className="admin-header">
           <div className="header-left">
-            <button 
+            <button
               className="mobile-toggle"
               onClick={() => setMobileSidebarOpen(true)}
             >
@@ -132,10 +134,6 @@ const AdminLayout = ({ children }) => {
             <h1 className="page-title">Admin Panel</h1>
           </div>
           <div className="header-right">
-            <button className="header-btn">
-              <i className="bi bi-bell"></i>
-              <span className="notification-badge">3</span>
-            </button>
             <div className="header-user">
               <i className="bi bi-person"></i>
               <span>{user?.name || "Admin"}</span>

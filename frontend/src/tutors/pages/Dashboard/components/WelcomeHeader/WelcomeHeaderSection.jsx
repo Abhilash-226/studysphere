@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { FaEnvelope, FaBell, FaUserCog } from "react-icons/fa";
+import { FaEnvelope, FaUserCog } from "react-icons/fa";
 import "./WelcomeHeaderSection.css";
 
 /**
@@ -33,15 +33,6 @@ const WelcomeHeaderSection = ({ user, messageStats }) => {
               <span className="visually-hidden">unread messages</span>
             </span>
           )}
-        </Link>
-        <Link
-          to="/tutor/notifications"
-          className="btn btn-outline-secondary position-relative me-2"
-        >
-          <FaBell />
-          <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-            2<span className="visually-hidden">notifications</span>
-          </span>
         </Link>
         <Link to="/tutor/profile" className="btn btn-outline-primary">
           <FaUserCog className="me-1" /> Profile
