@@ -40,7 +40,7 @@ const TutorDetailsPage = () => {
     if (!tutor?.teachingMode) return false;
     if (Array.isArray(tutor.teachingMode)) {
       return tutor.teachingMode.some(
-        (mode) => mode === "online" || mode.startsWith("online_")
+        (mode) => mode === "online" || mode.startsWith("online_"),
       );
     }
     return (
@@ -53,7 +53,7 @@ const TutorDetailsPage = () => {
     if (!tutor?.teachingMode) return false;
     if (Array.isArray(tutor.teachingMode)) {
       return tutor.teachingMode.some(
-        (mode) => mode === "offline" || mode.startsWith("offline_")
+        (mode) => mode === "offline" || mode.startsWith("offline_"),
       );
     }
     return (
@@ -100,13 +100,13 @@ const TutorDetailsPage = () => {
         setShowBookingModal(true);
       } else {
         navigate(
-          "/login-student?message=You need to login as a student to book a session"
+          "/login-student?message=You need to login as a student to book a session",
         );
       }
     } else {
       navigate(
         "/login-student?message=Please login to book a session&redirect=/tutors/" +
-          id
+          id,
       );
     }
   };
@@ -410,7 +410,6 @@ const TutorDetailsPage = () => {
       <Modal
         show={showBookingModal}
         onHide={() => setShowBookingModal(false)}
-        centered
         className="booking-modal"
       >
         <Modal.Header closeButton>

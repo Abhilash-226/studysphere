@@ -108,7 +108,6 @@ const ContactTutorButton = ({ tutorId, tutorName }) => {
       <Modal
         show={showModal}
         onHide={handleCloseModal}
-        centered
         className="contact-tutor-modal"
       >
         <Modal.Header closeButton>

@@ -1,26 +1,26 @@
 /* Contact Tutor Modal Styles */
-.contact-tutor-modal.modal.show .modal-dialog {
-  margin: 0 auto;
-  padding: 0;
+.contact-tutor-modal .modal-dialog {
+  max-width: 450px;
+  margin: 80px auto;
 }
 
 .contact-tutor-modal .modal-content {
   border-radius: 12px;
   border: none;
   overflow: hidden;
-  margin: 0;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
 }
 
 .contact-tutor-modal .modal-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-bottom: none;
-  padding: 10px 16px;
+  padding: 16px 20px;
 }
 
 .contact-tutor-modal .modal-title {
   font-weight: 600;
   color: white;
-  font-size: 1.1rem;
+  font-size: 1.25rem;
 }
 
 .contact-tutor-modal .modal-header .btn-close {
