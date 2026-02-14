@@ -24,7 +24,9 @@ const classroomImageStorage = new CloudinaryStorage({
     folder: "studysphere/classrooms",
     allowed_formats: ["jpg", "png", "jpeg"],
     resource_type: "image",
-    transformation: [{ width: 1200, height: 800, crop: "limit", quality: "auto" }],
+    transformation: [
+      { width: 1200, height: 800, crop: "limit", quality: "auto" },
+    ],
   },
 });
 

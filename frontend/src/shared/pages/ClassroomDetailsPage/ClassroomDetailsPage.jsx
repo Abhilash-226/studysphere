@@ -41,7 +41,7 @@ import {
   FaHeart,
   FaRegHeart,
 } from "react-icons/fa";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import offlineClassroomService from "../../services/offlineClassroom.service";
 import { formatImageUrl } from "../../utils/imageUtils";
 import "./ClassroomDetailsPage.css";
@@ -464,29 +464,36 @@ const ClassroomDetailsPage = () => {
                   <FaChalkboardTeacher className="me-2" />
                   Instructor
                 </h5>
-                <div className="tutor-info">
-                  <img
-                    src={formatImageUrl(classroom.tutor.profileImage)}
-                    alt={classroom.tutor.name}
-                    className="tutor-image"
-                    onError={(e) => {
-                      e.target.src = "/images/avatar-placeholder.jpg";
-                    }}
-                  />
-                  <div className="tutor-details">
-                    <h6>{classroom.tutor.name}</h6>
-                    {classroom.tutor.qualifications && (
-                      <p className="tutor-qualifications">
-                        {classroom.tutor.qualifications.slice(0, 2).join(", ")}
-                      </p>
-                    )}
-                    {classroom.tutor.experience && (
-                      <span className="tutor-experience">
-                        {classroom.tutor.experience} years experience
-                      </span>
-                    )}
+                <Link
+                  to={`/tutors/${classroom.tutor.id}`}
+                  className="tutor-info-link"
+                >
+                  <div className="tutor-info">
+                    <img
+                      src={formatImageUrl(classroom.tutor.profileImage)}
+                      alt={classroom.tutor.name}
+                      className="tutor-image"
+                      onError={(e) => {
+                        e.target.src = "/images/avatar-placeholder.jpg";
+                      }}
+                    />
+                    <div className="tutor-details">
+                      <h6>{classroom.tutor.name}</h6>
+                      {classroom.tutor.qualifications && (
+                        <p className="tutor-qualifications">
+                          {classroom.tutor.qualifications
+                            .slice(0, 2)
+                            .join(", ")}
+                        </p>
+                      )}
+                      {classroom.tutor.experience && (
+                        <span className="tutor-experience">
+                          {classroom.tutor.experience} years experience
+                        </span>
+                      )}
+                    </div>
                   </div>
-                </div>
+                </Link>
               </Card>
             )}
 

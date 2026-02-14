@@ -202,6 +202,19 @@
   box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
 }
 
+.classroom-card__tutor-link {
+  text-decoration: none;
+  display: inline-block;
+}
+
+.classroom-card__tutor-link:hover .classroom-card__tutor {
+  color: #667eea;
+}
+
+.classroom-card__tutor-link:hover .classroom-card__tutor img {
+  border-color: #667eea;
+}
+
 .classroom-card__tutor {
   display: flex;
   align-items: center;
@@ -209,6 +222,7 @@
   font-size: 0.8rem;
   color: #64748b;
   margin-top: 8px;
+  transition: all 0.2s ease;
 }
 
 .classroom-card__tutor img {
@@ -218,6 +232,7 @@
   object-fit: cover;
   border: 2px solid #fff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: border-color 0.2s ease;
 }
 
 /* Content Section */

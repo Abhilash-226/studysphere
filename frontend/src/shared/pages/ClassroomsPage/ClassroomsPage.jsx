@@ -30,7 +30,7 @@ import {
   FaBook,
   FaSortAmountDown,
 } from "react-icons/fa";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import offlineClassroomService from "../../services/offlineClassroom.service";
 import { formatImageUrl } from "../../utils/imageUtils";
 import useSEO from "../../hooks/useSEO";
@@ -421,16 +421,25 @@ const ClassroomsPage = () => {
 
                         {/* Tutor info under image */}
                         {classroom.tutor && (
-                          <div className="classroom-card__tutor">
-                            <img
-                              src={formatImageUrl(classroom.tutor.profileImage)}
-                              alt={classroom.tutor.name}
-                              onError={(e) => {
-                                e.target.src = "/images/avatar-placeholder.jpg";
-                              }}
-                            />
-                            <span>{classroom.tutor.name}</span>
-                          </div>
+                          <Link
+                            to={`/tutors/${classroom.tutor.id}`}
+                            className="classroom-card__tutor-link"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <div className="classroom-card__tutor">
+                              <img
+                                src={formatImageUrl(
+                                  classroom.tutor.profileImage,
+                                )}
+                                alt={classroom.tutor.name}
+                                onError={(e) => {
+                                  e.target.src =
+                                    "/images/avatar-placeholder.jpg";
+                                }}
+                              />
+                              <span>{classroom.tutor.name}</span>
+                            </div>
+                          </Link>
                         )}
                       </div>
 
