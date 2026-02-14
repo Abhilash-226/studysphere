@@ -17,7 +17,19 @@ const storage = new CloudinaryStorage({
   },
 });
 
+// Classroom images storage
+const classroomImageStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "studysphere/classrooms",
+    allowed_formats: ["jpg", "png", "jpeg"],
+    resource_type: "image",
+    transformation: [{ width: 1200, height: 800, crop: "limit", quality: "auto" }],
+  },
+});
+
 module.exports = {
   cloudinary,
   storage,
+  classroomImageStorage,
 };

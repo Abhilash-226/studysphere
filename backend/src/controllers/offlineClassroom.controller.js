@@ -646,6 +646,7 @@ exports.toggleClassroomStatus = async (req, res) => {
 /**
  * Upload classroom images
  * Tutor only - can upload up to 5 images
+ * Images are stored on Cloudinary for persistent storage
  */
 exports.uploadClassroomImages = async (req, res) => {
   try {
@@ -656,9 +657,10 @@ exports.uploadClassroomImages = async (req, res) => {
       });
     }
 
-    // Generate URLs for uploaded images
+    // Get Cloudinary URLs from uploaded files
+    // multer-storage-cloudinary stores the URL in file.path
     const imageUrls = req.files.map((file) => {
-      return `/uploads/classroomImages/${file.filename}`;
+      return file.path; // This is the full Cloudinary URL
     });
 
     res.status(200).json({
@@ -667,6 +669,7 @@ exports.uploadClassroomImages = async (req, res) => {
       images: imageUrls,
     });
   } catch (error) {
+    console.error("Error uploading classroom images:", error);
     res.status(500).json({
       success: false,
       message: "Failed to upload images",

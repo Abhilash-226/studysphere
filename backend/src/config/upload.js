@@ -2,6 +2,7 @@
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
+const { classroomImageStorage } = require("./cloudinary.config");
 
 const MIME_TYPE_MAP = {
   "image/png": "png",
@@ -44,22 +45,6 @@ const profileImageStorage = multer.diskStorage({
   },
 });
 
-// Classroom image upload configuration
-const classroomImageStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    // Make sure the upload directory exists
-    const uploadDir = path.join(__dirname, "../../uploads/classroomImages");
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-    cb(null, uploadDir);
-  },
-  filename: (req, file, cb) => {
-    const name = file.originalname.toLowerCase().split(" ").join("-");
-    cb(null, `classroom-${Date.now()}-${name}`);
-  },
-});
-
 // File filters
 const documentFilter = (req, file, cb) => {
   const isValid = !!MIME_TYPE_MAP[file.mimetype];
@@ -90,6 +75,7 @@ module.exports = {
     limits: { fileSize: 2 * 1024 * 1024 }, // 2MB
   }),
 
+  // Classroom images use Cloudinary for persistent storage in production
   classroomImageUpload: multer({
     storage: classroomImageStorage,
     fileFilter: imageFilter,
