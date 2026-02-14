@@ -629,8 +629,8 @@ exports.toggleClassroomStatus = async (req, res) => {
         status === "active"
           ? "activated"
           : status === "paused"
-          ? "paused"
-          : "deactivated"
+            ? "paused"
+            : "deactivated"
       } successfully`,
       status: classroom.status,
     });
@@ -638,6 +638,38 @@ exports.toggleClassroomStatus = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Failed to update classroom status",
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * Upload classroom images
+ * Tutor only - can upload up to 5 images
+ */
+exports.uploadClassroomImages = async (req, res) => {
+  try {
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "No images uploaded",
+      });
+    }
+
+    // Generate URLs for uploaded images
+    const imageUrls = req.files.map((file) => {
+      return `/uploads/classroomImages/${file.filename}`;
+    });
+
+    res.status(200).json({
+      success: true,
+      message: `${req.files.length} image(s) uploaded successfully`,
+      images: imageUrls,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to upload images",
       error: error.message,
     });
   }

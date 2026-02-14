@@ -27,6 +27,7 @@ import {
   FaPhone,
   FaWhatsapp,
   FaEnvelope,
+  FaImage,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import offlineClassroomService from "../../../shared/services/offlineClassroom.service";
@@ -111,6 +112,11 @@ const CreateClassroomPage = () => {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
 
+  // Image upload state
+  const [imageFiles, setImageFiles] = useState([]);
+  const [imagePreviews, setImagePreviews] = useState([]);
+  const [uploadingImages, setUploadingImages] = useState(false);
+
   const handleChange = (field, value) => {
     setFormData((prev) => ({
       ...prev,
@@ -145,7 +151,7 @@ const CreateClassroomPage = () => {
   const handleRemoveSubject = (subject) => {
     handleChange(
       "subjects",
-      formData.subjects.filter((s) => s !== subject)
+      formData.subjects.filter((s) => s !== subject),
     );
   };
 
@@ -165,7 +171,7 @@ const CreateClassroomPage = () => {
   const handleRemoveGrade = (grade) => {
     handleChange(
       "targetGrades",
-      formData.targetGrades.filter((g) => g !== grade)
+      formData.targetGrades.filter((g) => g !== grade),
     );
   };
 
@@ -183,6 +189,36 @@ const CreateClassroomPage = () => {
       ? currentFacilities.filter((f) => f !== facility)
       : [...currentFacilities, facility];
     handleChange("facilities", newFacilities);
+  };
+
+  const handleImageSelect = (e) => {
+    const files = Array.from(e.target.files);
+    const validFiles = files.filter((file) => {
+      const validTypes = ["image/jpeg", "image/png", "image/webp"];
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      return validTypes.includes(file.type) && file.size <= maxSize;
+    });
+
+    if (validFiles.length + imageFiles.length > 5) {
+      setSubmitError("Maximum 5 images allowed");
+      return;
+    }
+
+    setImageFiles((prev) => [...prev, ...validFiles]);
+
+    // Create previews
+    validFiles.forEach((file) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImagePreviews((prev) => [...prev, e.target.result]);
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleRemoveImage = (index) => {
+    setImageFiles((prev) => prev.filter((_, i) => i !== index));
+    setImagePreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
   const validateForm = () => {
@@ -235,8 +271,30 @@ const CreateClassroomPage = () => {
     try {
       setSubmitting(true);
 
+      // Upload images first if any
+      let uploadedImageUrls = [];
+      if (imageFiles.length > 0) {
+        setUploadingImages(true);
+        try {
+          const uploadResponse =
+            await offlineClassroomService.uploadClassroomImages(imageFiles);
+          if (uploadResponse.success) {
+            uploadedImageUrls = uploadResponse.images;
+          } else {
+            setSubmitError("Failed to upload images. Please try again.");
+            return;
+          }
+        } catch (uploadErr) {
+          setSubmitError("Failed to upload images. Please try again.");
+          return;
+        } finally {
+          setUploadingImages(false);
+        }
+      }
+
       const submitData = {
         ...formData,
+        images: uploadedImageUrls,
         feeStructure: {
           amount: Number(formData.feeStructure.amount),
           period: formData.feeStructure.period,
@@ -250,9 +308,8 @@ const CreateClassroomPage = () => {
         },
       };
 
-      const response = await offlineClassroomService.createClassroom(
-        submitData
-      );
+      const response =
+        await offlineClassroomService.createClassroom(submitData);
 
       if (response.success) {
         navigate("/tutor/my-classrooms", {
@@ -489,7 +546,7 @@ const CreateClassroomPage = () => {
                           handleNestedChange(
                             "location",
                             "state",
-                            e.target.value
+                            e.target.value,
                           )
                         }
                         placeholder="e.g., Karnataka"
@@ -506,7 +563,7 @@ const CreateClassroomPage = () => {
                           handleNestedChange(
                             "location",
                             "pincode",
-                            e.target.value
+                            e.target.value,
                           )
                         }
                         placeholder="e.g., 560001"
@@ -574,7 +631,7 @@ const CreateClassroomPage = () => {
                           handleNestedChange(
                             "schedule",
                             "startTime",
-                            e.target.value
+                            e.target.value,
                           )
                         }
                         isInvalid={!!errors.startTime}
@@ -594,7 +651,7 @@ const CreateClassroomPage = () => {
                           handleNestedChange(
                             "schedule",
                             "endTime",
-                            e.target.value
+                            e.target.value,
                           )
                         }
                         isInvalid={!!errors.endTime}
@@ -632,6 +689,59 @@ const CreateClassroomPage = () => {
 
             {/* Sidebar */}
             <Col lg={4}>
+              {/* Classroom Images */}
+              <Card className="form-section mb-4">
+                <h5>
+                  <FaImage className="me-2" />
+                  Classroom Images
+                </h5>
+                <p className="text-muted small">
+                  Add up to 5 images of your classroom (Max 5MB each)
+                </p>
+
+                <div className="image-upload-section">
+                  <div className="image-preview-grid">
+                    {imagePreviews.map((preview, index) => (
+                      <div key={index} className="image-preview-item">
+                        <img src={preview} alt={`Preview ${index + 1}`} />
+                        <Button
+                          variant="danger"
+                          size="sm"
+                          className="remove-image-btn"
+                          onClick={() => handleRemoveImage(index)}
+                          type="button"
+                        >
+                          <FaTimes />
+                        </Button>
+                      </div>
+                    ))}
+
+                    {imageFiles.length < 5 && (
+                      <label className="image-upload-box">
+                        <input
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp"
+                          onChange={handleImageSelect}
+                          multiple
+                          hidden
+                        />
+                        <div className="upload-placeholder">
+                          <FaPlus size={24} />
+                          <span>Add Image</span>
+                        </div>
+                      </label>
+                    )}
+                  </div>
+
+                  {uploadingImages && (
+                    <div className="upload-progress mt-2">
+                      <Spinner animation="border" size="sm" className="me-2" />
+                      Uploading images...
+                    </div>
+                  )}
+                </div>
+              </Card>
+
               {/* Fee Structure */}
               <Card className="form-section mb-4">
                 <h5>
@@ -648,7 +758,7 @@ const CreateClassroomPage = () => {
                       handleNestedChange(
                         "feeStructure",
                         "amount",
-                        e.target.value
+                        e.target.value,
                       )
                     }
                     placeholder="e.g., 5000"
@@ -667,7 +777,7 @@ const CreateClassroomPage = () => {
                       handleNestedChange(
                         "feeStructure",
                         "period",
-                        e.target.value
+                        e.target.value,
                       )
                     }
                   >
@@ -692,7 +802,7 @@ const CreateClassroomPage = () => {
                       handleNestedChange(
                         "batchInfo",
                         "batchType",
-                        e.target.value
+                        e.target.value,
                       )
                     }
                   >
@@ -714,7 +824,7 @@ const CreateClassroomPage = () => {
                         handleNestedChange(
                           "batchInfo",
                           "maxStudents",
-                          e.target.value
+                          e.target.value,
                         )
                       }
                       placeholder="e.g., 20"
@@ -761,7 +871,7 @@ const CreateClassroomPage = () => {
                       handleNestedChange(
                         "contactInfo",
                         "whatsapp",
-                        e.target.value
+                        e.target.value,
                       )
                     }
                     placeholder="e.g., 9876543210"
@@ -795,7 +905,7 @@ const CreateClassroomPage = () => {
                       handleNestedChange(
                         "contactInfo",
                         "preferredContact",
-                        e.target.value
+                        e.target.value,
                       )
                     }
                   >

@@ -44,6 +44,22 @@ const profileImageStorage = multer.diskStorage({
   },
 });
 
+// Classroom image upload configuration
+const classroomImageStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    // Make sure the upload directory exists
+    const uploadDir = path.join(__dirname, "../../uploads/classroomImages");
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    const name = file.originalname.toLowerCase().split(" ").join("-");
+    cb(null, `classroom-${Date.now()}-${name}`);
+  },
+});
+
 // File filters
 const documentFilter = (req, file, cb) => {
   const isValid = !!MIME_TYPE_MAP[file.mimetype];
@@ -72,5 +88,11 @@ module.exports = {
     storage: profileImageStorage,
     fileFilter: imageFilter,
     limits: { fileSize: 2 * 1024 * 1024 }, // 2MB
+  }),
+
+  classroomImageUpload: multer({
+    storage: classroomImageStorage,
+    fileFilter: imageFilter,
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB per image
   }),
 };

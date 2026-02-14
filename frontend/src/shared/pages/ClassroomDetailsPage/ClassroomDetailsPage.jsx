@@ -111,7 +111,7 @@ const ClassroomDetailsPage = () => {
     if (classroom?.contactInfo?.whatsapp) {
       const phone = classroom.contactInfo.whatsapp.replace(/\D/g, "");
       const message = encodeURIComponent(
-        `Hi, I found your classroom "${classroom.name}" on StudySphere. I'm interested in joining. Can you please share more details?`
+        `Hi, I found your classroom "${classroom.name}" on StudySphere. I'm interested in joining. Can you please share more details?`,
       );
       window.open(`https://wa.me/91${phone}?text=${message}`, "_blank");
       handleInquiry();
@@ -129,7 +129,7 @@ const ClassroomDetailsPage = () => {
     if (classroom?.contactInfo?.email) {
       const subject = encodeURIComponent(`Inquiry about ${classroom.name}`);
       const body = encodeURIComponent(
-        `Hi,\n\nI found your classroom "${classroom.name}" on StudySphere. I'm interested in joining.\n\nPlease share more details about:\n- Available batches\n- Fee structure\n- Starting dates\n\nThank you!`
+        `Hi,\n\nI found your classroom "${classroom.name}" on StudySphere. I'm interested in joining.\n\nPlease share more details about:\n- Available batches\n- Fee structure\n- Starting dates\n\nThank you!`,
       );
       window.location.href = `mailto:${classroom.contactInfo.email}?subject=${subject}&body=${body}`;
       handleInquiry();
@@ -446,7 +446,7 @@ const ClassroomDetailsPage = () => {
                       >
                         {day}
                       </span>
-                    )
+                    ),
                   )}
                 </div>
                 <div className="schedule-time">
@@ -503,8 +503,8 @@ const ClassroomDetailsPage = () => {
                     {classroom.batchInfo?.batchType === "individual"
                       ? "Individual"
                       : classroom.batchInfo?.batchType === "group"
-                      ? "Group"
-                      : "Individual & Group"}
+                        ? "Group"
+                        : "Individual & Group"}
                   </span>
                 </div>
                 {classroom.batchInfo?.batchType !== "individual" && (

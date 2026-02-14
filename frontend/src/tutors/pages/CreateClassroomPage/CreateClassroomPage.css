@@ -124,6 +124,87 @@
   border-radius: 20px;
 }
 
+/* Image Upload Section */
+.image-upload-section {
+  margin-top: 0.5rem;
+}
+
+.image-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 1rem;
+}
+
+.image-preview-item {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.image-preview-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.remove-image-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  padding: 0.25rem 0.4rem;
+  font-size: 0.7rem;
+  border-radius: 50%;
+  opacity: 0.9;
+}
+
+.remove-image-btn:hover {
+  opacity: 1;
+}
+
+.image-upload-box {
+  aspect-ratio: 1;
+  border: 2px dashed #dee2e6;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: #f8f9fa;
+}
+
+.image-upload-box:hover {
+  border-color: var(--primary-color);
+  background: rgba(var(--primary-color-rgb), 0.05);
+}
+
+.upload-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: #6c757d;
+  font-size: 0.85rem;
+}
+
+.upload-placeholder svg {
+  color: #adb5bd;
+}
+
+.image-upload-box:hover .upload-placeholder,
+.image-upload-box:hover .upload-placeholder svg {
+  color: var(--primary-color);
+}
+
+.upload-progress {
+  display: flex;
+  align-items: center;
+  color: var(--primary-color);
+  font-size: 0.85rem;
+}
+
 /* Form Controls */
 .form-control:focus,
 .form-select:focus {

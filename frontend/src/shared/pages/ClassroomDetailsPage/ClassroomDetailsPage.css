@@ -33,95 +33,104 @@
 
 /* Hero Section */
 .hero-section {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
   background: white;
-  border-radius: 16px;
-  padding: 1rem;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
-  overflow: hidden;
+  border-radius: 20px;
+  padding: 1.25rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  overflow: visible;
 }
 
-.hero-content {
-  display: flex;
-  flex-direction: row;
-  gap: 1rem;
+.classroom-details-page .hero-section .hero-content {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  gap: 1.5rem;
   width: 100%;
   align-items: stretch;
 }
 
-.hero-gallery {
-  flex: 0 0 45%;
-  width: 45%;
+.classroom-details-page .hero-section .hero-gallery {
+  flex: 0 0 50% !important;
+  width: 50% !important;
+  max-width: 50% !important;
   overflow: hidden;
-  border-radius: 12px;
+  border-radius: 16px;
 }
 
-.hero-info {
-  flex: 1;
+.classroom-details-page .hero-section .hero-info {
+  flex: 1 1 auto !important;
   min-width: 0;
+  width: auto !important;
+  max-width: 50% !important;
   padding: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .gallery-carousel {
   height: 100%;
-  border-radius: 12px;
+  border-radius: 16px;
   overflow: hidden;
+  width: 100%;
 }
 
 .gallery-carousel .carousel-inner,
 .gallery-carousel .carousel-item {
   height: 100%;
+  width: 100%;
 }
 
 /* Gallery Card */
 .gallery-card {
   border: none !important;
-  border-radius: 12px;
+  border-radius: 16px;
   overflow: hidden;
   box-shadow: none !important;
   height: 100%;
   margin: 0 !important;
+  width: 100%;
 }
 
 .gallery-image {
   width: 100%;
   height: 100%;
-  min-height: 220px;
+  min-height: 280px;
   object-fit: cover;
 }
 
 .no-image-placeholder {
   width: 100%;
   height: 100%;
-  min-height: 220px;
+  min-height: 280px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 12px;
+  border-radius: 16px;
   color: rgba(255, 255, 255, 0.9);
-  border-radius: 0;
 }
 
 .no-image-placeholder svg {
-  opacity: 0.7;
-  margin-bottom: 0.75rem;
-  font-size: 48px;
+  opacity: 0.6;
+  margin-bottom: 1rem;
+  font-size: 56px;
 }
 
 .no-image-placeholder p {
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   margin: 0;
+  font-weight: 500;
 }
 
 /* Quick Info Card - Right of Image */
 .quick-info-card {
-  border: 1px solid #e8ecf3;
-  border-radius: 12px;
-  padding: 1rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  background: #f8fafc;
+  border: none;
+  border-radius: 16px;
+  padding: 1.25rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  background: white;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -133,70 +142,71 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
 }
 
 .classroom-header-compact .classroom-title {
-  font-size: 1rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: #1e293b;
   margin: 0;
-  line-height: 1.2;
+  line-height: 1.3;
   flex: 1;
 }
 
 .verified-badge-inline {
-  font-size: 0.6rem;
+  font-size: 0.65rem;
   font-weight: 600;
-  padding: 3px 6px;
+  padding: 4px 8px;
   border-radius: 12px;
-  margin-left: 6px;
+  margin-left: 8px;
   vertical-align: middle;
 }
 
 .classroom-header-compact .header-actions {
   display: flex;
-  gap: 4px;
+  gap: 6px;
   flex-shrink: 0;
 }
 
 .classroom-header-compact .header-actions .btn {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
   padding: 0;
-  background: white;
+  background: #f8fafc;
   border: 1px solid #e2e8f0;
   color: #64748b;
   transition: all 0.2s ease;
-  font-size: 0.75rem;
+  font-size: 0.85rem;
 }
 
 .classroom-header-compact .header-actions .btn:hover {
   background: #667eea;
   border-color: #667eea;
   color: white;
+  transform: scale(1.05);
 }
 
 .quick-meta {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  margin-bottom: 0.5rem;
-  padding-bottom: 0.5rem;
+  gap: 8px;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
   border-bottom: 1px solid #f1f5f9;
 }
 
 .meta-item {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 0.75rem;
-  color: #64748b;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: #475569;
 }
 
 .meta-item svg {
@@ -208,31 +218,32 @@
 /* Fee Display in Quick Card */
 .quick-info-card .fee-display {
   text-align: center;
-  padding: 0.5rem;
+  padding: 1rem;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 10px;
-  margin-bottom: 0.5rem;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.25);
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
 }
 
 .quick-info-card .fee-amount {
   display: block;
-  font-size: 1.1rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: white;
+  letter-spacing: -0.5px;
 }
 
 .quick-info-card .fee-period {
-  color: rgba(255, 255, 255, 0.85);
-  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.8rem;
   font-weight: 500;
 }
 
 /* Contact Buttons in Quick Card */
 .quick-info-card .contact-buttons {
   display: flex;
-  gap: 6px;
-  margin-bottom: 6px;
+  gap: 10px;
+  margin-bottom: 10px;
 }
 
 .quick-info-card .contact-btn {
@@ -240,22 +251,25 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  padding: 6px 8px;
+  gap: 8px;
+  padding: 12px 16px;
   font-weight: 600;
-  font-size: 0.7rem;
-  border-radius: 8px;
+  font-size: 0.9rem;
+  border-radius: 10px;
   transition: all 0.2s ease;
+  border: none;
 }
 
 .quick-info-card .contact-btn.whatsapp {
   background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
   border-color: transparent;
+  color: white;
 }
 
 .quick-info-card .contact-btn.phone {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-color: transparent;
+  color: white;
 }
 
 .quick-info-card .contact-btn.email {
@@ -267,7 +281,7 @@
 
 .quick-info-card .contact-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
 }
 
 /* Info Cards */
@@ -405,22 +419,31 @@
 }
 
 .subject-badge {
-  font-size: 0.75rem;
-  font-weight: 500;
-  padding: 5px 12px;
-  border-radius: 20px;
-  background: linear-gradient(135deg, #f0f4ff 0%, #e8eeff 100%) !important;
-  color: #5469d4 !important;
-  border: 1px solid rgba(84, 105, 212, 0.1);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 25px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: #ffffff !important;
+  border: none;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.25);
+  transition: all 0.2s ease;
+}
+
+.subject-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.35);
 }
 
 .grade-badge {
-  font-size: 0.7rem;
-  font-weight: 500;
-  padding: 4px 10px;
-  border-radius: 15px;
-  background: #f1f5f9 !important;
-  color: #64748b !important;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%) !important;
+  color: #ffffff !important;
+  border: none;
+  box-shadow: 0 2px 6px rgba(30, 41, 59, 0.2);
 }
 
 /* Description */
@@ -633,13 +656,21 @@
     padding: 0.875rem;
   }
 
-  .hero-content {
+  .classroom-details-page .hero-section .hero-content {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
     gap: 0.75rem;
   }
 
-  .hero-gallery {
-    flex: 0 0 40%;
-    width: 40%;
+  .classroom-details-page .hero-section .hero-gallery {
+    flex: 0 0 45% !important;
+    width: 45% !important;
+    max-width: 45% !important;
+  }
+
+  .classroom-details-page .hero-section .hero-info {
+    flex: 1 !important;
   }
 
   .info-card {
@@ -657,38 +688,81 @@
   }
   
   .hero-section {
-    padding: 0.75rem;
+    padding: 1rem;
   }
   
-  .hero-content {
-    flex-direction: column;
+  .classroom-details-page .hero-section .hero-content {
+    display: flex !important;
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
+    gap: 1rem;
   }
   
-  .hero-gallery,
-  .hero-info {
-    flex: 0 0 100%;
-    width: 100%;
+  .classroom-details-page .hero-section .hero-gallery {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  .classroom-details-page .hero-section .hero-info {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
   }
   
   .gallery-carousel,
   .gallery-card,
   .gallery-image,
   .no-image-placeholder {
-    height: 180px;
-    min-height: 180px;
+    height: auto;
+    min-height: 220px;
   }
   
   .quick-info-card {
     height: auto;
+    padding: 1rem;
   }
   
   .classroom-header-compact {
-    flex-direction: column;
-    gap: 0.75rem;
+    flex-direction: row;
+    gap: 0.5rem;
   }
   
   .classroom-header-compact .classroom-title {
-    font-size: 1rem;
+    font-size: 1.1rem;
+  }
+  
+  .quick-meta {
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.75rem;
+    gap: 6px;
+  }
+  
+  .meta-item {
+    font-size: 0.85rem;
+  }
+  
+  .quick-info-card .fee-display {
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .quick-info-card .fee-amount {
+    font-size: 1.35rem;
+  }
+  
+  .quick-info-card .fee-period {
+    font-size: 0.75rem;
+  }
+  
+  .quick-info-card .contact-buttons {
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .quick-info-card .contact-btn {
+    padding: 12px 16px;
+    font-size: 0.9rem;
   }
   
   .info-card {
@@ -705,14 +779,6 @@
     grid-template-columns: repeat(2, 1fr);
   }
   
-  .quick-info-card .fee-amount {
-    font-size: 1.2rem;
-  }
-  
-  .quick-info-card .contact-buttons {
-    flex-direction: column;
-  }
-  
   .grades-section-inline {
     padding-left: 0;
     border-left: none;
@@ -724,29 +790,121 @@
 
 @media (max-width: 576px) {
   .classroom-details-page {
-    padding: 0.5rem 0 2rem;
+    padding: 0.75rem 0 2rem;
   }
 
   .hero-section {
-    padding: 0.5rem;
-    border-radius: 10px;
+    padding: 0.75rem;
+    border-radius: 12px;
+  }
+
+  .classroom-details-page .hero-section .hero-content {
+    display: flex !important;
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
+    gap: 0.75rem;
+  }
+
+  .classroom-details-page .hero-section .hero-gallery {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .classroom-details-page .hero-section .hero-info {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
   }
 
   .gallery-carousel,
   .gallery-card,
   .gallery-image,
   .no-image-placeholder {
-    height: 150px;
-    min-height: 150px;
-    border-radius: 8px;
+    height: auto;
+    min-height: 200px;
+    border-radius: 10px;
+  }
+
+  .no-image-placeholder svg {
+    font-size: 36px;
+    margin-bottom: 0.5rem;
+  }
+
+  .no-image-placeholder p {
+    font-size: 0.75rem;
+  }
+
+  .quick-info-card {
+    padding: 0.75rem;
+    border-radius: 12px;
+    height: 100%;
   }
 
   .classroom-header-compact {
-    gap: 0.5rem;
+    gap: 0.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .classroom-header-compact .header-actions {
+    display: none;
   }
 
   .classroom-header-compact .classroom-title {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
+    line-height: 1.2;
+  }
+
+  .verified-badge-inline {
+    font-size: 0.5rem;
+    padding: 2px 5px;
+    margin-left: 4px;
+  }
+
+  .quick-meta {
+    gap: 4px;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .meta-item {
+    font-size: 0.7rem;
+    gap: 6px;
+  }
+
+  .meta-item svg {
+    font-size: 0.7rem;
+  }
+
+  .quick-info-card .fee-display {
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    border-radius: 8px;
+  }
+
+  .quick-info-card .fee-amount {
+    font-size: 1rem;
+  }
+
+  .quick-info-card .fee-period {
+    font-size: 0.6rem;
+  }
+
+  .quick-info-card .contact-buttons {
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+
+  .quick-info-card .contact-btn {
+    padding: 8px 10px;
+    font-size: 0.7rem;
+    border-radius: 6px;
+    gap: 4px;
+  }
+
+  .quick-info-card .contact-btn.email {
+    padding: 6px 10px;
+    font-size: 0.7rem;
   }
 
   .info-card {
@@ -772,16 +930,6 @@
   .facility-item {
     padding: 0.35rem 0.5rem;
     font-size: 0.75rem;
-  }
-
-  .quick-info-card .fee-amount {
-    font-size: 1.1rem;
-  }
-
-  .quick-info-card .contact-btn {
-    padding: 0.5rem 0.75rem;
-    font-size: 0.85rem;
-    border-radius: 6px;
   }
 
   .tutor-mini-card {

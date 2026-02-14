@@ -3,6 +3,7 @@ const router = express.Router();
 const offlineClassroomController = require("../controllers/offlineClassroom.controller");
 const { authenticateToken } = require("../middleware/auth.middleware");
 const { checkRole } = require("../middleware/role.middleware");
+const { classroomImageUpload } = require("../config/upload");
 
 /**
  * Offline Classroom Routes
@@ -36,7 +37,7 @@ router.get(
   "/tutor/my-classrooms",
   authenticateToken,
   checkRole(["tutor"]),
-  offlineClassroomController.getMyClassrooms
+  offlineClassroomController.getMyClassrooms,
 );
 
 // Create a new classroom
@@ -44,7 +45,7 @@ router.post(
   "/",
   authenticateToken,
   checkRole(["tutor"]),
-  offlineClassroomController.createClassroom
+  offlineClassroomController.createClassroom,
 );
 
 // Update a classroom
@@ -52,7 +53,7 @@ router.put(
   "/:id",
   authenticateToken,
   checkRole(["tutor"]),
-  offlineClassroomController.updateClassroom
+  offlineClassroomController.updateClassroom,
 );
 
 // Toggle classroom status
@@ -60,7 +61,7 @@ router.patch(
   "/:id/status",
   authenticateToken,
   checkRole(["tutor"]),
-  offlineClassroomController.toggleClassroomStatus
+  offlineClassroomController.toggleClassroomStatus,
 );
 
 // Delete a classroom
@@ -68,7 +69,16 @@ router.delete(
   "/:id",
   authenticateToken,
   checkRole(["tutor"]),
-  offlineClassroomController.deleteClassroom
+  offlineClassroomController.deleteClassroom,
+);
+
+// Upload classroom images (up to 5 images)
+router.post(
+  "/upload-images",
+  authenticateToken,
+  checkRole(["tutor"]),
+  classroomImageUpload.array("images", 5),
+  offlineClassroomController.uploadClassroomImages,
 );
 
 module.exports = router;

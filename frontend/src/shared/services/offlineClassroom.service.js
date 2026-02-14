@@ -29,7 +29,7 @@ class OfflineClassroomService {
       if (params.sortOrder) queryParams.append("sortOrder", params.sortOrder);
 
       const response = await api.get(
-        `/offline-classrooms?${queryParams.toString()}`
+        `/offline-classrooms?${queryParams.toString()}`,
       );
       return response.data;
     } catch (error) {
@@ -131,7 +131,7 @@ class OfflineClassroomService {
     try {
       const response = await api.put(
         `/offline-classrooms/${id}`,
-        classroomData
+        classroomData,
       );
       return response.data;
     } catch (error) {
@@ -164,6 +164,28 @@ class OfflineClassroomService {
   async deleteClassroom(id) {
     try {
       const response = await api.delete(`/offline-classrooms/${id}`);
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error);
+    }
+  }
+
+  /**
+   * Upload classroom images
+   * @param {File[]} files - Array of image files
+   * @returns {Promise<Object>} Response with image URLs
+   */
+  async uploadClassroomImages(files) {
+    try {
+      const formData = new FormData();
+      files.forEach((file) => formData.append("images", file));
+      const response = await api.post(
+        "/offline-classrooms/upload-images",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        },
+      );
       return response.data;
     } catch (error) {
       throw this.handleError(error);
